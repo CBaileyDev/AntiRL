@@ -36,16 +36,12 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
-            let data_dir = app.path().app_data_dir()?;
+            let data_dir = std::env::var_os("ANTIRL_QA_DATA_DIR").map(std::path::PathBuf::from).unwrap_or(app.path().app_data_dir()?);
             let service = Arc::new(CoachService::open(&data_dir).map_err(std::io::Error::other)?);
-
-            // Seed initial profile notes if not present
-            let mem = service.get_memory().map_err(std::io::Error::other)?;
-            if !mem.as_array().is_some_and(|files| files.iter().any(|f| f["name"] == "profile.md")) {
-                let _ = service.save_memory(
-                    "profile.md",
-                    "# Coaching Profile\n\n- Scope: Competitive 1v1, 2v2 and 3v3.\n- Current 2v2 self-reported rank: Diamond 2.\n- Current 3v3 self-reported rank: Diamond 2.\n- Focus areas: Boost conservation, rotations, small-pad pathing, backpost defense.\n\nThese are user-reported starting parameters. AntiRL will measure progress against verified replay telemetry.\n",
-                );
+            if std::env::var_os("ANTIRL_QA_DATA_DIR").is_some() {
+                let mut settings=service.get_settings().map_err(std::io::Error::other)?;
+                settings["auto_import"]=serde_json::json!(false);
+                service.save_settings(settings).map_err(std::io::Error::other)?;
             }
 
             app.manage(AppState {
@@ -77,10 +73,22 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            commands::create_conversation,
+            commands::update_conversation,
+            commands::get_context_manifest,
+            commands::rebuild_analytics,
+            commands::search_training_packs,
+            commands::get_practice,
+            commands::save_practice_plan,
+            commands::record_training,
+            commands::archive_practice,
+            commands::evidence_tool,
+            commands::export_conversation,
             commands::get_library,
             commands::import_folder,
             commands::import_single_file,
             commands::get_replay,
+            commands::get_coach_replay,
             commands::delete_replay,
             commands::get_settings,
             commands::save_settings,
@@ -99,7 +107,9 @@ fn main() {
             commands::start_chatgpt_sign_in,
             commands::sign_out_chatgpt,
             commands::cancel_import,
-            commands::cancel_ai
+            commands::cancel_ai,
+            commands::get_player_candidates,
+            commands::resolve_identity
         ])
         .run(tauri::generate_context!())
         .expect("Unable to start AntiRL desktop application");

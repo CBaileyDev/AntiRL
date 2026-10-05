@@ -1,39 +1,55 @@
-import React, { useState } from "react";
-import {
-  TrendingUp,
-  Award,
-  Zap,
-  Shield,
-  Gauge,
-  CheckCircle,
-  Clock,
-  Flame,
-  Target,
-} from "lucide-react";
-import type { ProgressReport, Settings } from "../types";
+import React, { useMemo, useState } from "react";
+import { Trophy, Zap, Gauge, Flame } from "lucide-react";
+import type { ProgressReport, ReplaySummary, Settings } from "../types";
+import PracticePanel from "../components/PracticePanel";
 
 interface ProgressProps {
   progress: ProgressReport | null;
   settings: Settings;
+  replays?: ReplaySummary[];
 }
 
-export default function Progress({ progress, settings }: ProgressProps) {
+export default function Progress({ progress, settings, replays = [] }: ProgressProps) {
   const [selectedMode, setSelectedMode] = useState<string>("2v2");
 
-  const modeData = progress?.modes?.[selectedMode] || {
+  const modeData = {
     matches: 0,
     wins: 0,
     win_rate: 0,
-    avg_boost: 0,
-    avg_speed: 0,
+    avg_boost: null,
+    avg_speed: null,
     defensive_half_pct: 0,
     low_boost_pct: 0,
-    supersonic_waste_seconds: 0,
+    boost_active_at_supersonic_speed_s: null,
+    ...(progress?.modes?.[selectedMode] ?? {}),
   };
+  const clampPct = (n: number) => Math.min(100, Math.max(0, n || 0));
+
+  const form = useMemo(() => {
+    const pid = settings.player_id;
+    return replays
+      .filter((r) => r.mode === selectedMode && r.blue_score != null && r.orange_score != null)
+      .map((r) => {
+        const me = pid ? r.players?.find((p) => p.id === pid) : undefined;
+        if (!me) return null;
+        const mine = me.team === 0 ? r.blue_score! : r.orange_score!;
+        const theirs = me.team === 0 ? r.orange_score! : r.blue_score!;
+        return {
+          id: r.id,
+          at: r.played_at || "",
+          mine,
+          theirs,
+          res: mine > theirs ? "win" : mine < theirs ? "loss" : "draw",
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null)
+      .sort((a, b) => (a.at < b.at ? 1 : -1))
+      .slice(0, 12);
+  }, [replays, settings.player_id, selectedMode]);
+  const formWins = form.filter((f) => f.res === "win").length;
 
   return (
     <div className="content-pane">
-      {/* Mode Selector and Profile Context */}
       <div
         style={{
           display: "flex",
@@ -43,21 +59,17 @@ export default function Progress({ progress, settings }: ProgressProps) {
           gap: 12,
         }}
       >
-        <div>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)" }}>
-            Long-term Progress & Analytics
-          </h2>
-          <span style={{ fontSize: 13, color: "var(--muted)" }}>
-            Player: <b>{settings.player_name || settings.player_id || "Primary Account"}</b> · Sample:{" "}
-            <b>{progress?.matches_analyzed ?? 0}</b> total matches analyzed
-          </span>
-        </div>
+        <span style={{ fontSize: 13, color: "var(--muted)" }}>
+          Player: <b>{settings.player_name || settings.player_id || "Primary Account"}</b> · Sample:{" "}
+          <b>{progress?.matches_analyzed ?? 0}</b> total matches analyzed
+        </span>
 
-        {/* Playlist Filter */}
         <div style={{ display: "flex", background: "var(--surface)", borderRadius: "var(--radius-sm)", padding: 3, border: "1px solid var(--line)" }}>
           {["1v1", "2v2", "3v3"].map((mode) => (
             <button
               key={mode}
+              type="button"
+              aria-pressed={selectedMode === mode}
               onClick={() => setSelectedMode(mode)}
               style={{
                 padding: "6px 14px",
@@ -75,228 +87,156 @@ export default function Progress({ progress, settings }: ProgressProps) {
         </div>
       </div>
 
-      {/* Mode-specific Metric Cards */}
-      <div className="grid-4">
-        <div className="stat-box">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Award size={16} color="var(--sage)" />
-            <span className="stat-label">Win Rate ({selectedMode})</span>
+      <div className="pg-stats">
+        <div className="pg-stat">
+          <div className="pg-stat-head">
+            <Trophy size={16} color="var(--sage)" aria-hidden="true" />
+            <span className="pg-label">Win Rate ({selectedMode})</span>
           </div>
-          <span className="stat-value" style={{ color: "var(--sage)" }}>
-            {modeData.win_rate}%
-          </span>
-          <span className="stat-hint">
-            {modeData.wins} wins in {modeData.matches} matches
-          </span>
+          <span className="pg-value" style={{ color: "var(--sage)" }}>{modeData.matches ? `${modeData.win_rate}%` : "N/A"}</span>
+          <span className="pg-sub">{modeData.wins} wins in {modeData.matches} matches</span>
         </div>
-
-        <div className="stat-box">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="pg-stat">
+          <div className="pg-stat-head">
             <Zap size={16} color="var(--accent)" />
-            <span className="stat-label">Avg Boost Level</span>
+            <span className="pg-label">Avg Boost Level</span>
           </div>
-          <span className="stat-value" style={{ color: "var(--accent)" }}>
-            {modeData.avg_boost ? `${modeData.avg_boost}%` : "N/A"}
+          <span className="pg-value" style={{ color: "var(--accent)" }}>
+            {modeData.avg_boost != null ? `${modeData.avg_boost}%` : "N/A"}
           </span>
-          <span className="stat-hint">Time-weighted active boost</span>
+          <span className="pg-sub">Aggregation uses valid observation duration where available; legacy means are labelled in Coach</span>
         </div>
-
-        <div className="stat-box">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="pg-stat">
+          <div className="pg-stat-head">
             <Gauge size={16} color="var(--blue-team)" />
-            <span className="stat-label">Average Speed</span>
+            <span className="pg-label">Average Speed</span>
           </div>
-          <span className="stat-value" style={{ color: "var(--blue-team)" }}>
-            {modeData.avg_speed ? `${modeData.avg_speed} uu/s` : "N/A"}
+          <span className="pg-value" style={{ color: "var(--blue-team)" }}>
+            {modeData.avg_speed != null ? `${modeData.avg_speed} uu/s` : "N/A"}
           </span>
-          <span className="stat-hint">Linear velocity during live play</span>
+          <span className="pg-sub">Linear velocity during live play</span>
         </div>
-
-        <div className="stat-box">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="pg-stat">
+          <div className="pg-stat-head">
             <Flame size={16} color="var(--danger)" />
-            <span className="stat-label">Supersonic Waste</span>
+            <span className="pg-label">Boosting at Speed</span>
           </div>
-          <span className="stat-value" style={{ color: "var(--danger)" }}>
-            {modeData.supersonic_waste_seconds ? `${modeData.supersonic_waste_seconds}s` : "0.0s"}
+          <span className="pg-value" style={{ color: "var(--danger)" }}>
+            {modeData.boost_active_at_supersonic_speed_s != null ? `${modeData.boost_active_at_supersonic_speed_s}s` : "N/A"}
           </span>
-          <span className="stat-hint">Avg seconds boosting at &gt;=2200 uu/s</span>
+          <span className="pg-sub">Equal-match mean at &gt;=2200 uu/s; not proven waste</span>
         </div>
       </div>
 
-      {/* Detailed Positioning & Resource Efficiency Breakdown */}
-      <div className="grid-2">
-        {/* Resource & Field Presence */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Telemetry Efficiency Breakdown</h3>
-            <span style={{ fontSize: 11.5, color: "var(--muted)" }}>
-              Sample: {modeData.matches} matches
-            </span>
+      <div className="pg-card">
+        <div className="pg-card-head">
+          <h3 className="pg-card-title">Recent Form ({selectedMode})</h3>
+          <span className="pg-card-meta">
+            {form.length > 0
+              ? `${formWins}W - ${form.filter((f) => f.res === "loss").length}L - ${form.filter((f) => f.res === "draw").length}D in last ${form.length}`
+              : "No results yet"}
+          </span>
+        </div>
+        {form.length === 0 ? (
+          <span className="pg-empty">
+            Import {selectedMode} matches that include your player profile to see your recent results here.
+          </span>
+        ) : (
+          <div className="pg-form">
+            {form.map((f) => (
+              <div key={f.id} className={`pg-form-item ${f.res}`} title={f.at}>
+                <b>{f.res === "win" ? "W" : f.res === "loss" ? "L" : "D"}</b>
+                <span>{f.mine}-{f.theirs}</span>
+              </div>
+            ))}
           </div>
+        )}
+      </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 13 }}>
+      <PracticePanel mode={selectedMode} playerId={settings.player_id}/>
+      <div className="pg-grid">
+        <div className="pg-card">
+          <div className="pg-card-head">
+            <h3 className="pg-card-title">Telemetry Efficiency Breakdown</h3>
+            <span className="pg-card-meta">Sample: {modeData.matches} matches</span>
+          </div>
+          <div className="pg-list" style={{ gap: 20 }}>
+            <div className="pg-bar-row">
+              <div className="pg-bar-top">
                 <span style={{ color: "var(--text)", fontWeight: 600 }}>Defensive Half Presence</span>
-                <span style={{ color: "var(--accent)", fontWeight: 700 }}>
-                  {modeData.defensive_half_pct}%
-                </span>
+                <span style={{ color: "var(--accent)", fontWeight: 700 }}>{modeData.defensive_half_pct}%</span>
               </div>
-              <div style={{ height: 6, background: "var(--surface-raised)", borderRadius: 3, overflow: "hidden" }}>
-                <div
-                  style={{
-                    width: `${modeData.defensive_half_pct}%`,
-                    height: "100%",
-                    background: "var(--accent)",
-                  }}
-                />
+              <div className="pg-bar">
+                <div style={{ width: `${clampPct(modeData.defensive_half_pct)}%`, background: "var(--accent)" }} />
               </div>
-              <span style={{ fontSize: 11.5, color: "var(--faint)", marginTop: 4, display: "block" }}>
-                Time-weighted Y position behind the halfway line relative to your defending goal.
-              </span>
+              <span className="pg-sub">Time-weighted Y position behind the halfway line relative to your defending goal.</span>
             </div>
-
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 13 }}>
+            <div className="pg-bar-row">
+              <div className="pg-bar-top">
                 <span style={{ color: "var(--text)", fontWeight: 600 }}>Low Boost Exposure (&lt;10 Boost)</span>
-                <span style={{ color: "var(--orange-team)", fontWeight: 700 }}>
-                  {modeData.low_boost_pct}%
-                </span>
+                <span style={{ color: "var(--orange-team)", fontWeight: 700 }}>{modeData.low_boost_pct}%</span>
               </div>
-              <div style={{ height: 6, background: "var(--surface-raised)", borderRadius: 3, overflow: "hidden" }}>
-                <div
-                  style={{
-                    width: `${modeData.low_boost_pct}%`,
-                    height: "100%",
-                    background: "var(--orange-team)",
-                  }}
-                />
+              <div className="pg-bar">
+                <div style={{ width: `${clampPct(modeData.low_boost_pct)}%`, background: "var(--orange-team)" }} />
               </div>
-              <span style={{ fontSize: 11.5, color: "var(--faint)", marginTop: 4, display: "block" }}>
-                Portion of active match time spent in a resource-compromised state.
-              </span>
+              <span className="pg-sub">Portion of active match time spent in a resource-compromised state.</span>
             </div>
           </div>
         </div>
 
-        {/* Active Coaching Objectives / Goals */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Coaching Goals</h3>
-            <span style={{ fontSize: 11.5, color: "var(--sage)" }}>Progress Tracker</span>
+        <div className="pg-card">
+          <div className="pg-card-head">
+            <h3 className="pg-card-title">Coaching Goals</h3>
+            <span className="pg-card-meta">Progress Tracker</span>
           </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div
-              style={{
-                padding: "10px 12px",
-                background: "var(--surface-raised)",
-                borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--line)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: 13, color: "var(--text)" }}>
-                  Reduce Supersonic Waste under 1.5s
-                </strong>
-                <span style={{ fontSize: 11.5, color: "var(--muted)", display: "block" }}>
-                  Target: &lt; 1.5s per match · Current: {modeData.supersonic_waste_seconds}s
-                </span>
+          <div className="pg-list">
+            {[
+              {title:"Review a resource decision",sub:"No universal boost target. Inspect pressure, space and recovery.",ok:false},
+              {title:"Practice one useful recovery",sub:"Choose a short drill and check transfer in later same-mode matches.",ok:false},
+              {title:"Reassess with new matches",sub:"Grades and promotion forecasts await validated evidence.",ok:false},
+            ].map((g) => (
+              <div className="pg-row" key={g.title}>
+                <div>
+                  <span className="pg-row-title">{g.title}</span>
+                  <span className="pg-sub">{g.sub}</span>
+                </div>
+                <span className={`pg-chip ${modeData.matches && g.ok ? "good" : "progress"}`}>{!modeData.matches ? "No data" : g.ok ? "On Track" : "In Progress"}</span>
               </div>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "2px 8px",
-                  borderRadius: "var(--radius-pill)",
-                  background:
-                    modeData.supersonic_waste_seconds <= 1.5
-                      ? "var(--sage-soft)"
-                      : "var(--accent-soft)",
-                  color:
-                    modeData.supersonic_waste_seconds <= 1.5
-                      ? "var(--sage)"
-                      : "var(--accent)",
-                }}
-              >
-                {modeData.supersonic_waste_seconds <= 1.5 ? "On Track" : "In Progress"}
-              </span>
-            </div>
-
-            <div
-              style={{
-                padding: "10px 12px",
-                background: "var(--surface-raised)",
-                borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--line)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: 13, color: "var(--text)" }}>
-                  Maintain Average Boost &gt; 35%
-                </strong>
-                <span style={{ fontSize: 11.5, color: "var(--muted)", display: "block" }}>
-                  Target: &gt; 35% · Current: {modeData.avg_boost}%
-                </span>
-              </div>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "2px 8px",
-                  borderRadius: "var(--radius-pill)",
-                  background:
-                    modeData.avg_boost >= 35
-                      ? "var(--sage-soft)"
-                      : "var(--accent-soft)",
-                  color:
-                    modeData.avg_boost >= 35 ? "var(--sage)" : "var(--accent)",
-                }}
-              >
-                {modeData.avg_boost >= 35 ? "Achieved" : "In Progress"}
-              </span>
-            </div>
-
-            <div
-              style={{
-                padding: "10px 12px",
-                background: "var(--surface-raised)",
-                borderRadius: "var(--radius-sm)",
-                border: "1px solid var(--line)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: 13, color: "var(--text)" }}>
-                  Small-Pad Rotations in 2v2
-                </strong>
-                <span style={{ fontSize: 11.5, color: "var(--muted)", display: "block" }}>
-                  Limit zero-boost windows to less than 10% of game
-                </span>
-              </div>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "2px 8px",
-                  borderRadius: "var(--radius-pill)",
-                  background: "var(--sage-soft)",
-                  color: "var(--sage)",
-                }}
-              >
-                Active Focus
-              </span>
-            </div>
+            ))}
           </div>
+        </div>
+      </div>
+
+      <div className="pg-grid">
+        <div className="pg-card">
+          <div className="pg-card-head">
+            <h3 className="pg-card-title">Recurring Strengths</h3>
+            <span className="pg-card-meta">Across analyzed matches</span>
+          </div>
+          {progress?.recurring_strengths?.length ? (
+            <ul className="pg-bullets">
+              {progress.recurring_strengths.slice(0, 5).map((t, i) => (
+                <li key={i}>{t}</li>
+              ))}
+            </ul>
+          ) : (
+            <span className="pg-empty">Strengths appear once enough matches are analyzed.</span>
+          )}
+        </div>
+        <div className="pg-card">
+          <div className="pg-card-head">
+            <h3 className="pg-card-title">Recurring Priorities</h3>
+            <span className="pg-card-meta">Focus next</span>
+          </div>
+          {progress?.recurring_priorities?.length ? (
+            <ul className="pg-bullets">
+              {progress.recurring_priorities.slice(0, 5).map((t, i) => (
+                <li key={i}>{t}</li>
+              ))}
+            </ul>
+          ) : (
+            <span className="pg-empty">Priorities appear once enough matches are analyzed.</span>
+          )}
         </div>
       </div>
     </div>

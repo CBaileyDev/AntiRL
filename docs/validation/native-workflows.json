@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "native mode/preset creation and rename",
+    "archive hidden while stored",
+    "history retained on reload",
+    "catalog code provenance",
+    "wrong-mode retrieval denied",
+    "persistent practice completion and mode isolation",
+    "native practice form"
+  ]
+}

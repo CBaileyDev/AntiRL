@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FolderOpen,
   FilePlus,
@@ -24,6 +24,13 @@ interface ReplaysProps {
   onDeleteReplay: (id: string) => void;
 }
 
+function teamScores(r: ReplaySummary): [string, string] {
+  const b = r.blue_score;
+  const o = r.orange_score;
+  if (b == null && o == null) return ["-", "-"];
+  return [String(b ?? 0), String(o ?? 0)];
+}
+
 export default function Replays({
   replays,
   importing,
@@ -36,16 +43,19 @@ export default function Replays({
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState<string>("all");
 
-  const filtered = replays.filter((r) => {
-    const matchesSearch =
-      r.replay_name?.toLowerCase().includes(search.toLowerCase()) ||
-      r.file_name?.toLowerCase().includes(search.toLowerCase()) ||
-      r.map_name?.toLowerCase().includes(search.toLowerCase()) ||
-      r.players?.some((p) => p.name.toLowerCase().includes(search.toLowerCase()));
-
-    const matchesMode = filterMode === "all" || r.mode === filterMode;
-    return matchesSearch && matchesMode;
-  });
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return replays.filter((r) => {
+      const matchesSearch =
+        !q ||
+        r.replay_name?.toLowerCase().includes(q) ||
+        r.file_name?.toLowerCase().includes(q) ||
+        r.map_name?.toLowerCase().includes(q) ||
+        r.players?.some((p) => p.name?.toLowerCase().includes(q));
+      const matchesMode = filterMode === "all" || r.mode === filterMode;
+      return matchesSearch && matchesMode;
+    });
+  }, [replays, search, filterMode]);
 
   return (
     <div className="content-pane">
@@ -84,7 +94,7 @@ export default function Replays({
               style={{
                 width: `${
                   importProgress && importProgress.total > 0
-                    ? (importProgress.current / importProgress.total) * 100
+                    ? Math.min(100, (importProgress.current / importProgress.total) * 100)
                     : 10
                 }%`,
                 height: "100%",
@@ -126,6 +136,7 @@ export default function Replays({
             />
             <input
               type="text"
+              aria-label="Search replays"
               placeholder="Search by match, player, or map name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -146,6 +157,7 @@ export default function Replays({
               <button
                 key={mode}
                 onClick={() => setFilterMode(mode)}
+                aria-pressed={filterMode === mode}
                 style={{
                   padding: "4px 10px",
                   fontSize: 12,
@@ -163,10 +175,10 @@ export default function Replays({
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button className="btn btn-secondary" onClick={onImportFiles} disabled={importing}>
+          <button className="btn btn secondary" onClick={onImportFiles} disabled={importing}>
             <FilePlus size={15} /> Select Files
           </button>
-          <button className="btn btn-primary" onClick={onImportFolder} disabled={importing}>
+          <button className="btn btn primary" onClick={onImportFolder} disabled={importing}>
             <FolderOpen size={15} /> Import Folder
           </button>
         </div>
@@ -201,7 +213,14 @@ export default function Replays({
                 <tr
                   key={r.id}
                   style={{ cursor: "pointer" }}
+                  tabIndex={0}
                   onClick={() => onSelectReplay(r.id)}
+                  onKeyDown={(e) => {
+                    if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                      e.preventDefault();
+                      onSelectReplay(r.id);
+                    }
+                  }}
                 >
                   <td>
                     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -246,9 +265,9 @@ export default function Replays({
 
                   <td>
                     <span style={{ fontWeight: 700, fontSize: 13.5, fontVariantNumeric: "tabular-nums" }}>
-                      <span style={{ color: "var(--blue-team)" }}>{r.blue_score ?? "?"}</span>
+                      <span style={{ color: "var(--blue-team)" }}>{teamScores(r)[0]}</span>
                       {" - "}
-                      <span style={{ color: "var(--orange-team)" }}>{r.orange_score ?? "?"}</span>
+                      <span style={{ color: "var(--orange-team)" }}>{teamScores(r)[1]}</span>
                     </span>
                   </td>
 
@@ -271,7 +290,7 @@ export default function Replays({
                       ))}
                       {(r.players?.length ?? 0) > 4 && (
                         <span style={{ fontSize: 10.5, color: "var(--faint)" }}>
-                          +{r.players.length - 4} more
+                          +{(r.players?.length ?? 0) - 4} more
                         </span>
                       )}
                     </div>
@@ -280,7 +299,7 @@ export default function Replays({
                   <td style={{ textAlign: "right" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                       <button
-                        className="btn btn-secondary"
+                        className="btn btn secondary"
                         style={{ padding: "5px 10px", fontSize: 12 }}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -294,6 +313,7 @@ export default function Replays({
                         className="icon-btn"
                         style={{ width: 28, height: 28 }}
                         title="Delete Replay from Cache"
+                        aria-label="Delete replay from cache"
                         onClick={(e) => {
                           e.stopPropagation();
                           if (confirm("Delete this replay from local database cache?")) {

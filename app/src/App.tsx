@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   LayoutDashboard,
   Film,
@@ -16,13 +16,15 @@ import {
 import Overview from "./pages/Overview";
 import Replays from "./pages/Replays";
 import ReplayStudio from "./pages/ReplayStudio";
-import Coach from "./pages/Coach";
+import Coach, { COACH_INTRO, type ChatMsg } from "./pages/Coach";
 import Progress from "./pages/Progress";
 import Teammates from "./pages/Teammates";
 import SettingsPage from "./pages/Settings";
 
 import TitleBar from "./components/TitleBar";
 import OnboardingModal from "./components/OnboardingModal";
+import RankBadge from "./components/RankBadge";
+import { highestCompetitiveRank } from "./rankMath";
 
 import type {
   ReplaySummary,
@@ -32,6 +34,7 @@ import type {
   TeammateStats,
   MemoryNote,
   Conversation,
+  Message,
 } from "./types";
 
 // Tauri API helper with browser fallback
@@ -43,7 +46,7 @@ async function tauriInvoke<T>(cmd: string, args: Record<string, any> = {}): Prom
     return invoke<T>(cmd, args);
   }
   // Browser fallback for UI preview/testing
-  console.log(`[Browser Fallback] invoke: ${cmd}`, args);
+  console.log(`[Browser Fallback] invoke: ${cmd}`);
   return {} as T;
 }
 
@@ -51,7 +54,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<string>("overview");
   const [replays, setReplays] = useState<ReplaySummary[]>([]);
   const [selectedReplay, setSelectedReplay] = useState<ReplayAnalysis | null>(null);
-  const [settings, setSettings] = useState<Settings>({
+  const [rawSettings, setSettings] = useState<Settings>({
     replay_folder: "",
     player_id: null,
     player_name: null,
@@ -63,14 +66,34 @@ export default function App() {
     auto_import: true,
     cloud_consent: false,
     rank_1v1: null,
-    rank_2v2: "Diamond 2",
-    rank_3v3: "Diamond 2",
+    rank_2v2: null,
+    rank_3v3: null,
   });
+  const [identity, setIdentity] = useState<{
+    player_id: string | null;
+    player_name: string | null;
+    auto: boolean;
+  } | null>(null);
+  const settings = useMemo<Settings>(
+    () => ({
+      ...rawSettings,
+      player_id: rawSettings.player_id || identity?.player_id || null,
+      player_name: rawSettings.player_name || identity?.player_name || null,
+    }),
+    [rawSettings, identity]
+  );
+  const highestRank = highestCompetitiveRank([settings.rank_1v1, settings.rank_2v2, settings.rank_3v3]);
   const [progress, setProgress] = useState<ProgressReport | null>(null);
   const [teammates, setTeammates] = useState<TeammateStats[]>([]);
   const [memoryNotes, setMemoryNotes] = useState<MemoryNote[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [aiStatus, setAiStatus] = useState<any>(null);
+  const aiConnected = useMemo(() => {
+    const provider = aiStatus?.current_provider;
+    const p = aiStatus?.providers?.[provider];
+    const hasKey = provider === "chatgpt" ? p?.status === "connected" : Boolean(p?.configured);
+    return Boolean(aiStatus?.cloud_consent) && hasKey;
+  }, [aiStatus]);
   const [identityCandidates, setIdentityCandidates] = useState<
     { player_id: string; name: string; matches: number }[]
   >([]);
@@ -83,14 +106,20 @@ export default function App() {
     status: string;
   } | null>(null);
 
+  const [coachMessages, setCoachMessages] = useState<ChatMsg[]>([COACH_INTRO]);
+  const [coachConvId, setCoachConvId] = useState<string | null>(null);
+  const [coachLoading, setCoachLoading] = useState<boolean>(false);
+  const coachRestored = useRef(false);
   const [coachInitialPrompt, setCoachInitialPrompt] = useState<string>("");
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const onboardingChecked=useRef(false);
 
   // Load initial data from Tauri native backend
   const loadData = async () => {
     try {
       const cfg = await tauriInvoke<Settings>("get_settings");
       if (cfg && cfg.provider) setSettings(cfg);
+      if(cfg?.provider&&!onboardingChecked.current){onboardingChecked.current=true;if(!cfg.onboarding_status)setShowOnboarding(true);}
 
       const lib = await tauriInvoke<any>("get_library");
       if (lib && lib.replays) {
@@ -100,23 +129,53 @@ export default function App() {
         }
       }
 
+      const ident = await tauriInvoke<any>("resolve_identity");
+      if (ident && "player_id" in ident) setIdentity(ident);
+      const resolvedId: string | null = cfg?.player_id || ident?.player_id || null;
+
       const prog = await tauriInvoke<ProgressReport>("get_progress", {
-        player_id: cfg?.player_id,
+        player_id: resolvedId,
       });
       if (prog) setProgress(prog);
 
-      if (cfg?.player_id) {
+      if (resolvedId) {
         const mates = await tauriInvoke<TeammateStats[]>("get_teammates", {
-          player_id: cfg.player_id,
+          player_id: resolvedId,
         });
-        if (mates) setTeammates(mates);
+        if (Array.isArray(mates)) setTeammates(mates);
       }
 
       const mem = await tauriInvoke<MemoryNote[]>("get_memory");
-      if (mem) setMemoryNotes(mem);
+      if (Array.isArray(mem)) setMemoryNotes(mem);
 
       const convs = await tauriInvoke<Conversation[]>("get_conversations");
-      if (convs) setConversations(convs);
+      if (Array.isArray(convs)) {
+        setConversations(convs);
+        if (!coachRestored.current && convs.length > 0) {
+          coachRestored.current = true;
+          const latest = convs[0];
+          const msgs = await tauriInvoke<Message[]>("get_messages", {
+            conversation_id: latest.id,
+          });
+          if (Array.isArray(msgs) && msgs.length > 0) {
+            setCoachConvId((cur) => cur ?? latest.id);
+            setCoachMessages((cur) =>
+              cur.length > 1
+                ? cur
+                : msgs
+                    .filter((m) => m.body?.role === "user" || m.body?.role === "assistant")
+                    .map((m) => ({
+                      id: m.id,
+                      role: m.body.role as "user" | "assistant",
+                      content: m.body.content,
+                      status:m.body.status,legacy_warning:m.body.legacy_warning,timestamp:m.body.timestamp,context_manifest:m.body.context_manifest,
+                      evidence_ids: m.body.evidence_ids,
+                      replay_id: m.body.replay_id,
+                    }))
+            );
+          }
+        }
+      }
 
       const status = await tauriInvoke<any>("get_ai_status");
       if (status) setAiStatus(status);
@@ -130,6 +189,7 @@ export default function App() {
 
     // Listen for import progress events if in Tauri
     let unlisten: (() => void) | undefined;
+    let disposed = false;
     if (isTauri()) {
       import("@tauri-apps/api/event").then(({ listen }) => {
         listen<any>("import-progress", (event) => {
@@ -137,17 +197,17 @@ export default function App() {
           setImportProgress(payload);
           if (payload.status === "done") {
             setImporting(false);
-            loadData();
-          } else {
-            setImporting(true);
+            if (payload.imported > 0 || payload.failed > 0) loadData();
           }
         }).then((u) => {
-          unlisten = u;
+          if (disposed) u();
+          else unlisten = u;
         });
-      });
+      }).catch(() => {});
     }
 
     return () => {
+      disposed = true;
       unlisten?.();
     };
   }, []);
@@ -162,6 +222,21 @@ export default function App() {
     } catch (e) {
       alert(`Could not load replay: ${e}`);
     }
+  };
+
+  const handlePickFolder = async () => {
+    if (isTauri()) {
+      const { open } = await import("@tauri-apps/plugin-dialog");
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        defaultPath: settings.replay_folder || undefined,
+      });
+      if (selected && typeof selected === "string") {
+        return selected;
+      }
+    }
+    return null;
   };
 
   const handleImportFolder = async () => {
@@ -226,7 +301,9 @@ export default function App() {
 
   const handleSaveSettings = async (updated: Partial<Settings>) => {
     const res = await tauriInvoke<Settings>("save_settings", { settings: updated });
-    if (res) setSettings(res);
+    if (res?.provider) setSettings(res);
+    else if (!isTauri()) setSettings(previous => ({ ...previous, ...updated }));
+    else throw new Error("The saved settings response was invalid. Reload Settings to check the saved values.");
     await loadData();
   };
 
@@ -263,38 +340,44 @@ export default function App() {
   const handleSendMessage = async (
     message: string,
     replayId?: string | null,
-    convId?: string | null
+    convId?: string | null,
+    onUpdate?: (text: string) => void
   ) => {
+    const { Channel } = await import("@tauri-apps/api/core");
+    const updates = new Channel<string>();
+    updates.onmessage = (text) => onUpdate?.(text);
     return tauriInvoke<any>("chat", {
       message,
       replay_id: replayId || null,
       player_id: settings.player_id || null,
       conversation_id: convId || null,
+      on_update: updates,
     });
   };
 
-  const handleNavigateToCoach = (replayId: string, prompt?: string) => {
+  const handleNavigateToCoach = async (replayId: string, prompt?: string) => {
     if (prompt) setCoachInitialPrompt(prompt);
+    if (replayId) {
+      try {
+        const res = await tauriInvoke<ReplayAnalysis>("get_replay", { id: replayId });
+        if (res && res.summary) setSelectedReplay(res);
+      } catch (e) {
+        console.error("Coach nav: Replay fetch failed", e);
+      }
+    }
     setCurrentPage("coach");
   };
 
   return (
     <>
-      <TitleBar activeMatch={selectedReplay?.summary.id} />
+      <TitleBar aiConnected={aiConnected} />
       <div className="app-shell">
       {/* 244px Sidebar Rail */}
       <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-glyph">A</div>
-          <span className="brand-word">
-            AntiRL<span className="brand-period">.</span>
-          </span>
-          <span className="brand-badge">Coach</span>
-        </div>
-
         <div className="nav-section">Studio</div>
         <nav className="side-nav">
           <button
+            type="button"
             className={`nav-link ${currentPage === "overview" ? "active" : ""}`}
             onClick={() => setCurrentPage("overview")}
           >
@@ -303,6 +386,7 @@ export default function App() {
           </button>
 
           <button
+            type="button"
             className={`nav-link ${currentPage === "replays" ? "active" : ""}`}
             onClick={() => setCurrentPage("replays")}
           >
@@ -312,6 +396,7 @@ export default function App() {
           </button>
 
           <button
+            type="button"
             className={`nav-link ${currentPage === "studio" ? "active" : ""}`}
             onClick={() => {
               if (!selectedReplay && replays.length > 0) {
@@ -326,9 +411,10 @@ export default function App() {
           </button>
         </nav>
 
-        <div className="nav-section">Coaching & Evidence</div>
+        <div className="nav-section">Coaching</div>
         <nav className="side-nav">
           <button
+            type="button"
             className={`nav-link ${currentPage === "coach" ? "active" : ""}`}
             onClick={() => setCurrentPage("coach")}
           >
@@ -337,6 +423,7 @@ export default function App() {
           </button>
 
           <button
+            type="button"
             className={`nav-link ${currentPage === "progress" ? "active" : ""}`}
             onClick={() => setCurrentPage("progress")}
           >
@@ -345,6 +432,7 @@ export default function App() {
           </button>
 
           <button
+            type="button"
             className={`nav-link ${currentPage === "teammates" ? "active" : ""}`}
             onClick={() => setCurrentPage("teammates")}
           >
@@ -352,10 +440,10 @@ export default function App() {
             <span>Teammates</span>
           </button>
         </nav>
-
-        <div className="nav-section">Settings</div>
+        <div className="nav-section">Account</div>
         <nav className="side-nav">
           <button
+            type="button"
             className={`nav-link ${currentPage === "settings" ? "active" : ""}`}
             onClick={() => setCurrentPage("settings")}
           >
@@ -365,23 +453,25 @@ export default function App() {
         </nav>
 
         <div className="sidebar-footer">
-          <div
+          <button
+            type="button"
             className="profile-pill"
             onClick={() => setShowOnboarding(true)}
             title="Edit Player Profile, Ranks & Playstyle"
           >
             <div className="profile-avatar">
-              {(settings.player_name || "P").slice(0, 1).toUpperCase()}
+              <RankBadge rank={highestRank} size={36} />
             </div>
             <div className="profile-info">
               <span className="profile-name">
                 {settings.player_name || settings.player_id || "Unconfirmed Player"}
+                {identity?.auto && !rawSettings.player_id ? " (auto)" : ""}
               </span>
               <span className="profile-sub">
-                2v2: {settings.rank_2v2 || "Diamond 2"}
+                Highest · {highestRank}
               </span>
             </div>
-          </div>
+          </button>
         </div>
       </aside>
 
@@ -389,18 +479,18 @@ export default function App() {
       <main className="main-wrapper">
         <header className="top-bar">
           <div className="top-title">
-            {currentPage === "overview" && "Dashboard Overview"}
+            {currentPage === "overview" && "Overview"}
             {currentPage === "replays" && "Replay Library"}
-            {currentPage === "studio" && "3D Replay Studio"}
-            {currentPage === "coach" && "Evidence-Grounded AI Coach"}
-            {currentPage === "progress" && "Performance & Analytics"}
-            {currentPage === "teammates" && "Teammates Roster"}
-            {currentPage === "settings" && "Application Settings"}
+            {currentPage === "studio" && "Replay Studio"}
+            {currentPage === "coach" && "Coach Chat"}
+            {currentPage === "progress" && "Progress & Goals"}
+            {currentPage === "teammates" && "Teammates"}
+            {currentPage === "settings" && "Settings"}
           </div>
 
           <div className="top-actions">
-            <button className="btn btn-secondary" onClick={handleImportFolder} disabled={importing}>
-              <FolderOpen size={14} /> Import Replays
+            <button className="btn secondary" style={{ display: currentPage === "replays" ? "none" : undefined }} onClick={handleImportFolder} disabled={importing}>
+              <FolderOpen size={14} /> {importing ? "Importing..." : "Import Replays"}
             </button>
           </div>
         </header>
@@ -445,7 +535,7 @@ export default function App() {
             <p style={{ color: "var(--muted)", marginBottom: 16 }}>
               Select a match from your replay library to inspect the reconstructed 3D arena.
             </p>
-            <button className="btn btn-primary" onClick={() => setCurrentPage("replays")}>
+            <button className="btn primary" onClick={() => setCurrentPage("replays")}>
               Browse Replay Library
             </button>
           </div>
@@ -453,19 +543,27 @@ export default function App() {
 
         {currentPage === "coach" && (
           <Coach
+            messages={coachMessages}
+            setMessages={setCoachMessages}
+            selectedConvId={coachConvId}
+            setSelectedConvId={setCoachConvId}
+            loading={coachLoading}
+            setLoading={setCoachLoading}
             settings={settings}
             replays={replays}
             conversations={conversations}
             activeReplayId={selectedReplay?.summary.id}
             initialPrompt={coachInitialPrompt}
             onSendMessage={handleSendMessage}
+            onLoadReplay={(id) => tauriInvoke<ReplayAnalysis>("get_coach_replay", { id })}
+            onCancelAi={() => tauriInvoke("cancel_ai").then(() => {})}
             onSelectReplayStudio={handleSelectReplay}
             onRefreshConversations={loadData}
           />
         )}
 
         {currentPage === "progress" && (
-          <Progress progress={progress} settings={settings} />
+          <Progress progress={progress} settings={settings} replays={replays} />
         )}
 
         {currentPage === "teammates" && (
@@ -485,7 +583,7 @@ export default function App() {
             onDeleteMemoryNote={handleDeleteMemoryNote}
             onStartChatgptSignIn={handleStartChatgptSignIn}
             onSignOutChatgpt={handleSignOutChatgpt}
-            onSelectFolder={handleImportFolder}
+            onSelectFolder={handlePickFolder}
           />
         )}
       </main>
@@ -494,8 +592,8 @@ export default function App() {
     {showOnboarding && (
       <OnboardingModal
         initialSettings={settings}
-        onSave={handleSaveSettings}
-        onClose={() => setShowOnboarding(false)}
+        onSave={async patch=>{await handleSaveSettings({...patch,onboarding_status:"completed"});setShowOnboarding(false);}}
+        onClose={completed => {setShowOnboarding(false);if(!completed)handleSaveSettings({onboarding_status:settings.onboarding_status || "skipped"}).catch(console.error);}}
       />
     )}
   </>

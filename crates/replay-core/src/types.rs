@@ -12,6 +12,7 @@ pub struct Player {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReplaySummary {
     pub id: String,
+    pub file_hash: String,
     pub file_name: String,
     pub replay_name: String,
     pub played_at: Option<String>,
@@ -60,6 +61,12 @@ pub struct Frame {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Metric {
+    #[serde(default)]
+    pub numerator: Option<f64>,
+    #[serde(default)]
+    pub denominator: Option<f64>,
+    #[serde(default)]
+    pub metric_version: Option<String>,
     pub player_id: String,
     pub key: String,
     pub label: String,

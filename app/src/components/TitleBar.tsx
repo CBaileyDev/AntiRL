@@ -4,10 +4,10 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 
 interface TitleBarProps {
   title?: string;
-  activeMatch?: string | null;
+  aiConnected?: boolean;
 }
 
-export default function TitleBar({ title = "AntiRL", activeMatch }: TitleBarProps) {
+export default function TitleBar({ title = "AntiRL", aiConnected = false }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false);
 
   useEffect(() => {
@@ -71,20 +71,16 @@ export default function TitleBar({ title = "AntiRL", activeMatch }: TitleBarProp
           </svg>
         </div>
         <span className="titlebar-title">{title}</span>
-        <span className="titlebar-badge">v0.1.0</span>
 
-        {activeMatch && (
-          <div className="titlebar-match-pill">
-            <span className="pill-dot" />
-            <span>Match: {activeMatch.slice(0, 8)}</span>
-          </div>
-        )}
+        <div
+          className={`titlebar-match-pill ${aiConnected ? "ai-on" : "ai-off"}`}
+          title={aiConnected ? "Cloud AI consent is on and a provider key is detected" : "Enable cloud consent and add a provider key in Settings"}
+        >
+          <span className="pill-dot" />
+          <span>{aiConnected ? "Cloud configured" : "Local mode"}</span>
+        </div>
       </div>
-
-      {/* Middle Drag Space */}
-      <div className="titlebar-center" data-tauri-drag-region>
-        <span className="titlebar-center-label">Rocket League Replay Intelligence & AI Coach</span>
-      </div>
+      <div className="titlebar-center" data-tauri-drag-region />
 
       {/* Window Controls */}
       <div className="titlebar-controls">

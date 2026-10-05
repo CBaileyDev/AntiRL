@@ -51,7 +51,7 @@ All metrics and tactical events in AntiRL are derived from genuine Rocket League
 - **Category**: `boost`
 - **Trigger**: Linear velocity \(\ge 2200\text{ uu/s}\) while `boost_active == true` continuously for \(\ge 1.0\) second.
 - **Output**: Event with start and end timestamps, linking to metric `supersonic_boost_seconds`.
-- **Review Advice**: Highlights that boost delivers zero acceleration once supersonic trail is active; recommends releasing boost and maintaining momentum with flips or wave dashes.
+- **Review Advice**: Marks boost-active windows at >=2200 uu/s for contextual review. This differs from total supersonic uptime and from the 2300 uu/s cap; it does not establish wasted boost.
 
 ### C. Defensive Exposure Window
 - **Category**: `rotation` / `coverage`
@@ -63,3 +63,5 @@ All metrics and tactical events in AntiRL are derived from genuine Rocket League
 - **Category**: `goal` / `demo`
 - **Trigger**: Replay header goal tables and native demolition events anchored to exact network frame timestamps.
 - **Output**: Explicit factual event markers with scorer/attacker attribution.
+
+The authoritative versioned dictionary is `app/src/data/metrics.json` (metrics-2). Old equal-match aggregates lacking sufficient statistics remain labelled legacy estimates.

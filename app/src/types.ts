@@ -8,6 +8,7 @@ export interface Player {
 
 export interface ReplaySummary {
   id: string;
+  file_hash: string;
   file_name: string;
   replay_name: string;
   played_at?: string | null;
@@ -111,12 +112,21 @@ export interface Settings {
   rank_1v1?: string | null;
   rank_2v2?: string | null;
   rank_3v3?: string | null;
+  playstyle?: string | null;
+  coach_persona?: string | null;
+  onboarding_status?: "completed" | "skipped";
+  primary_mode?: string;
+  team_preference?: "unknown" | "solo" | "fixed";
+  mode_profiles?: Record<string,{current_rank?:string|null;target_rank?:string|null;long_term_rank?:string|null;practice_hours?:number|null;match_hours?:number|null}>;
 }
 
 export interface Conversation {
   id: string;
   title: string;
   updated_at: string;
+  mode?: string;
+  preset?: string;
+  prompt_version?: string;
 }
 
 export interface Message {
@@ -126,11 +136,16 @@ export interface Message {
     role: "user" | "assistant" | "system";
     content: string;
     timestamp: string;
+    status?:string;
+    legacy_warning?:string;
+    context_manifest?:any;
     evidence_ids?: string[];
+    replay_id?: string | null;
   };
 }
 
 export interface MemoryNote {
+  legacy_warning?: string | null;
   name: string;
   content: string;
   updated_at: string;
@@ -149,7 +164,7 @@ export interface ProgressReport {
       avg_speed: number;
       defensive_half_pct: number;
       low_boost_pct: number;
-      supersonic_waste_seconds: number;
+      boost_active_at_supersonic_speed_s: number;
     };
   };
   recurring_strengths: string[];

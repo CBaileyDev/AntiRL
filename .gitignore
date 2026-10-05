@@ -1,5 +1,7 @@
 # Local research tools & downloaded binaries
 .local/
+app/.studio-qa/
+.playwright-cli/
 target/
 node_modules/
 dist/
@@ -8,3 +10,22 @@ build/
 *.log
 .DS_Store
 Thumbs.db
+# Private runtime state and machine-local agent files
+.serena/
+coach-memory/
+replay-cache/
+*.replay
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+*credentials*.json
+*oauth*token*.json
+docs/validation/qa-process-id.txt

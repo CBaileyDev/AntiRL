@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "native md save dialog",
+    "native txt save dialog",
+    "native json save dialog",
+    "native cancel dialog",
+    "native response clipboard"
+  ],
+  "privacy": "unknown snapshot fields excluded; original clipboard restored"
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import {
   Play,
   TrendingUp,
@@ -15,7 +15,6 @@ import {
 import type { ReplaySummary, Settings, ProgressReport } from "../types";
 import { timeLabel } from "../ReplayViewer";
 import RankBadge from "../components/RankBadge";
-import GoalTracker from "../components/GoalTracker";
 
 interface OverviewProps {
   replays: ReplaySummary[];
@@ -36,15 +35,24 @@ export default function Overview({
   onOpenOnboarding,
   onAskCoach,
 }: OverviewProps) {
-  const playerName = settings.player_name || "Champion Pilot";
-  const primaryRank = settings.rank_2v2 || "Diamond 2";
+  const playerName = settings.player_name || "Unconfirmed Player";
+  const primaryRank = settings.rank_2v2 || "Unranked";
   const lastReplay = replays[0];
 
   const totalMatches = replays.length;
-  const wins = replays.filter(
-    (r) => (r.blue_score ?? 0) > (r.orange_score ?? 0)
-  ).length;
-  const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
+  const isWin = (r: typeof replays[0]) => {
+    const p = r.players?.find((p) => p.id === settings.player_id) || r.players?.[0];
+    const myTeam = p?.team ?? 0;
+    return myTeam === 0 ? (r.blue_score ?? 0) > (r.orange_score ?? 0) : (r.orange_score ?? 0) > (r.blue_score ?? 0);
+  };
+  const { winRate } = useMemo(() => {
+    const w = replays.filter(isWin).length;
+    return { winRate: totalMatches > 0 ? Math.round((w / totalMatches) * 100) : 0 };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replays, settings.player_id]);
+  const mode = progress?.modes?.["2v2"] ?? Object.values(progress?.modes ?? {})[0];
+  const fmt = (v: number | undefined, suffix: string, digits = 1) =>
+    v == null || !isFinite(v) || v === 0 ? "—" : `${Number(v.toFixed(digits))}${suffix}`;
 
   return (
     <div className="content-pane overview-pane">
@@ -61,13 +69,15 @@ export default function Overview({
             </div>
             <div className="hero-rank-sub">
               <span className="rank-name-bold">{primaryRank}</span>
-              <span className="rank-separator">•</span>
-              <span className="mmr-tag">~940 MMR</span>
-              <span className="rank-separator">•</span>
-              <span className="playstyle-tag">Rotational 2nd Man</span>
+              {settings.playstyle && (
+                <>
+                  <span className="rank-separator">•</span>
+                  <span className="playstyle-tag">{settings.playstyle}</span>
+                </>
+              )}
             </div>
             <p className="hero-tagline">
-              29 local matches verified with full network telemetry. Zero guessed statistics.
+              {totalMatches} local {totalMatches === 1 ? "match" : "matches"} parsed from full replay telemetry. Zero guessed statistics.
             </p>
           </div>
         </div>
@@ -105,7 +115,6 @@ export default function Overview({
           </div>
           <div className="kpi-value-row">
             <span className="kpi-number">{winRate}%</span>
-            <span className="kpi-trend positive">+{Math.min(12, winRate)}%</span>
           </div>
           <span className="kpi-subtext">Across {totalMatches} tracked matches</span>
         </div>
@@ -118,24 +127,23 @@ export default function Overview({
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-number">41.2%</span>
-            <span className="kpi-trend target">Target: 48%</span>
+            <span className="kpi-number">{fmt(mode?.avg_boost, "%")}</span>
+            <span className="kpi-trend target">Context dependent</span>
           </div>
-          <span className="kpi-subtext">Time-weighted integral over active play</span>
+          <span className="kpi-subtext">Legacy equal-match mean; weights unavailable</span>
         </div>
 
         <div className="kpi-card">
           <div className="kpi-card-header">
-            <span className="kpi-label">SUPERSONIC BOOST WASTE</span>
+            <span className="kpi-label">BOOSTING AT SPEED</span>
             <div className="kpi-icon-wrap waste">
               <Flame size={16} />
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-number">4.6s</span>
-            <span className="kpi-trend alert">-1.8s needed</span>
+            <span className="kpi-number">{fmt(mode?.boost_active_at_supersonic_speed_s, "s")}</span>
           </div>
-          <span className="kpi-subtext">Duration boosting while already supersonic</span>
+          <span className="kpi-subtext">Boost-active time at ≥2200 uu/s</span>
         </div>
 
         <div className="kpi-card">
@@ -146,21 +154,11 @@ export default function Overview({
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-number">52.8%</span>
-            <span className="kpi-trend neutral">Balanced</span>
+            <span className="kpi-number">{fmt(mode?.defensive_half_pct, "%")}</span>
           </div>
           <span className="kpi-subtext">Active play behind midfield line</span>
         </div>
       </div>
-
-      {/* AI Telemetry Training Goals Tracker */}
-      <GoalTracker
-        onAskCoach={(prompt) => {
-          onNavigate("coach");
-          onAskCoach?.(prompt);
-        }}
-        recentSummaries={replays.slice(0, 5)}
-      />
 
       {/* Recent Matches Strip with Direct 3D Launcher */}
       <div className="recent-matches-card">
@@ -175,10 +173,15 @@ export default function Overview({
         </div>
 
         <div className="recent-matches-list">
+          {replays.length === 0 && (
+            <p className="section-subtitle" style={{ padding: "16px 4px" }}>
+              No matches imported yet. Import replays to see them here.
+            </p>
+          )}
           {replays.slice(0, 4).map((r) => {
             const blueScore = r.blue_score ?? 0;
             const orangeScore = r.orange_score ?? 0;
-            const won = blueScore > orangeScore;
+            const won = isWin(r);
 
             return (
               <div
@@ -187,6 +190,12 @@ export default function Overview({
                 onClick={() => onSelectReplay(r.id)}
                 role="button"
                 tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelectReplay(r.id);
+                  }
+                }}
               >
                 <div className="match-mode-badge">
                   <span className="mode-text">{r.mode}</span>
@@ -209,7 +218,7 @@ export default function Overview({
                 </div>
 
                 <div className="match-action-col">
-                  <button className="icon-btn primary" title="Launch 3D Replay Studio">
+                  <button className="icon-btn primary" title="Launch 3D Replay Studio" aria-label="Launch 3D Replay Studio" tabIndex={-1}>
                     <Play size={14} />
                   </button>
                 </div>

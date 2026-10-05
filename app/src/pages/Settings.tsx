@@ -15,6 +15,7 @@ import {
   LogOut,
   AlertCircle,
 } from "lucide-react";
+import RankSelect from "../components/RankSelect";
 import type { Settings, MemoryNote } from "../types";
 
 interface SettingsProps {
@@ -29,7 +30,7 @@ interface SettingsProps {
   onDeleteMemoryNote: (name: string) => Promise<void>;
   onStartChatgptSignIn: () => Promise<void>;
   onSignOutChatgpt: () => Promise<void>;
-  onSelectFolder: () => void;
+  onSelectFolder: () => Promise<string | null>;
 }
 
 export default function SettingsPage({
@@ -55,8 +56,21 @@ export default function SettingsPage({
   const [chatModel, setChatModel] = useState(settings.chat_model);
   const [cloudConsent, setCloudConsent] = useState(settings.cloud_consent);
   const [rank1v1, setRank1v1] = useState(settings.rank_1v1 || "");
-  const [rank2v2, setRank2v2] = useState(settings.rank_2v2 || "Diamond 2");
-  const [rank3v3, setRank3v3] = useState(settings.rank_3v3 || "Diamond 2");
+  const [rank2v2, setRank2v2] = useState(settings.rank_2v2 || "");
+  const [rank3v3, setRank3v3] = useState(settings.rank_3v3 || "");
+
+  useEffect(() => {
+    setFolder(settings.replay_folder);
+    setAutoImport(settings.auto_import);
+    setPlayerId(settings.player_id || "");
+    setPlayerName(settings.player_name || "");
+    setProvider(settings.provider);
+    setChatModel(settings.chat_model);
+    setCloudConsent(settings.cloud_consent);
+    setRank1v1(settings.rank_1v1 || "");
+    setRank2v2(settings.rank_2v2 || "");
+    setRank3v3(settings.rank_3v3 || "");
+  }, [settings]);
 
   // API Key input
   const [apiKeyInput, setApiKeyInput] = useState("");
@@ -73,6 +87,12 @@ export default function SettingsPage({
   const [saveStatus, setSaveStatus] = useState("");
 
   useEffect(() => {
+    if (!selectedNote && memoryNotes.length > 0) {
+      setSelectedNote(memoryNotes[0]);
+    }
+  }, [memoryNotes, selectedNote]);
+
+  useEffect(() => {
     if (selectedNote) {
       setNoteContent(selectedNote.content);
     }
@@ -83,9 +103,6 @@ export default function SettingsPage({
     try {
       const models = await onLoadModels(provider);
       setModelsList(models);
-      if (models.length > 0 && !models.includes(chatModel)) {
-        setChatModel(models[0]);
-      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -93,7 +110,15 @@ export default function SettingsPage({
     }
   };
 
+  useEffect(() => {
+    handleFetchModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider]);
+
+  const keyDetected = Boolean(aiStatus?.providers?.[provider]?.configured);
+
   const handleSaveGeneral = async () => {
+    try {
     await onSaveSettings({
       replay_folder: folder,
       auto_import: autoImport,
@@ -108,6 +133,9 @@ export default function SettingsPage({
       rank_3v3: rank3v3,
     });
     setSaveStatus("Settings saved successfully.");
+    } catch (e) {
+      setSaveStatus(`Save failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
     setTimeout(() => setSaveStatus(""), 3000);
   };
 
@@ -118,29 +146,30 @@ export default function SettingsPage({
       await onSetApiKey(provider, apiKeyInput.trim());
       setApiKeyInput("");
       setSaveStatus("API key securely stored in Windows Credential Vault.");
-      setTimeout(() => setSaveStatus(""), 3000);
+    } catch (e) {
+      setSaveStatus(`Key save failed: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
+      setTimeout(() => setSaveStatus(""), 3000);
       setSavingKey(false);
     }
   };
 
   const handleSaveNote = async () => {
     if (!selectedNote) return;
-    await onSaveMemoryNote(selectedNote.name, noteContent);
-    setSaveStatus(`Note ${selectedNote.name} saved.`);
+    try {
+      await onSaveMemoryNote(selectedNote.name, noteContent);
+      setSaveStatus(`Note ${selectedNote.name} saved.`);
+    } catch (e) {
+      setSaveStatus(`Save failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
     setTimeout(() => setSaveStatus(""), 3000);
   };
 
   return (
-    <div className="content-pane" style={{ maxWidth: 1000 }}>
+    <div className="content-pane" style={{ maxWidth: 880 }}>
       {/* Page Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)" }}>Application Settings</h2>
-          <span style={{ fontSize: 13, color: "var(--muted)" }}>
-            Configure replay discovery, profile identity, AI providers, and coaching memory.
-          </span>
-        </div>
+        <div />
 
         {saveStatus && (
           <span
@@ -163,7 +192,7 @@ export default function SettingsPage({
         <div className="card-header">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <FolderOpen size={18} color="var(--accent)" />
-            <h3 className="card-title">Replay Discovery & Auto-Import</h3>
+            <h3 className="card-title">Replays</h3>
           </div>
         </div>
 
@@ -180,7 +209,10 @@ export default function SettingsPage({
                 value={folder}
                 onChange={(e) => setFolder(e.target.value)}
               />
-              <button className="btn btn-secondary" onClick={onSelectFolder}>
+              <button className="btn secondary" onClick={async () => {
+                const sel = await onSelectFolder();
+                if (sel) setFolder(sel);
+              }}>
                 Browse
               </button>
             </div>
@@ -208,41 +240,41 @@ export default function SettingsPage({
         <div className="card-header">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Shield size={18} color="var(--sage)" />
-            <h3 className="card-title">Player Identity & Ranks</h3>
+            <h3 className="card-title">Player</h3>
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {identityCandidates.length > 0 && (
-            <div>
-              <label style={{ fontSize: 12.5, fontWeight: 600, color: "var(--muted)", display: "block", marginBottom: 6 }}>
-                Detected Players in Your Replays:
-              </label>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {identityCandidates.slice(0, 6).map((c) => (
-                  <button
-                    key={c.player_id}
-                    onClick={() => {
-                      setPlayerId(c.player_id);
-                      setPlayerName(c.name);
-                    }}
-                    style={{
-                      padding: "5px 10px",
-                      borderRadius: 6,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      background: playerId === c.player_id ? "var(--accent)" : "var(--surface-raised)",
-                      color: playerId === c.player_id ? "var(--accent-ink)" : "var(--text)",
-                      border: "1px solid var(--line-strong)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {c.name} ({c.matches} matches)
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <div>
+            <label style={{ fontSize: 12.5, fontWeight: 600, color: "var(--muted)", display: "block", marginBottom: 6 }}>
+              Which player are you?
+            </label>
+            <select
+              aria-label="Which player are you?"
+              className="chat-input"
+              style={{ width: "100%" }}
+              value={playerId}
+              onChange={(e) => {
+                const c = identityCandidates.find((x) => x.player_id === e.target.value);
+                setPlayerId(e.target.value);
+                if (c) setPlayerName(c.name);
+              }}
+            >
+              {!playerId && <option value="">Select your player...</option>}
+              {playerId && !identityCandidates.some((c) => c.player_id === playerId) && (
+                <option value={playerId}>{playerName || playerId}</option>
+              )}
+              {identityCandidates.map((c, i) => (
+                <option key={c.player_id} value={c.player_id}>
+                  {c.name} - {c.matches} {c.matches === 1 ? "match" : "matches"}
+                  {i === 0 ? " (auto-detected)" : ""}
+                </option>
+              ))}
+            </select>
+            <span style={{ fontSize: 11.5, color: "var(--faint)", marginTop: 4, display: "block" }}>
+              Auto-detected as the human player in the most replays. Save to confirm.
+            </span>
+          </div>
 
           <div className="grid-2">
             <div>
@@ -268,7 +300,7 @@ export default function SettingsPage({
                 className="chat-input"
                 style={{ width: "100%", fontFamily: "var(--mono)", fontSize: 12 }}
                 value={playerId}
-                placeholder="e.g. psn:7323469927272844526"
+                placeholder="e.g. platform:your-account-id"
                 onChange={(e) => setPlayerId(e.target.value)}
               />
             </div>
@@ -279,40 +311,19 @@ export default function SettingsPage({
               <label style={{ fontSize: 12, color: "var(--muted)", display: "block", marginBottom: 4 }}>
                 1v1 Rank
               </label>
-              <input
-                type="text"
-                className="chat-input"
-                style={{ width: "100%" }}
-                value={rank1v1}
-                placeholder="Unranked / Diamond 1"
-                onChange={(e) => setRank1v1(e.target.value)}
-              />
+              <RankSelect allowUnranked value={rank1v1} onChange={setRank1v1} ariaLabel="1v1 rank" />
             </div>
             <div>
               <label style={{ fontSize: 12, color: "var(--muted)", display: "block", marginBottom: 4 }}>
                 2v2 Rank
               </label>
-              <input
-                type="text"
-                className="chat-input"
-                style={{ width: "100%" }}
-                value={rank2v2}
-                placeholder="Diamond 2"
-                onChange={(e) => setRank2v2(e.target.value)}
-              />
+              <RankSelect allowUnranked value={rank2v2} onChange={setRank2v2} ariaLabel="2v2 rank" />
             </div>
             <div>
               <label style={{ fontSize: 12, color: "var(--muted)", display: "block", marginBottom: 4 }}>
                 3v3 Rank
               </label>
-              <input
-                type="text"
-                className="chat-input"
-                style={{ width: "100%" }}
-                value={rank3v3}
-                placeholder="Diamond 2"
-                onChange={(e) => setRank3v3(e.target.value)}
-              />
+              <RankSelect allowUnranked value={rank3v3} onChange={setRank3v3} ariaLabel="3v3 rank" />
             </div>
           </div>
         </div>
@@ -323,7 +334,7 @@ export default function SettingsPage({
         <div className="card-header">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Bot size={18} color="var(--accent)" />
-            <h3 className="card-title">AI Provider & Model Integration</h3>
+            <h3 className="card-title">AI Coach</h3>
           </div>
         </div>
 
@@ -382,30 +393,23 @@ export default function SettingsPage({
                 Chat & Analysis Model
               </label>
               <div style={{ display: "flex", gap: 8 }}>
-                {modelsList.length > 0 ? (
-                  <select
+                <select
                     className="chat-input"
                     style={{ flex: 1 }}
                     value={chatModel}
                     onChange={(e) => setChatModel(e.target.value)}
                   >
+                    {!modelsList.includes(chatModel) && chatModel && (
+                      <option value={chatModel}>{chatModel}</option>
+                    )}
                     {modelsList.map((m) => (
                       <option key={m} value={m}>
                         {m}
                       </option>
                     ))}
                   </select>
-                ) : (
-                  <input
-                    type="text"
-                    className="chat-input"
-                    style={{ flex: 1 }}
-                    value={chatModel}
-                    onChange={(e) => setChatModel(e.target.value)}
-                  />
-                )}
                 <button
-                  className="btn btn-secondary"
+                  className="btn btn secondary"
                   title="Query live model catalog"
                   disabled={loadingModels}
                   onClick={handleFetchModels}
@@ -427,20 +431,26 @@ export default function SettingsPage({
                   </span>
                 </div>
                 {aiStatus?.providers?.chatgpt?.status === "connected" ? (
-                  <button className="btn btn-secondary" onClick={onSignOutChatgpt}>
+                  <button className="btn btn secondary" onClick={onSignOutChatgpt}>
                     <LogOut size={14} /> Sign Out
                   </button>
                 ) : (
-                  <button className="btn btn-primary" onClick={onStartChatgptSignIn}>
+                  <button className="btn btn primary" onClick={onStartChatgptSignIn}>
                     <LogIn size={14} /> Continue with ChatGPT
                   </button>
                 )}
               </div>
             </div>
           ) : (
+            keyDetected ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--sage)" }}>
+                <CheckCircle2 size={16} />
+                {provider === "neotoken" ? "Key detected from your OpenCode config" : "API key configured"}
+              </div>
+            ) : (
             <div>
               <label style={{ fontSize: 12.5, fontWeight: 600, color: "var(--muted)", display: "block", marginBottom: 6 }}>
-                Update API Key (Stored in Windows Credential Vault)
+                API Key (Stored in Windows Credential Vault)
               </label>
               <div style={{ display: "flex", gap: 8 }}>
                 <input
@@ -452,7 +462,7 @@ export default function SettingsPage({
                   onChange={(e) => setApiKeyInput(e.target.value)}
                 />
                 <button
-                  className="btn btn-primary"
+                  className="btn btn primary"
                   disabled={!apiKeyInput.trim() || savingKey}
                   onClick={handleStoreKey}
                 >
@@ -463,11 +473,12 @@ export default function SettingsPage({
                 Keys are never logged, exported, or serialized into Markdown notes.
               </span>
             </div>
+            )
           )}
 
           <div style={{ marginTop: 8 }}>
-            <button className="btn btn-primary" onClick={handleSaveGeneral}>
-              <Save size={14} /> Save Application Settings
+            <button className="btn btn primary" onClick={handleSaveGeneral}>
+              <Save size={14} /> Save changes
             </button>
           </div>
         </div>
@@ -478,7 +489,7 @@ export default function SettingsPage({
         <div className="card-header">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <FileText size={18} color="var(--accent)" />
-            <h3 className="card-title">Durable Coaching Memory</h3>
+            <h3 className="card-title">Coaching Memory</h3>
           </div>
           <span style={{ fontSize: 11.5, color: "var(--faint)" }}>
             Editable Markdown files in coach-memory/
@@ -518,12 +529,14 @@ export default function SettingsPage({
                 style={{ padding: "4px 8px", fontSize: 12 }}
               />
               <button
-                className="btn btn-secondary"
+                className="btn btn secondary"
                 style={{ padding: "4px 8px" }}
-                disabled={!newNoteName.endsWith(".md")}
+                disabled={!/^[\w .-]+\.md$/.test(newNoteName.trim())}
                 onClick={async () => {
-                  await onSaveMemoryNote(newNoteName, `# ${newNoteName}\n\n`);
+                  const n = newNoteName.trim();
+                  await onSaveMemoryNote(n, `# ${n}\n\n`);
                   setNewNoteName("");
+                  setSelectedNote({ name: n, content: `# ${n}\n\n`, updated_at: new Date().toISOString() });
                 }}
               >
                 <Plus size={14} />
@@ -534,12 +547,13 @@ export default function SettingsPage({
           {/* Note Editor */}
           {selectedNote ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {selectedNote.legacy_warning&&<p className="legacy-advice">{selectedNote.legacy_warning}</p>}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <strong style={{ fontSize: 14, color: "var(--text)" }}>
                   {selectedNote.name}
                 </strong>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button className="btn btn-primary" style={{ padding: "5px 12px", fontSize: 12 }} onClick={handleSaveNote}>
+                  <button className="btn btn primary" style={{ padding: "5px 12px", fontSize: 12 }} onClick={handleSaveNote}>
                     <Save size={13} /> Save Note
                   </button>
                   {selectedNote.name !== "profile.md" && (
@@ -550,6 +564,7 @@ export default function SettingsPage({
                       onClick={async () => {
                         if (confirm(`Delete ${selectedNote.name}?`)) {
                           await onDeleteMemoryNote(selectedNote.name);
+                          setSelectedNote(null);
                         }
                       }}
                     >

@@ -13,7 +13,7 @@ use tokio::{
 };
 use url::Url;
 
-const ISSUER: &str = "https://auth.openai.com";
+
 const AUTHORIZE: &str = "https://auth.openai.com/api/accounts/authorize";
 const TOKEN: &str = "https://auth.openai.com/api/accounts/oauth/token";
 const RESOURCE: &str = "https://api.openai.com/v1";
@@ -41,12 +41,6 @@ struct Tokens {
     expires_at: i64,
 }
 
-#[derive(Deserialize)]
-struct Claims {
-    sub: String,
-    email: Option<String>,
-    nonce: Option<String>,
-}
 
 fn atomic(path: &Path, bytes: &[u8]) -> ServiceResult<()> {
     let temp = path.with_extension(format!("{}.tmp", ident()));
@@ -90,14 +84,21 @@ fn save_tokens(client: &str, t: &Tokens) -> ServiceResult<()> {
     let pointer = vault(&format!("chatgpt-{client}"))?;
     let old = pointer.get_password().ok();
     for (i, c) in chunks.iter().enumerate() {
-        if vault(&chunk_name(client, &generation, i))?
-            .set_password(std::str::from_utf8(c).unwrap())
-            .is_err()
-        {
-            for j in 0..=i {
-                let _ = vault(&chunk_name(client, &generation, j))?.delete_credential();
+        if let Ok(chunk_str) = std::str::from_utf8(c) {
+            if vault(&chunk_name(client, &generation, i))?
+                .set_password(chunk_str)
+                .is_err()
+            {
+                for j in 0..=i {
+                    let _ = vault(&chunk_name(client, &generation, j)).and_then(|v| { let _ = v.delete_credential(); Ok(()) });
+                }
+                return Err("Could not protect ChatGPT tokens in Windows vault".into());
             }
-            return Err("Could not protect ChatGPT tokens in Windows vault".into());
+        } else {
+            for j in 0..i {
+                let _ = vault(&chunk_name(client, &generation, j)).and_then(|v| { let _ = v.delete_credential(); Ok(()) });
+            }
+            return Err("Invalid UTF-8 in vault chunk".into());
         }
     }
     pointer
@@ -106,7 +107,7 @@ fn save_tokens(client: &str, t: &Tokens) -> ServiceResult<()> {
     if let Some(old) = old.and_then(|s| serde_json::from_str::<Value>(&s).ok()) {
         if let (Some(g), Some(n)) = (old["generation"].as_str(), old["parts"].as_u64()) {
             for i in 0..n.min(100) {
-                let _ = vault(&chunk_name(client, g, i as usize))?.delete_credential();
+                let _ = vault(&chunk_name(client, g, i as usize)).and_then(|v| { let _ = v.delete_credential(); Ok(()) });
             }
         }
     }
@@ -234,32 +235,24 @@ impl CoachService {
         Ok(())
     }
 
+    pub fn chatgpt_token(&self) -> Option<String> {
+        let acc = self.accounts();
+        let client_id = acc.active.as_deref()?;
+        let tokens = load_tokens(client_id).ok()?;
+        Some(tokens.access_token)
+    }
+
     pub async fn start_chatgpt_sign_in(&self) -> ServiceResult<Value> {
         let _guard = self
             .oauth_gate
             .try_lock()
             .map_err(|_| "Sign-in already in progress in your browser")?;
-        let verifier: String = (0..64)
-            .map(|_| {
-                let idx = (rand_byte() as usize) % 62;
-                b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[idx] as char
-            })
-            .collect();
+        let verifier = rand_string(64);
         let mut hasher = Sha256::new();
         hasher.update(verifier.as_bytes());
         let challenge = URL_SAFE_NO_PAD.encode(hasher.finalize());
-        let state: String = (0..32)
-            .map(|_| {
-                let idx = (rand_byte() as usize) % 62;
-                b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[idx] as char
-            })
-            .collect();
-        let nonce: String = (0..32)
-            .map(|_| {
-                let idx = (rand_byte() as usize) % 62;
-                b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[idx] as char
-            })
-            .collect();
+        let state = rand_string(32);
+        let nonce = rand_string(32);
 
         let listener = TcpListener::bind("127.0.0.1:14555")
             .await
@@ -284,29 +277,44 @@ impl CoachService {
         }
 
         let callback_future = async {
-            let (mut socket, _) = listener
-                .accept()
-                .await
-                .map_err(|_| "Authentication callback failed")?;
-            let mut buf = [0u8; 4096];
-            let n = socket
-                .read(&mut buf)
-                .await
-                .map_err(|_| "Could not read callback")?;
-            let request = String::from_utf8_lossy(&buf[..n]);
-            let first_line = request.lines().next().unwrap_or("");
-            let query = first_line.split_whitespace().nth(1).unwrap_or("");
-            let response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><body style='font-family:sans-serif;text-align:center;padding:50px;'><h2>AntiRL Sign-in Complete</h2><p>You can close this window and return to AntiRL.</p></body></html>";
-            let _ = socket.write_all(response.as_bytes()).await;
+            // Loop so stray requests (e.g. /favicon.ico) don't consume the callback.
+            let query = loop {
+                let (mut socket, _) = listener
+                    .accept()
+                    .await
+                    .map_err(|_| "Authentication callback failed")?;
+                let mut buf = [0u8; 4096];
+                let n = socket
+                    .read(&mut buf)
+                    .await
+                    .map_err(|_| "Could not read callback")?;
+                let request = String::from_utf8_lossy(&buf[..n]);
+                let first_line = request.lines().next().unwrap_or("");
+                let target = first_line.split_whitespace().nth(1).unwrap_or("").to_string();
+                if !target.starts_with("/callback") {
+                    let _ = socket
+                        .write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                        .await;
+                    continue;
+                }
+                let body = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body style='font-family:sans-serif;text-align:center;padding:50px;'><h2>AntiRL Sign-in Complete</h2><p>You can close this window and return to AntiRL.</p></body></html>";
+                let response = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                    body.len()
+                );
+                let _ = socket.write_all(response.as_bytes()).await;
+                let _ = socket.shutdown().await;
+                break target;
+            };
 
             let url = Url::parse(&format!("http://localhost{query}"))
                 .map_err(|_| "Invalid callback URL")?;
             let pairs: BTreeMap<_, _> = url.query_pairs().into_owned().collect();
-            if pairs.get("state").map(String::as_str) != Some(&state) {
-                return Err("Security verification failed: state mismatch".into());
-            }
             if let Some(err) = pairs.get("error") {
                 return Err(format!("Sign in cancelled: {err}"));
+            }
+            if pairs.get("state").map(String::as_str) != Some(&state) {
+                return Err("Security verification failed: state mismatch".into());
             }
             let code = pairs.get("code").ok_or("No authorization code received")?;
             Ok::<String, String>(code.clone())
@@ -398,8 +406,21 @@ impl CoachService {
         }))
     }
 }
-
-fn rand_byte() -> u8 {
-    let now = Utc::now().timestamp_nanos_opt().unwrap_or(0);
-    (now & 0xFF) as u8
+fn rand_string(len: usize) -> String {
+    let mut out = String::with_capacity(len);
+    while out.len() < len {
+        let u = uuid::Uuid::new_v4();
+        for &b in u.as_bytes() {
+            if out.len() >= len {
+                break;
+            }
+            let c = match b % 62 {
+                0..=25 => b'a' + (b % 62),
+                26..=51 => b'A' + (b % 62 - 26),
+                _ => b'0' + (b % 62 - 52),
+            } as char;
+            out.push(c);
+        }
+    }
+    out
 }

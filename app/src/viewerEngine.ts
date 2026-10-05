@@ -1,8 +1,9 @@
 // Babylon.js modular primitives for AntiRL Replay Studio.
 export { Engine } from "@babylonjs/core/Engines/engine";
-export { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 export { Scene } from "@babylonjs/core/scene";
 export { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+export { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
+export { Texture } from "@babylonjs/core/Materials/Textures/texture";
 export { Camera } from "@babylonjs/core/Cameras/camera";
 export { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 export { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
@@ -11,5 +12,6 @@ export { DynamicTexture } from "@babylonjs/core/Materials/Textures/dynamicTextur
 export { Mesh } from "@babylonjs/core/Meshes/mesh";
 export { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 export { Vector3, Quaternion } from "@babylonjs/core/Maths/math.vector";
+export { Ray } from "@babylonjs/core/Culling/ray";
 export { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
 import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";

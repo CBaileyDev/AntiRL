@@ -21,11 +21,8 @@ export default function Teammates({ teammates, onSelectTeammateMatches }: Teamma
         }}
       >
         <div>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)" }}>
-            Teammate Chemistry & Synergy
-          </h2>
           <span style={{ fontSize: 13, color: "var(--muted)" }}>
-            Ranked strictly by <b>shared-team appearances</b> in competitive matches, not incidental lobby encounters.
+            Ranked by shared-team appearances.
           </span>
         </div>
       </div>
@@ -58,14 +55,10 @@ export default function Teammates({ teammates, onSelectTeammateMatches }: Teamma
               {teammates.map((mate) => (
                 <tr key={mate.player_id}>
                   <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div className="profile-avatar" style={{ width: 28, height: 28, fontSize: 12 }}>
-                        {mate.name.slice(0, 1).toUpperCase()}
-                      </div>
-                      <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
-                        {mate.name}
-                      </strong>
-                    </div>
+                    <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
+                      {mate.name || "Unknown"}
+                    </strong>
+                  
                   </td>
 
                   <td>
@@ -85,7 +78,7 @@ export default function Teammates({ teammates, onSelectTeammateMatches }: Teamma
 
                   <td>
                     <span style={{ fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-                      {mate.shared_matches} matches
+                      {mate.shared_matches} {mate.shared_matches === 1 ? "match" : "matches"}
                     </span>
                   </td>
 

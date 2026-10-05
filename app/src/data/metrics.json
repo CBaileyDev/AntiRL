@@ -1,0 +1,163 @@
+{
+  "version": "metrics-2",
+  "interval_convention": "right endpoint, continuous live intervals <=0.25s; missing values excluded",
+  "metrics": [
+    {
+      "key": "avg_boost",
+      "label": "Average boost",
+      "unit": "%",
+      "formula": "boost integral / valid boost seconds",
+      "limitations": "Higher is not automatically better; no hoarding target.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "low_boost_pct",
+      "label": "Time below 10 boost",
+      "unit": "%",
+      "formula": "100 * seconds below 10 / valid boost seconds",
+      "limitations": "Resource state, not proof of poor play.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "avg_speed",
+      "label": "Average speed",
+      "unit": "uu/s",
+      "formula": "speed integral / valid velocity seconds",
+      "limitations": "Movement, not decision quality; compare within mode.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "time_at_or_above_supersonic_threshold_s",
+      "label": "Time at supersonic threshold",
+      "unit": "s",
+      "formula": "valid seconds at speed >=2200 uu/s",
+      "limitations": "Approximation, not exact game flag or decision quality.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "time_at_or_above_supersonic_threshold_pct",
+      "label": "Supersonic threshold share",
+      "unit": "%",
+      "formula": "100 * threshold seconds / valid velocity seconds",
+      "limitations": "Not boosting duration.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "boost_active_at_supersonic_speed_s",
+      "label": "Boost active at supersonic speed",
+      "unit": "s",
+      "formula": "valid seconds at speed >=2200 AND observed boost active",
+      "limitations": "NOT total supersonic uptime. NOT proven waste. Threshold 2200 differs from speed cap 2300; no universal target. Legacy supersonic_boost_seconds is a compatibility alias only.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ],
+      "aliases": [
+        "supersonic_boost_seconds"
+      ]
+    },
+    {
+      "key": "suspected_unnecessary_boost_s",
+      "label": "Suspected unnecessary boost",
+      "unit": "s",
+      "formula": "Unavailable pending validated contextual detector",
+      "limitations": "No arbitrary score or waste detector.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "defensive_half_pct",
+      "label": "Time in defensive half",
+      "unit": "%",
+      "formula": "100 * own-half seconds / valid position seconds",
+      "limitations": "Position, not last-man responsibility, rotation quality or causation.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "ahead_ball_pct",
+      "label": "Time ahead of ball",
+      "unit": "%",
+      "formula": "100 * ahead seconds / valid position seconds",
+      "limitations": "Can be appropriate supporting position.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "avg_ball_distance",
+      "label": "Average ball distance",
+      "unit": "uu",
+      "formula": "distance integral / joint valid position seconds",
+      "limitations": "No universal ideal distance.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    },
+    {
+      "key": "tracked_seconds",
+      "label": "Measured active play",
+      "unit": "s",
+      "formula": "sum continuous observed live intervals",
+      "limitations": "Excludes stoppages, missing and discontinuous intervals.",
+      "eligibility": "continuous live observations",
+      "coverage": "per-metric valid denominator",
+      "comparison_direction": "contextual",
+      "evidence_types": [
+        "metric",
+        "timeline"
+      ]
+    }
+  ]
+}

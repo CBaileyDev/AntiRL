@@ -185,7 +185,11 @@ pub async fn import(
             }),
         );
 
-        let snapshot_res = snapshot(path, &snapshots_dir);
+        let (sp, sd) = (path.clone(), snapshots_dir.clone());
+        let snapshot_res = tokio::task::spawn_blocking(move || snapshot(&sp, &sd))
+            .await
+            .map_err(|e| e.to_string())
+            .and_then(|r| r);
         let (snap_path, content_hash) = match snapshot_res {
             Ok(pair) => pair,
             Err(e) => {
@@ -205,11 +209,9 @@ pub async fn import(
         };
 
         // Check if replay is already saved
-        if let Ok(existing) = state.service.get_replay(&content_hash) {
-            if existing["summary"]["status"].as_str() == Some("ready") {
-                imported += 1;
-                continue;
-            }
+        if let Ok(true) = state.service.has_replay_by_hash(&content_hash) {
+            imported += 1;
+            continue;
         }
 
         match run_worker(&snap_path, state.cancel.clone()).await {
@@ -266,6 +268,7 @@ pub async fn import_single_file(
     state: &AppState,
     file_path: &str,
 ) -> Result<Value, String> {
+    state.cancel.store(false, Ordering::SeqCst);
     let path = Path::new(file_path);
     let snapshots_dir = app
         .path()
@@ -273,7 +276,10 @@ pub async fn import_single_file(
         .map_err(|e| e.to_string())?
         .join("replay-snapshots");
 
-    let (snap_path, _) = snapshot(path, &snapshots_dir)?;
+    let (sp, sd) = (path.to_path_buf(), snapshots_dir);
+    let (snap_path, _) = tokio::task::spawn_blocking(move || snapshot(&sp, &sd))
+        .await
+        .map_err(|e| e.to_string())??;
     let analysis = run_worker(&snap_path, state.cancel.clone()).await?;
     state.service.save_replay(&analysis)?;
     Ok(analysis)

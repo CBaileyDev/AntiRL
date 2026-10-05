@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "packaged assets render",
+    "separate QA store",
+    "native analytics/rebuild",
+    "replay library and Studio"
+  ],
+  "manifest": {
+    "date_policy": "Unknown dates included in lifetime only. Latest 20 per mode by replay clock; offset-aware timestamps normalized to UTC. Offset-free headers retain unknown timezone; ordering across timezone changes is uncertain.",
+    "excluded": {},
+    "lag": false,
+    "library_count": 1,
+    "metric_version": "metrics-2",
+    "mode": "2v2",
+    "modes": {
+      "2v2": {
+        "lifetime": {
+          "avg_boost": {
+            "count": 1,
+            "denominator": 10,
+            "method": "time_weighted",
+            "numerator": 500,
+            "value": 50
+          }
+        },
+        "lifetime_count": 1,
+        "previous_count": 0,
+        "previous_summary": {},
+        "recent": [
+          {
+            "id": "synthetic-viewer",
+            "metrics": [
+              {
+                "confidence": "measured",
+                "denominator": 10,
+                "description": "Synthetic observed mean",
+                "key": "avg_boost",
+                "label": "Average boost",
+                "metric_version": "metrics-2",
+                "numerator": 500,
+                "player_id": "synthetic:p",
+                "sample_count": 10,
+                "unit": "%",
+                "value": 50
+              }
+            ],
+            "played_at": "2026-01-01T00:00:00+00:00",
+            "result": "win",
+            "revision": "7af1fba4d3d3ba4d2467572d039e72bf400aed4591428f7f41a161347327ef36",
+            "time_provenance": "replay_header_with_offset"
+          }
+        ],
+        "recent_count": 1,
+        "recent_summary": {
+          "avg_boost": {
+            "count": 1,
+            "denominator": 10,
+            "method": "time_weighted",
+            "numerator": 500,
+            "value": 50
+          }
+        },
+        "unknown_date_count": 0,
+        "win_rate": 100,
+        "wins": 1
+      }
+    },
+    "player_id": "synthetic:p",
+    "query_version": "personal-windows-2",
+    "source": "analytics.sqlite3",
+    "source_watermark": "b64c107b51b769e741fc52530fca4c44611bed9b9fd9f8ae7cea5954885eea04"
+  }
+}

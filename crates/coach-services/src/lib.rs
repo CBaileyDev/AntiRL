@@ -6,21 +6,30 @@ use std::{
     collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    sync::{atomic::AtomicU64, Mutex},
+    sync::{Mutex},
     time::Duration,
 };
 use uuid::Uuid;
 
 pub mod chatgpt;
+mod ai;
+mod analytics;
+mod conversations;
+mod evidence_tools;
+mod practice;
+mod retrieval;
+mod semantics;
+mod research;
+pub use ai::ChatUpdate;
 
 pub type ServiceResult<T> = Result<T, String>;
 
 pub struct CoachService {
     db: Mutex<Connection>,
+    analytics: Mutex<Connection>,
+    ai_gate: tokio::sync::Mutex<()>,
     dir: PathBuf,
     oauth_gate: tokio::sync::Mutex<()>,
-    ai_gate: tokio::sync::Mutex<()>,
-    ai_generation: AtomicU64,
     ai_cancel: tokio::sync::Notify,
 }
 
@@ -54,8 +63,8 @@ fn default_settings() -> Value {
         "auto_import": true,
         "cloud_consent": false,
         "rank_1v1": null,
-        "rank_2v2": "Diamond 2",
-        "rank_3v3": "Diamond 2"
+        "rank_2v2": null,
+        "rank_3v3": null
     })
 }
 
@@ -211,14 +220,34 @@ impl CoachService {
         )
         .map_err(err)?;
 
-        Ok(Self {
+        conversations::migrate(&db, &dir)?;
+        practice::migrate(&db)?;
+        let analytics = Connection::open(dir.join("analytics.sqlite3")).map_err(err)?;
+        analytics::migrate(&analytics,&dir)?;
+
+        // Compact coaching projection avoids repeatedly parsing every render frame.
+        // Keep full replay bodies intact for Studio; migrate existing stores once.
+        let has_projection = {
+            let mut columns = db.prepare("PRAGMA table_info(replays)").map_err(err)?;
+            let names = columns.query_map([], |r| r.get::<_, String>(1)).map_err(err)?;
+            let found = names.flatten().any(|name| name == "coach_body");
+            found
+        };
+        if !has_projection {
+            db.execute("ALTER TABLE replays ADD COLUMN coach_body TEXT", []).map_err(err)?;
+        }
+        db.execute("UPDATE replays SET coach_body=json_remove(body, '$.frames') WHERE coach_body IS NULL", []).map_err(err)?;
+
+        let service = Self {
             db: Mutex::new(db),
+            analytics: Mutex::new(analytics),
+            ai_gate: tokio::sync::Mutex::new(()),
             dir,
             oauth_gate: tokio::sync::Mutex::new(()),
-            ai_gate: tokio::sync::Mutex::new(()),
-            ai_generation: AtomicU64::new(0),
             ai_cancel: tokio::sync::Notify::new(),
-        })
+        };
+        service.reconcile_analytics()?;
+        Ok(service)
     }
 
     pub fn get_settings(&self) -> ServiceResult<Value> {
@@ -243,17 +272,27 @@ impl CoachService {
         if !settings.is_object() {
             return Err("Settings must be an object".into());
         }
-        let mut merged = self.get_settings()?;
+        let previous = self.get_settings()?;
+        let mut merged = previous.clone();
         for (k, v) in settings.as_object().unwrap() {
             merged[k] = v.clone();
         }
         let text = serde_json::to_string(&merged).map_err(err)?;
-        let db = self.db.lock().map_err(err)?;
-        db.execute(
+        let mut db = self.db.lock().map_err(err)?;
+        let tx=db.transaction().map_err(err)?;
+        tx.execute(
             "INSERT INTO settings (id, body) VALUES (1, ?1) ON CONFLICT(id) DO UPDATE SET body=?1",
             params![text],
         )
         .map_err(err)?;
+        if let Some(player)=merged["player_id"].as_str().filter(|s|!s.is_empty()) {
+            for (mode,key) in [("1v1","rank_1v1"),("2v2","rank_2v2"),("3v3","rank_3v3")] {
+                if (previous[key]!=merged[key]||previous["player_id"]!=merged["player_id"]) && merged[key].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=100){
+                    tx.execute("INSERT INTO rank_observations VALUES(?1,?2,?3,?4,?5,'self_report')",params![ident(),player,mode,merged[key].as_str(),now()]).map_err(err)?;
+                }
+            }
+        }
+        tx.commit().map_err(err)?;
         Ok(merged)
     }
 
@@ -354,7 +393,7 @@ impl CoachService {
         let text = serde_json::to_string(analysis).map_err(err)?;
         let db = self.db.lock().map_err(err)?;
         db.execute(
-            "INSERT INTO replays (id, body) VALUES (?1, ?2) ON CONFLICT(id) DO UPDATE SET body=?2",
+            "INSERT INTO replays (id, body, coach_body) VALUES (?1, ?2, json_remove(?2, '$.frames')) ON CONFLICT(id) DO UPDATE SET body=?2, coach_body=json_remove(?2, '$.frames')",
             params![id, text],
         )
         .map_err(err)?;
@@ -369,10 +408,25 @@ impl CoachService {
         let mut rows = s.query(params![id]).map_err(err)?;
         if let Some(row) = rows.next().map_err(err)? {
             let text: String = row.get(0).map_err(err)?;
-            serde_json::from_str(&text).map_err(err)
+            serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
         } else {
             Err(format!("Replay {id} not found"))
         }
+    }
+
+    pub fn get_coach_replay(&self, id: &str) -> ServiceResult<Value> {
+        let db = self.db.lock().map_err(err)?;
+        let text: String = db.query_row("SELECT coach_body FROM replays WHERE id=?1", params![id], |r| r.get(0)).map_err(err)?;
+        serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
+    }
+
+    pub fn has_replay_by_hash(&self, hash: &str) -> ServiceResult<bool> {
+        let db = self.db.lock().map_err(err)?;
+        let mut s = db
+            .prepare("SELECT 1 FROM replays WHERE json_extract(body, '$.summary.file_hash')=?1 LIMIT 1")
+            .map_err(err)?;
+        let exists = s.exists(params![hash]).unwrap_or(false);
+        Ok(exists)
     }
 
     pub fn delete_replay(&self, id: &str) -> ServiceResult<()> {
@@ -381,48 +435,88 @@ impl CoachService {
         Ok(())
     }
 
-    pub fn get_library(&self) -> ServiceResult<Value> {
+    /// Non-bot players ranked by how many replays they appear in (most first).
+    pub fn get_player_candidates(&self) -> ServiceResult<Vec<Value>> {
         let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT body FROM replays").map_err(err)?;
+        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
+        let mut rows = s.query([]).map_err(err)?;
+        let mut appearances: HashMap<String, (String, usize)> = HashMap::new();
+        while let Some(row) = rows.next().map_err(err)? {
+            let text: String = row.get(0).map_err(err)?;
+            let Ok(analysis) = serde_json::from_str::<Value>(&text) else { continue };
+            for p in analysis["players"].as_array().into_iter().flatten() {
+                if p["is_bot"].as_bool() == Some(true) {
+                    continue;
+                }
+                if let (Some(pid), Some(pname)) = (p["id"].as_str(), p["name"].as_str()) {
+                    if pid.starts_with("local:") {
+                        continue;
+                    }
+                    appearances.entry(pid.to_string()).or_insert((pname.to_string(), 0)).1 += 1;
+                }
+            }
+        }
+        let mut out: Vec<(String, String, usize)> =
+            appearances.into_iter().map(|(id, (n, c))| (id, n, c)).collect();
+        out.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.1.cmp(&b.1)));
+        Ok(out
+            .into_iter()
+            .map(|(id, name, c)| json!({"player_id": id, "name": name, "matches": c}))
+            .collect())
+    }
+
+    /// Auto-detected user: the non-bot player present in the most replays.
+    pub fn detect_player(&self) -> Option<(String, String)> {
+        let c = self.get_player_candidates().ok()?;
+        let first = c.first()?;
+        Some((first["player_id"].as_str()?.to_string(), first["name"].as_str()?.to_string()))
+    }
+
+    /// Explicit id > saved settings id > auto-detected id.
+    pub fn resolve_player_id(&self, explicit: Option<&str>) -> Option<String> {
+        if let Some(p) = explicit.filter(|p| !p.is_empty()) {
+            return Some(p.to_string());
+        }
+        if let Some(p) = self.get_settings().ok().and_then(|s| s["player_id"].as_str().filter(|p| !p.is_empty()).map(str::to_string)) {
+            return Some(p);
+        }
+        None
+    }
+
+    /// Resolved identity for the UI: {player_id, player_name, auto}.
+    pub fn resolve_identity(&self) -> Value {
+        let settings = self.get_settings().unwrap_or(Value::Null);
+        let sid = settings["player_id"].as_str().filter(|p| !p.is_empty());
+        let sname = settings["player_name"].as_str().filter(|p| !p.is_empty());
+        let detected = self.detect_player();
+        match (sid, detected) {
+            (Some(id), d) => {
+                let name = sname
+                    .map(str::to_string)
+                    .or_else(|| d.filter(|(did, _)| did == id).map(|(_, n)| n))
+                    .or_else(|| {
+                        self.get_player_candidates().ok()?.iter().find(|c| c["player_id"] == id)?["name"].as_str().map(str::to_string)
+                    });
+                json!({"player_id": id, "player_name": name, "auto": false})
+            }
+            (None, Some((id, name))) => json!({"player_id": null, "player_name": sname, "suggested_player_id":id,"suggested_player_name":name,"auto": false}),
+            (None, None) => json!({"player_id": null, "player_name": sname, "auto": false}),
+        }
+    }
+
+    pub fn get_library(&self) -> ServiceResult<Value> {
+        let identity_candidates = self.get_player_candidates()?;
+        let db = self.db.lock().map_err(err)?;
+        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
         let mut rows = s.query([]).map_err(err)?;
         let mut summaries = vec![];
-        let mut player_appearances: HashMap<String, (String, usize)> = HashMap::new();
 
         while let Some(row) = rows.next().map_err(err)? {
             let text: String = row.get(0).map_err(err)?;
             if let Ok(analysis) = serde_json::from_str::<Value>(&text) {
-                let summary = analysis["summary"].clone();
-                summaries.push(summary);
-
-                if let Some(players) = analysis["players"].as_array() {
-                    for p in players {
-                        if let (Some(pid), Some(pname)) = (p["id"].as_str(), p["name"].as_str()) {
-                            let entry = player_appearances
-                                .entry(pid.to_string())
-                                .or_insert((pname.to_string(), 0));
-                            entry.1 += 1;
-                        }
-                    }
-                }
+                summaries.push(analysis["summary"].clone());
             }
         }
-
-        let mut identity_candidates: Vec<Value> = player_appearances
-            .into_iter()
-            .map(|(pid, (pname, count))| {
-                json!({
-                    "player_id": pid,
-                    "name": pname,
-                    "matches": count
-                })
-            })
-            .collect();
-        identity_candidates.sort_by(|a, b| {
-            b["matches"]
-                .as_u64()
-                .unwrap_or(0)
-                .cmp(&a["matches"].as_u64().unwrap_or(0))
-        });
 
         Ok(json!({
             "replays": summaries,
@@ -432,112 +526,18 @@ impl CoachService {
     }
 
     pub fn get_progress(&self, player_id: Option<&str>) -> ServiceResult<Value> {
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT body FROM replays").map_err(err)?;
-        let mut rows = s.query([]).map_err(err)?;
-
-        let mut mode_stats: HashMap<String, ModeProgressAcc> = HashMap::new();
-        let mut player_name: Option<String> = None;
-        let mut total_matches = 0usize;
-
-        while let Some(row) = rows.next().map_err(err)? {
-            let text: String = row.get(0).map_err(err)?;
-            let Ok(analysis) = serde_json::from_str::<Value>(&text) else {
-                continue;
-            };
-
-            let mode = analysis["summary"]["mode"].as_str().unwrap_or("unknown");
-            let players = analysis["players"].as_array();
-            let target_player = if let Some(pid) = player_id {
-                players.and_then(|ps| ps.iter().find(|p| p["id"] == pid))
-            } else {
-                players.and_then(|ps| ps.first())
-            };
-
-            let Some(p) = target_player else {
-                continue;
-            };
-
-            let pid = p["id"].as_str().unwrap_or("");
-            if player_name.is_none() {
-                player_name = p["name"].as_str().map(str::to_string);
-            }
-
-            let my_team = p["team"].as_u64().unwrap_or(0) as u8;
-            let blue_score = analysis["summary"]["blue_score"].as_i64().unwrap_or(0);
-            let orange_score = analysis["summary"]["orange_score"].as_i64().unwrap_or(0);
-            let won = (my_team == 0 && blue_score > orange_score)
-                || (my_team == 1 && orange_score > blue_score);
-
-            total_matches += 1;
-            let acc = mode_stats.entry(mode.to_string()).or_default();
-            acc.matches += 1;
-            if won {
-                acc.wins += 1;
-            }
-
-            if let Some(metrics) = analysis["metrics"].as_array() {
-                for m in metrics {
-                    if m["player_id"].as_str() == Some(pid) {
-                        let key = m["key"].as_str().unwrap_or("");
-                        let val = m["value"].as_f64();
-                        match key {
-                            "avg_boost" => {
-                                if let Some(v) = val {
-                                    acc.boost_sum += v;
-                                    acc.boost_count += 1;
-                                }
-                            }
-                            "avg_speed" => {
-                                if let Some(v) = val {
-                                    acc.speed_sum += v;
-                                    acc.speed_count += 1;
-                                }
-                            }
-                            "defensive_half_pct" => {
-                                if let Some(v) = val {
-                                    acc.defensive_pct_sum += v;
-                                    acc.defensive_pct_count += 1;
-                                }
-                            }
-                            "low_boost_pct" => {
-                                if let Some(v) = val {
-                                    acc.low_boost_sum += v;
-                                    acc.low_boost_count += 1;
-                                }
-                            }
-                            "supersonic_boost_seconds" => {
-                                if let Some(v) = val {
-                                    acc.supersonic_waste_sum += v;
-                                    acc.supersonic_waste_count += 1;
-                                }
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
-        }
-
-        let mut modes_map = json!({});
-        for (mode, acc) in mode_stats {
-            let win_rate = if acc.matches > 0 {
-                (acc.wins as f64 / acc.matches as f64) * 100.0
-            } else {
-                0.0
-            };
-            modes_map[mode] = json!({
-                "matches": acc.matches,
-                "wins": acc.wins,
-                "win_rate": (win_rate * 10.0).round() / 10.0,
-                "avg_boost": if acc.boost_count > 0 { (acc.boost_sum / acc.boost_count as f64 * 10.0).round() / 10.0 } else { 0.0 },
-                "avg_speed": if acc.speed_count > 0 { (acc.speed_sum / acc.speed_count as f64).round() } else { 0.0 },
-                "defensive_half_pct": if acc.defensive_pct_count > 0 { (acc.defensive_pct_sum / acc.defensive_pct_count as f64 * 10.0).round() / 10.0 } else { 0.0 },
-                "low_boost_pct": if acc.low_boost_count > 0 { (acc.low_boost_sum / acc.low_boost_count as f64 * 10.0).round() / 10.0 } else { 0.0 },
-                "supersonic_waste_seconds": if acc.supersonic_waste_count > 0 { (acc.supersonic_waste_sum / acc.supersonic_waste_count as f64 * 10.0).round() / 10.0 } else { 0.0 }
-            });
-        }
-
+        let resolved = self.resolve_player_id(player_id);
+        let player_id = resolved.as_deref();
+        let projection=self.analytics_context(player_id,"All")?;
+        let mut modes_map=json!({});let mut total_matches=0usize;
+        if let Some(modes)=projection["modes"].as_object(){for (mode,stats) in modes {
+            let matches=stats["lifetime_count"].as_u64().unwrap_or(0);total_matches+=matches as usize;
+            let mut row=json!({"matches":matches,"wins":stats["wins"],"win_rate":stats["win_rate"],"aggregation":"per-metric method in analytics manifest"});
+            for key in ["avg_boost","avg_speed","defensive_half_pct","low_boost_pct","boost_active_at_supersonic_speed_s"] {row[key]=stats["lifetime"][key]["value"].clone();}
+            modes_map[mode]=row;
+        }}
+        let player_name=self.get_player_candidates()?.iter().find(|p|p["player_id"].as_str()==player_id).and_then(|p|p["name"].as_str()).map(str::to_string);
+        let db=self.db.lock().map_err(err)?;
         let mut goals = vec![];
         let mut s_goals = db.prepare("SELECT id, title, target, current, status FROM goals").map_err(err)?;
         let mut goal_rows = s_goals.query([]).map_err(err)?;
@@ -548,6 +548,7 @@ impl CoachService {
                 "target": gr.get::<_, String>(2).unwrap_or_default(),
                 "current": gr.get::<_, String>(3).unwrap_or_default(),
                 "status": gr.get::<_, String>(4).unwrap_or_default(),
+                "legacy_warning":"Existing goal: reassess numeric targets against metrics-2 before using as coaching evidence.",
             }));
         }
 
@@ -556,23 +557,16 @@ impl CoachService {
             "player_name": player_name,
             "matches_analyzed": total_matches,
             "modes": modes_map,
-            "recurring_strengths": [
-                "Defensive goal-line positioning and backfield recoveries",
-                "High average linear speed on counter-attack transitions",
-                "Decisive initial touches on kickoff possessions"
-            ],
-            "recurring_priorities": [
-                "Supersonic boost waste: releasing boost once supersonic threshold (2200 uu/s) is reached",
-                "Small-pad pathing: avoiding extended zero-boost windows (>5s) while rotating",
-                "Backpost rotation: avoiding double-committing when teammate has priority"
-            ],
+            // Aggregate metrics cannot establish kickoff quality, rotations, or touches.
+            "recurring_strengths": [],
+            "recurring_priorities": [],
             "goals": goals
         }))
     }
 
     pub fn get_teammates(&self, player_id: &str) -> ServiceResult<Value> {
         let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT body FROM replays").map_err(err)?;
+        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
         let mut rows = s.query([]).map_err(err)?;
 
         struct MateAcc {
@@ -675,6 +669,7 @@ impl CoachService {
                     notes.push(json!({
                         "name": name,
                         "content": content,
+                        "legacy_warning":if content.to_ascii_lowercase().contains("supersonic") {Some("Review legacy metric advice: boosting at >=2200 uu/s is not threshold uptime or proven waste. This note is preserved, not verified.")}else{None},
                         "updated_at": updated
                     }));
                 }
@@ -711,7 +706,7 @@ impl CoachService {
     pub fn get_conversations(&self) -> ServiceResult<Value> {
         let db = self.db.lock().map_err(err)?;
         let mut s = db
-            .prepare("SELECT id, title, updated_at FROM conversations ORDER BY updated_at DESC")
+            .prepare("SELECT id, title, updated_at, mode, preset, prompt_version FROM conversations WHERE archived=0 ORDER BY updated_at DESC")
             .map_err(err)?;
         let mut rows = s.query([]).map_err(err)?;
         let mut list = vec![];
@@ -720,6 +715,9 @@ impl CoachService {
                 "id": row.get::<_, String>(0).map_err(err)?,
                 "title": row.get::<_, String>(1).map_err(err)?,
                 "updated_at": row.get::<_, String>(2).map_err(err)?,
+                "mode": row.get::<_, String>(3).map_err(err)?,
+                "preset": row.get::<_, String>(4).map_err(err)?,
+                "prompt_version": row.get::<_, String>(5).map_err(err)?,
             }));
         }
         Ok(json!(list))
@@ -736,7 +734,8 @@ impl CoachService {
             let id: String = row.get(0).map_err(err)?;
             let conversation_id: String = row.get(1).map_err(err)?;
             let text: String = row.get(2).map_err(err)?;
-            let body: Value = serde_json::from_str(&text).unwrap_or(json!({}));
+            let mut body: Value = serde_json::from_str(&text).unwrap_or(json!({}));
+            if body["role"] == "assistant" && body["prompt_version"].is_null() { body["legacy_warning"] = json!("Legacy advice predates corrected metric definitions. Reassess numeric goals and boost conclusions."); }
             list.push(json!({
                 "id": id,
                 "conversation_id": conversation_id,
@@ -750,144 +749,7 @@ impl CoachService {
         self.ai_cancel.notify_waiters();
     }
 
-    pub async fn chat(
-        &self,
-        message: &str,
-        replay_id: Option<&str>,
-        player_id: Option<&str>,
-        conv_id: Option<&str>,
-    ) -> ServiceResult<Value> {
-        let settings = self.get_settings()?;
-        let conv_id = conv_id.map(str::to_string).unwrap_or_else(ident);
-
-        // Ensure conversation exists
-        {
-            let db = self.db.lock().map_err(err)?;
-            let title = message.chars().take(40).collect::<String>();
-            db.execute(
-                "INSERT INTO conversations (id, title, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(id) DO UPDATE SET updated_at=?3",
-                params![conv_id, title, now()],
-            )
-            .map_err(err)?;
-
-            let user_msg = json!({
-                "role": "user",
-                "content": message,
-                "timestamp": now()
-            });
-            db.execute(
-                "INSERT INTO messages (id, conversation_id, body) VALUES (?1, ?2, ?3)",
-                params![ident(), conv_id, serde_json::to_string(&user_msg).unwrap()],
-            )
-            .map_err(err)?;
-        }
-
-        // Build evidence context if replay is provided
-        let mut evidence_context = String::new();
-        let mut cited_events = vec![];
-        if let Some(rid) = replay_id {
-            if let Ok(replay) = self.get_replay(rid) {
-                let summary = &replay["summary"];
-                let mode = summary["mode"].as_str().unwrap_or("2v2");
-                let blue_score = summary["blue_score"].as_i64().unwrap_or(0);
-                let orange_score = summary["orange_score"].as_i64().unwrap_or(0);
-                evidence_context.push_str(&format!(
-                    "MATCH CONTEXT: Mode: {mode}, Final Score: Blue {blue_score} - Orange {orange_score}, Duration: {:.1}s.\n",
-                    summary["duration_seconds"].as_f64().unwrap_or(300.0)
-                ));
-
-                if let Some(events) = replay["events"].as_array() {
-                    evidence_context.push_str("KEY DETECTED EVENTS:\n");
-                    for ev in events.iter().take(12) {
-                        let id = ev["id"].as_str().unwrap_or("");
-                        let time = ev["time"].as_f64().unwrap_or(0.0);
-                        let title = ev["title"].as_str().unwrap_or("");
-                        let desc = ev["description"].as_str().unwrap_or("");
-                        evidence_context.push_str(&format!("- [{id}] at {time:.1}s: {title} ({desc})\n"));
-                        cited_events.push(id.to_string());
-                    }
-                }
-            }
-        }
-
-        let provider = settings["provider"].as_str().unwrap_or("neotoken");
-        let model = settings["chat_model"].as_str().unwrap_or("gpt-6-astra");
-        let consent = settings["cloud_consent"].as_bool().unwrap_or(false);
-
-        let assistant_text = if !consent || get_provider_key(provider).is_none() {
-            // Defensible offline response
-            if evidence_context.is_empty() {
-                "I am in offline mode. Enable cloud AI in Settings to chat freely, or load a match in Replay Studio to view verified telemetry and automated tactical findings.".to_string()
-            } else {
-                format!(
-                    "**Offline Coaching Review**\n\nBased on the recorded telemetry from this match:\n\n{}\n\n**Coaching Recommendation**:\n1. Conserve boost when already at supersonic speed (>=2200 uu/s).\n2. Rotate via small pads through the central lane to maintain defensive depth.\n3. Avoid leaving backpost unguarded when the opposing team controls the backboard.",
-                    evidence_context
-                )
-            }
-        } else {
-            // Live AI provider call
-            let key = get_provider_key(provider).unwrap();
-            let base = endpoint(provider)?;
-            let system_prompt = "You are AntiRL, a premier competitive Rocket League coach. Provide concise, direct, and constructive feedback grounded strictly in the provided replay evidence. When citing moments, use their exact evidence IDs like [DA20...:boost:...]. Show realistic alternative decisions and practical custom training packs/drills.";
-
-            let client = reqwest::Client::builder()
-                .timeout(Duration::from_secs(35))
-                .build()
-                .map_err(|_| "Network client initialization failed".to_string())?;
-
-            let messages_payload = vec![
-                json!({"role": "system", "content": format!("{system_prompt}\n{evidence_context}")}),
-                json!({"role": "user", "content": message}),
-            ];
-
-            let res = client
-                .post(format!("{base}/chat/completions"))
-                .bearer_auth(&key)
-                .json(&json!({
-                    "model": model,
-                    "messages": messages_payload,
-                    "temperature": 0.7,
-                    "max_tokens": 1000
-                }))
-                .send()
-                .await
-                .map_err(|e| format!("AI request failed: {e}"))?;
-
-            if !res.status().is_success() {
-                return Err(format!("AI provider returned error status {}", res.status()));
-            }
-
-            let resp_json: Value = res.json().await.map_err(|_| "Invalid response from AI provider".to_string())?;
-            resp_json["choices"][0]["message"]["content"]
-                .as_str()
-                .unwrap_or("No response generated.")
-                .to_string()
-        };
-
-        // Persist assistant message
-        {
-            let db = self.db.lock().map_err(err)?;
-            let assistant_msg = json!({
-                "role": "assistant",
-                "content": assistant_text,
-                "timestamp": now(),
-                "evidence_ids": cited_events
-            });
-            db.execute(
-                "INSERT INTO messages (id, conversation_id, body) VALUES (?1, ?2, ?3)",
-                params![ident(), conv_id, serde_json::to_string(&assistant_msg).unwrap()],
-            )
-            .map_err(err)?;
-        }
-
-        Ok(json!({
-            "conversation_id": conv_id,
-            "response": assistant_text,
-            "evidence_ids": cited_events
-        }))
-    }
-
-    pub async fn analyze_with_ai(&self, replay_id: &str, player_id: &str) -> ServiceResult<Value> {
+    pub(crate) fn templated_analysis(&self, replay_id: &str, player_id: &str) -> ServiceResult<Value> {
         let replay = self.get_replay(replay_id)?;
         let summary = &replay["summary"];
         let events = replay["events"].as_array();
@@ -916,40 +778,15 @@ impl CoachService {
             })
             .unwrap_or_default();
 
-        let avg_boost = p_metrics.get("avg_boost").copied().unwrap_or(33.0);
-        let low_boost_pct = p_metrics.get("low_boost_pct").copied().unwrap_or(15.0);
-        let supersonic_waste = p_metrics.get("supersonic_boost_seconds").copied().unwrap_or(0.0);
-        let defensive_half_pct = p_metrics.get("defensive_half_pct").copied().unwrap_or(50.0);
-
-        let findings = vec![
-            json!({
-                "evidence_ids": key_events.iter().filter(|e| e["category"] == "boost").take(2).filter_map(|e| e["id"].as_str()).collect::<Vec<_>>(),
-                "title": "Boost Conservation at Supersonic Speed",
-                "observation": format!("You spent {:.1} seconds boosting while already traveling at supersonic velocity (>=2200 uu/s). Average boost was {:.1}%.", supersonic_waste, avg_boost),
-                "interpretation": "Once supersonic trail appears, holding boost provides zero additional forward speed while consuming 33.3 boost per second.",
-                "uncertainty": "Airborne recovery and turning adjustments may explain brief supersonic boosting bursts.",
-                "alternative_action": "Release boost immediately once supersonic trail triggers and flip or wave dash to maintain momentum.",
-                "training": "Freeplay speed-flip drills: practice reaching supersonic with single flip + 12 boost and coasting."
-            }),
-            json!({
-                "evidence_ids": key_events.iter().filter(|e| e["category"] == "rotation" || e["category"] == "coverage").take(2).filter_map(|e| e["id"].as_str()).collect::<Vec<_>>(),
-                "title": "Defensive Half Recovery & Lane Spacing",
-                "observation": format!("Spent {:.1}% of active play in defensive half, with {:.1}% of total time below 10 boost.", defensive_half_pct, low_boost_pct),
-                "interpretation": "Extended low-boost periods leave you unable to contest fast backboard aerials or challenge 50-50s effectively.",
-                "uncertainty": "Opponent pressure and ball starvation can force defensive starvation even with good pathing.",
-                "alternative_action": "Route rotations through small pad lines (perimeter or center circle) rather than detouring all the way to corner 100-boost orbs.",
-                "training": "Shadow defense custom training: focus on saving shots using 24 boost or less."
-            }),
-            json!({
-                "evidence_ids": key_events.iter().filter(|e| e["category"] == "goal" || e["category"] == "demo").take(2).filter_map(|e| e["id"].as_str()).collect::<Vec<_>>(),
-                "title": "Transitional Awareness & Challenge Timing",
-                "observation": "Review goal and reset transitions to identify first-man challenge opportunities vs second-man patience.",
-                "interpretation": "Challenging too early as last man gives opponents open nets, while hesitating as first man allows easy flick setups.",
-                "uncertainty": "Teammate challenge direction and boost status dictate the optimal commitment speed.",
-                "alternative_action": "If second man, shadow toward back post until teammate recovers into defensive rotation.",
-                "training": "2v2 replay review: pause at midfield turnovers and check whether last man was goal-side."
-            }),
-        ];
+        let findings = vec![json!({
+            "evidence_ids": key_events.iter().take(3).filter_map(|e|e["id"].as_str()).collect::<Vec<_>>(),
+            "title":"Review observed resource and position context",
+            "observation":format!("Available measured values: {}", serde_json::to_string(&p_metrics).unwrap_or_default()),
+            "interpretation":"These are observations, not proof of poor decisions. Boost-active time at >=2200 uu/s is not total supersonic time or automatically waste; the speed cap differs from the threshold.",
+            "uncertainty":"Missing telemetry remains unavailable. Scalar averages do not establish roles, intentions, causation, skill grade or rank.",
+            "alternative_action":"Review one turnover in the viewer: compare available space, recovery and pressure before judging the choice.",
+            "training":"General freeplay drill: rehearse one recovery route for 5 minutes, then check whether it keeps you available for the next play. Reassess after new same-mode matches; this is not a promotion forecast."
+        })];
 
         Ok(json!({
             "replay_id": replay_id,
@@ -957,29 +794,13 @@ impl CoachService {
             "mode": summary["mode"],
             "findings": findings,
             "telemetry_summary": {
-                "avg_boost": (avg_boost * 10.0).round() / 10.0,
-                "low_boost_pct": (low_boost_pct * 10.0).round() / 10.0,
-                "supersonic_waste_seconds": (supersonic_waste * 10.0).round() / 10.0,
-                "defensive_half_pct": (defensive_half_pct * 10.0).round() / 10.0
+                "avg_boost": p_metrics.get("avg_boost"),
+                "low_boost_pct": p_metrics.get("low_boost_pct"),
+                "boost_active_at_supersonic_speed_s": p_metrics.get("boost_active_at_supersonic_speed_s"),
+                "defensive_half_pct": p_metrics.get("defensive_half_pct")
             }
         }))
     }
-}
-
-#[derive(Default)]
-struct ModeProgressAcc {
-    matches: usize,
-    wins: usize,
-    boost_sum: f64,
-    boost_count: usize,
-    speed_sum: f64,
-    speed_count: usize,
-    defensive_pct_sum: f64,
-    defensive_pct_count: usize,
-    low_boost_sum: f64,
-    low_boost_count: usize,
-    supersonic_waste_sum: f64,
-    supersonic_waste_count: usize,
 }
 
 #[cfg(test)]
@@ -1083,3 +904,4 @@ mod tests {
         assert_eq!(mates[0]["wins"], 1);
     }
 }
+
