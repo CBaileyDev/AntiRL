@@ -5,10 +5,13 @@ import {
   SkipBack,
   SkipForward,
   RotateCcw,
-  Maximize2,
   Video,
   Eye,
   Compass,
+  Tv,
+  Layers,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import type { ReplayAnalysis, Frame } from "./types";
 
@@ -18,6 +21,40 @@ export const timeLabel = (seconds: number) => {
   const sec = Math.floor(s % 60);
   return `${m}:${sec.toString().padStart(2, "0")}`;
 };
+
+// Standard Rocket League Big Boost Pad coordinates in Babylon scale (units * 0.01)
+const BIG_BOOST_PADS: [number, number, number][] = [
+  [-30.72, 0.1, -40.96], // Blue Left
+  [30.72, 0.1, -40.96],  // Blue Right
+  [-35.84, 0.1, 0],      // Mid Left
+  [35.84, 0.1, 0],       // Mid Right
+  [-30.72, 0.1, 40.96],  // Orange Left
+  [30.72, 0.1, 40.96],   // Orange Right
+];
+
+// Key Small Boost Pad locations
+const SMALL_BOOST_PADS: [number, number, number][] = [
+  [0, 0.05, -42],
+  [-17.92, 0.05, -41.84],
+  [17.92, 0.05, -41.84],
+  [0, 0.05, -28.16],
+  [-10.24, 0.05, -28.16],
+  [10.24, 0.05, -28.16],
+  [-20.48, 0.05, -10.24],
+  [20.48, 0.05, -10.24],
+  [0, 0.05, -10.24],
+  [-10.24, 0.05, 0],
+  [10.24, 0.05, 0],
+  [0, 0.05, 10.24],
+  [-20.48, 0.05, 10.24],
+  [20.48, 0.05, 10.24],
+  [0, 0.05, 28.16],
+  [-10.24, 0.05, 28.16],
+  [10.24, 0.05, 28.16],
+  [0, 0.05, 42],
+  [-17.92, 0.05, 41.84],
+  [17.92, 0.05, 41.84],
+];
 
 interface ReplayViewerProps {
   replay: ReplayAnalysis;
@@ -35,12 +72,14 @@ export default function ReplayViewer({
   onSelectEvent,
 }: ReplayViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const radarCanvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef({ time, playerId, camera: "player" });
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const [camera, setCamera] = useState<"player" | "ball" | "top" | "free">("player");
+  const [camera, setCamera] = useState<"player" | "ball" | "broadcast" | "top" | "free">("player");
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
+  const [showRadar, setShowRadar] = useState(true);
 
   stateRef.current = { time, playerId, camera };
 
@@ -96,6 +135,7 @@ export default function ReplayViewer({
             preserveDrawingBuffer: false,
             stencil: true,
             antialias: true,
+            powerPreference: "high-performance",
           });
         } catch {
           engine = new B.Engine(canvasRef.current, false);
@@ -107,59 +147,112 @@ export default function ReplayViewer({
         }
 
         const scene = new B.Scene(engine);
-        scene.clearColor = new B.Color4(0.05, 0.07, 0.05, 1);
+        // Deep obsidian arena background
+        scene.clearColor = new B.Color4(0.04, 0.05, 0.07, 1);
 
+        // Main Camera
         const view = new B.ArcRotateCamera(
           "camera",
           -Math.PI / 2,
-          1.05,
+          1.1,
           75,
           new B.Vector3(0, 0, 0),
           scene
         );
         view.attachControl(canvasRef.current, true);
-        view.lowerRadiusLimit = 5;
-        view.upperRadiusLimit = 180;
+        view.lowerRadiusLimit = 4;
+        view.upperRadiusLimit = 220;
+        view.wheelPrecision = 15;
 
-        const light = new B.HemisphericLight("light", new B.Vector3(0, 1, 0), scene);
-        light.intensity = 0.95;
+        // Ambient + Directional Stadium Floodlights
+        const ambient = new B.HemisphericLight("ambient", new B.Vector3(0, 1, 0), scene);
+        ambient.intensity = 0.75;
+        ambient.groundColor = new B.Color3(0.08, 0.1, 0.12);
 
-        const material = (name: string, hex: string) => {
+        const stadiumLight1 = new B.DirectionalLight(
+          "light1",
+          new B.Vector3(0.5, -1, 0.8),
+          scene
+        );
+        stadiumLight1.intensity = 1.2;
+        stadiumLight1.diffuse = new B.Color3(0.95, 0.98, 1.0);
+
+        const stadiumLight2 = new B.DirectionalLight(
+          "light2",
+          new B.Vector3(-0.5, -1, -0.8),
+          scene
+        );
+        stadiumLight2.intensity = 0.9;
+        stadiumLight2.diffuse = new B.Color3(1.0, 0.95, 0.9);
+
+        // Material builder helper
+        const makeMat = (name: string, hex: string, emHex?: string, alpha = 1.0) => {
           const m = new B.StandardMaterial(name, scene);
           m.diffuseColor = B.Color3.FromHexString(hex);
-          m.specularColor = new B.Color3(0.08, 0.08, 0.08);
+          m.specularColor = new B.Color3(0.2, 0.2, 0.2);
+          m.alpha = alpha;
+          if (emHex) {
+            m.emissiveColor = B.Color3.FromHexString(emHex);
+          }
           return m;
         };
 
-        const grass = material("turf", "#263529");
-        const turfLight = material("turf-light", "#2C3D30");
-        const blueMat = material("blue", "#80BCE5");
-        const orangeMat = material("orange", "#E6A260");
-        const chalkMat = material("chalk", "#D2D8C7");
-        const ballMat = material("ball", "#F0EDE1");
+        const blueColor = "#38BDF8";
+        const orangeColor = "#FB923C";
+        const blueMat = makeMat("blueCarMat", blueColor, "#0284C7");
+        const orangeMat = makeMat("orangeCarMat", orangeColor, "#C2410C");
+        const goalBlueMat = makeMat("goalBlue", "#38BDF8", "#0284C7");
+        const goalOrangeMat = makeMat("goalOrange", "#FB923C", "#EA580C");
+        const boostPadGold = makeMat("boostPadGold", "#F59E0B", "#D97706");
+        const boostPadCyan = makeMat("boostPadCyan", "#06B6D4", "#0891B2");
+        const rubberMat = makeMat("rubber", "#111418");
+        const rimMat = makeMat("rims", "#E2E8F0", "#94A3B8");
+        const glassMat = makeMat("glass", "#0F172A", "#1E293B", 0.7);
 
-        // Pitch ground and alternating lawn stripes
+        // PITCH: Deep dark turf with lawn stripes
+        const turfBase = makeMat("turfBase", "#0B1116");
+        const turfStripe = makeMat("turfStripe", "#0E151C");
+
         const ground = B.MeshBuilder.CreateGround("pitch", { width: 81.92, height: 102.4 }, scene);
-        ground.material = grass;
+        ground.material = turfBase;
 
-        for (let s = 0; s < 10; s++) {
+        for (let s = 0; s < 12; s++) {
           const strip = B.MeshBuilder.CreateGround(
             `stripe-${s}`,
-            { width: 81.92, height: 10.24 },
+            { width: 81.92, height: 8.53 },
             scene
           );
-          strip.position.set(0, 0.015, -46.08 + s * 10.24);
-          strip.material = s % 2 ? grass : turfLight;
+          strip.position.set(0, 0.01, -46.93 + s * 8.53);
+          strip.material = s % 2 === 0 ? turfBase : turfStripe;
         }
 
-        // Field markings
-        const drawLine = (name: string, points: [number, number, number][]) => {
+        // Team Colored Zone Glows on Pitch Ends
+        const blueZone = B.MeshBuilder.CreateGround(
+          "blueZone",
+          { width: 81.92, height: 26 },
+          scene
+        );
+        blueZone.position.set(0, 0.015, -38.2);
+        const bzMat = makeMat("bzMat", "#0369A1", "#0284C7", 0.18);
+        blueZone.material = bzMat;
+
+        const orangeZone = B.MeshBuilder.CreateGround(
+          "orangeZone",
+          { width: 81.92, height: 26 },
+          scene
+        );
+        orangeZone.position.set(0, 0.015, 38.2);
+        const ozMat = makeMat("ozMat", "#C2410C", "#EA580C", 0.18);
+        orangeZone.material = ozMat;
+
+        // PITCH LINES: Boundary, Center Line, Center Circle, Goal Arc
+        const drawLine = (name: string, points: [number, number, number][], hex = "#334155") => {
           const lineMesh = B.MeshBuilder.CreateLines(
             name,
             { points: points.map((p) => new B.Vector3(...p)) },
             scene
           );
-          lineMesh.color = B.Color3.FromHexString("#7A8B74");
+          lineMesh.color = B.Color3.FromHexString(hex);
           return lineMesh;
         };
 
@@ -169,130 +262,248 @@ export default function ReplayViewer({
           [40.96, 0.03, 51.2],
           [-40.96, 0.03, 51.2],
           [-40.96, 0.03, -51.2],
-        ]);
+        ], "#64748B");
+
         drawLine("halfway", [
           [-40.96, 0.03, 0],
           [40.96, 0.03, 0],
-        ]);
+        ], "#64748B");
+
         drawLine(
-          "center-circle",
+          "centerCircle",
           Array.from({ length: 65 }, (_, i) => [
             Math.cos((i / 64) * Math.PI * 2) * 9.1,
             0.03,
             Math.sin((i / 64) * Math.PI * 2) * 9.1,
-          ])
+          ]),
+          "#94A3B8"
         );
 
-        // Goals and backwalls
+        // STADIUM WALLS & CORNER GLASS CURVES
+        const wallMat = makeMat("glassWall", "#1E293B", "#0F172A", 0.25);
         for (const side of [-1, 1]) {
-          const goalMat = side > 0 ? blueMat : orangeMat;
+          const sideWall = B.MeshBuilder.CreateBox(
+            `wall-side-${side}`,
+            { width: 0.4, height: 14, depth: 102.4 },
+            scene
+          );
+          sideWall.position.set(side * 41.16, 7, 0);
+          sideWall.material = wallMat;
+
+          const backWall = B.MeshBuilder.CreateBox(
+            `wall-back-${side}`,
+            { width: 81.92, height: 14, depth: 0.4 },
+            scene
+          );
+          backWall.position.set(0, 7, side * 51.4);
+          backWall.material = wallMat;
+
+          // Glowing Wall Trim Neon
+          drawLine(`neon-top-${side}`, [
+            [-40.96, 14, side * 51.2],
+            [40.96, 14, side * 51.2],
+          ], side > 0 ? orangeColor : blueColor);
+
+          drawLine(`neon-side-${side}`, [
+            [side * 40.96, 14, -51.2],
+            [side * 40.96, 14, 51.2],
+          ], "#475569");
+        }
+
+        // GOALS (Neon Crossbars, Posts, and Deep Net Cage)
+        for (const side of [-1, 1]) {
+          const gMat = side > 0 ? goalOrangeMat : goalBlueMat;
+          // Posts
           for (const x of [-8.93, 8.93]) {
             const post = B.MeshBuilder.CreateCylinder(
               `post-${side}-${x}`,
-              { diameter: 0.35, height: 6.43, tessellation: 12 },
+              { diameter: 0.4, height: 6.43, tessellation: 16 },
               scene
             );
             post.position.set(x, 3.215, side * 51.2);
-            post.material = goalMat;
+            post.material = gMat;
           }
-          const crossbar = B.MeshBuilder.CreateBox(
+          // Crossbar
+          const crossbar = B.MeshBuilder.CreateCylinder(
             `crossbar-${side}`,
-            { width: 18.2, height: 0.35, depth: 0.35 },
+            { diameter: 0.4, height: 18.26, tessellation: 16 },
             scene
           );
+          crossbar.rotation.z = Math.PI / 2;
           crossbar.position.set(0, 6.43, side * 51.2);
-          crossbar.material = goalMat;
+          crossbar.material = gMat;
 
-          const backwall = B.MeshBuilder.CreateBox(
-            `backwall-${side}`,
-            { width: 81.92, height: 12, depth: 0.25 },
+          // Goal Net Enclosure
+          const net = B.MeshBuilder.CreateBox(
+            `net-${side}`,
+            { width: 17.86, height: 6.43, depth: 8.0 },
             scene
           );
-          backwall.position.set(0, 6, side * 51.5);
-          const wMat = material(`wall-${side}`, side > 0 ? "#253545" : "#4A3926");
-          wMat.alpha = 0.25;
-          backwall.material = wMat;
+          net.position.set(0, 3.215, side * (51.2 + 4.0));
+          const netMat = makeMat(`netMat-${side}`, side > 0 ? "#7C2D12" : "#075985", undefined, 0.35);
+          net.material = netMat;
         }
 
-        // Side boards
-        for (const side of [-1, 1]) {
-          const sideBoard = B.MeshBuilder.CreateBox(
-            `sideboard-${side}`,
-            { width: 0.3, height: 8, depth: 102.4 },
+        // BOOST PADS
+        // 6 Big Full 100 Boost Pads with floating glowing orbs
+        const boostOrbs: InstanceType<typeof B.Mesh>[] = [];
+        BIG_BOOST_PADS.forEach((posArr, i) => {
+          const padDisc = B.MeshBuilder.CreateCylinder(
+            `bigPad-${i}`,
+            { diameter: 3.2, height: 0.12, tessellation: 24 },
             scene
           );
-          sideBoard.position.set(side * 41.1, 4, 0);
-          const sbMat = material("sideboard-mat", "#435941");
-          sbMat.alpha = 0.2;
-          sideBoard.material = sbMat;
-        }
+          padDisc.position.set(posArr[0], posArr[1], posArr[2]);
+          padDisc.material = boostPadGold;
 
-        // Ball mesh
-        const ball = B.MeshBuilder.CreateSphere("ball", { diameter: 1.86, segments: 24 }, scene);
+          const orb = B.MeshBuilder.CreateSphere(
+            `bigOrb-${i}`,
+            { diameter: 1.1, segments: 16 },
+            scene
+          );
+          orb.position.set(posArr[0], posArr[1] + 0.8, posArr[2]);
+          orb.material = boostPadGold;
+          boostOrbs.push(orb);
+        });
+
+        // 20+ Small Boost Pads with glowing discs
+        SMALL_BOOST_PADS.forEach((posArr, i) => {
+          const smallDisc = B.MeshBuilder.CreateCylinder(
+            `smallPad-${i}`,
+            { diameter: 1.5, height: 0.08, tessellation: 16 },
+            scene
+          );
+          smallDisc.position.set(posArr[0], posArr[1], posArr[2]);
+          smallDisc.material = boostPadCyan;
+        });
+
+        // BALL: Metallic Rocket League sphere with glowing seams & ground shadow disc
+        const ballMat = makeMat("ballMat", "#FFFFFF", "#38BDF8");
+        ballMat.specularColor = new B.Color3(0.8, 0.8, 0.8);
+        const ball = B.MeshBuilder.CreateSphere("ball", { diameter: 1.86, segments: 28 }, scene);
         ball.material = ballMat;
 
-        // Player Car Meshes & Dynamic Billboard Nameplates
+        // Ball Shadow Disc on Turf
+        const shadowMat = makeMat("shadowMat", "#000000", undefined, 0.55);
+        const ballShadow = B.MeshBuilder.CreateDisc(
+          "ballShadow",
+          { radius: 1.0, tessellation: 24 },
+          scene
+        );
+        ballShadow.rotation.x = Math.PI / 2;
+        ballShadow.position.y = 0.025;
+        ballShadow.material = shadowMat;
+
+        // CAR SILHOUETTES: Sleek Sports-Car Models
         const cars = new Map<string, InstanceType<typeof B.Mesh>>();
-        const rubber = material("tires", "#131714");
-        const glass = material("glass", "#22353E");
-        const rims = material("rims", "#C5D0C6");
+        const thrusters = new Map<string, InstanceType<typeof B.Mesh>>();
 
         for (const p of replay.players) {
+          const isBlue = p.team === 0;
+          const carMat = isBlue ? blueMat : orangeMat;
+
+          // Main Chassis Base
           const car = B.MeshBuilder.CreateBox(
             `car-${p.id}`,
-            { width: 2.5, height: 0.65, depth: 1.7 },
+            { width: 2.4, height: 0.62, depth: 1.6 },
             scene
           );
-          car.material = p.team === 0 ? blueMat : orangeMat;
+          car.material = carMat;
 
+          // Front Aerodynamic Hood & Splitter
+          const hood = B.MeshBuilder.CreateBox(
+            `hood-${p.id}`,
+            { width: 1.1, height: 0.38, depth: 1.45 },
+            scene
+          );
+          hood.parent = car;
+          hood.position.set(0.68, -0.08, 0);
+          hood.material = carMat;
+
+          // Cockpit Windshield (Tinted Glass)
           const cabin = B.MeshBuilder.CreateBox(
             `cabin-${p.id}`,
-            { width: 1.25, height: 0.45, depth: 1.3 },
+            { width: 1.15, height: 0.44, depth: 1.25 },
             scene
           );
           cabin.parent = car;
-          cabin.position.set(-0.1, 0.48, 0);
-          cabin.material = glass;
+          cabin.position.set(-0.12, 0.44, 0);
+          cabin.material = glassMat;
 
-          for (const x of [-0.8, 0.8]) {
-            for (const z of [-0.86, 0.86]) {
+          // Rear Deck & Elevated Spoiler Wing
+          const spoiler = B.MeshBuilder.CreateBox(
+            `spoiler-${p.id}`,
+            { width: 0.3, height: 0.08, depth: 1.55 },
+            scene
+          );
+          spoiler.parent = car;
+          spoiler.position.set(-1.1, 0.62, 0);
+          spoiler.material = rubberMat;
+
+          // 4 Alloy Wheels with Rubber Tires
+          for (const x of [-0.75, 0.75]) {
+            for (const z of [-0.85, 0.85]) {
               const tire = B.MeshBuilder.CreateCylinder(
                 `tire-${p.id}-${x}-${z}`,
-                { diameter: 0.64, height: 0.32, tessellation: 12 },
+                { diameter: 0.65, height: 0.34, tessellation: 16 },
                 scene
               );
               tire.parent = car;
               tire.rotation.x = Math.PI / 2;
-              tire.position.set(x, -0.2, z);
-              tire.material = rubber;
+              tire.position.set(x, -0.18, z);
+              tire.material = rubberMat;
 
               const rim = B.MeshBuilder.CreateCylinder(
                 `rim-${p.id}-${x}-${z}`,
-                { diameter: 0.31, height: 0.34, tessellation: 12 },
+                { diameter: 0.32, height: 0.36, tessellation: 16 },
                 scene
               );
               rim.parent = tire;
-              rim.material = rims;
+              rim.material = rimMat;
             }
           }
 
-          // Dynamic 3D Nameplate billboard
-          const label = B.MeshBuilder.CreatePlane(`label-${p.id}`, { width: 7.5, height: 1.4 }, scene);
+          // Twin Exhaust Boost Thruster Jet
+          const thrusterJet = B.MeshBuilder.CreateCylinder(
+            `boost-${p.id}`,
+            { diameterTop: 0.1, diameterBottom: 0.55, height: 1.6, tessellation: 12 },
+            scene
+          );
+          thrusterJet.parent = car;
+          thrusterJet.rotation.z = Math.PI / 2;
+          thrusterJet.position.set(-1.9, 0.02, 0);
+          const jetMat = makeMat(`jetMat-${p.id}`, "#F59E0B", "#F97316", 0.85);
+          thrusterJet.material = jetMat;
+          thrusterJet.setEnabled(false);
+          thrusters.set(p.id, thrusterJet);
+
+          // Dynamic 3D Nameplate Billboard
+          const label = B.MeshBuilder.CreatePlane(`label-${p.id}`, { width: 7.5, height: 1.5 }, scene);
           label.parent = car;
-          label.position.y = 2.2;
+          label.position.y = 2.4;
           label.billboardMode = B.Mesh.BILLBOARDMODE_ALL;
 
-          const texture = new B.DynamicTexture(`name-${p.id}`, { width: 512, height: 96 }, scene, false);
+          const texture = new B.DynamicTexture(`name-${p.id}`, { width: 512, height: 104 }, scene, false);
           texture.hasAlpha = true;
-          texture.drawText(
-            p.name.slice(0, 24),
-            null,
-            64,
-            "700 36px Segoe UI, Inter",
-            p.team === 0 ? "#C4E2F9" : "#F8D4AB",
-            "rgba(19, 22, 16, 0.82)",
-            true
-          );
+          // Draw crisp esports badge
+          const ctx = texture.getContext();
+          ctx.fillStyle = "rgba(10, 14, 22, 0.85)";
+          ctx.beginPath();
+          if ((ctx as any).roundRect) {
+            (ctx as any).roundRect(8, 8, 496, 88, 16);
+          } else {
+            ctx.rect(8, 8, 496, 88);
+          }
+          ctx.fill();
+          ctx.strokeStyle = isBlue ? "#38BDF8" : "#FB923C";
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "bold 36px 'Plus Jakarta Sans', Inter, sans-serif";
+          ctx.fillText(p.name.slice(0, 20), 24, 60);
+
+          texture.update();
 
           const labelMat = new B.StandardMaterial(`label-mat-${p.id}`, scene);
           labelMat.diffuseTexture = texture;
@@ -330,11 +541,19 @@ export default function ReplayViewer({
           const weight =
             b.time > a.time ? Math.min(1, Math.max(0, (t - a.time) / (b.time - a.time))) : 0;
 
-          // Ball positioning & interpolation
+          // Rotate boost pad orbs
+          boostOrbs.forEach((orb, i) => {
+            orb.rotation.y += 0.02;
+            orb.position.y = BIG_BOOST_PADS[i][1] + 0.8 + Math.sin(t * 3 + i) * 0.12;
+          });
+
+          // Ball positioning & ground shadow
           if (a.ball) {
             ball.setEnabled(true);
+            ballShadow.setEnabled(true);
             const pA = pos(a.ball.position);
             ball.position = pA;
+
             if (
               b.ball &&
               !a.discontinuity &&
@@ -343,11 +562,20 @@ export default function ReplayViewer({
             ) {
               ball.position = B.Vector3.Lerp(pA, pos(b.ball.position), weight);
             }
+
+            // Shadow directly under ball
+            ballShadow.position.x = ball.position.x;
+            ballShadow.position.z = ball.position.z;
+            const height = Math.max(0, ball.position.y);
+            const scale = Math.max(0.4, 1.2 - height * 0.04);
+            ballShadow.scaling.set(scale, scale, scale);
+            shadowMat.alpha = Math.max(0.15, 0.6 - height * 0.03);
           } else {
             ball.setEnabled(false);
+            ballShadow.setEnabled(false);
           }
 
-          // Cars positioning, rotation, & interpolation
+          // Cars positioning, rotation, boost thrusters, & interpolation
           for (const [id, mesh] of cars) {
             const carA = a.cars.find((c) => c.player_id === id);
             const carB = b.cars.find((c) => c.player_id === id);
@@ -379,10 +607,20 @@ export default function ReplayViewer({
               } else {
                 mesh.rotationQuaternion = rotA;
               }
+
+              // Thruster jet animation
+              const jet = thrusters.get(id);
+              if (jet) {
+                const isBoosting =
+                  carA.boost != null &&
+                  carB?.boost != null &&
+                  carB.boost < carA.boost;
+                jet.setEnabled(isBoosting);
+              }
             }
           }
 
-          // Camera modes
+          // CAMERA MODES
           if (cam !== lastCam) {
             view.detachControl();
             if (cam === "free") {
@@ -404,22 +642,88 @@ export default function ReplayViewer({
             view.alpha = -Math.PI / 2;
             view.beta = 0.001;
             view.radius = 120;
-          } else if (cam !== "free") {
+          } else if (cam === "broadcast") {
+            // RLCS Sideline TV Camera: dynamic sideline pan & tilt
             view.mode = B.Camera.PERSPECTIVE_CAMERA;
-            const target =
-              cam === "ball" ? ball.position : cars.get(pid ?? "")?.position ?? ball.position;
-            view.target.copyFrom(target);
-            view.beta = 1.05;
-            view.radius = cam === "ball" ? 36 : 24;
-
-            if (cam === "player") {
-              const pMesh = cars.get(pid ?? "");
-              if (pMesh?.rotationQuaternion) {
+            const focalPoint = ball.position;
+            view.target = B.Vector3.Lerp(view.target, focalPoint, 0.08);
+            view.alpha = -Math.PI / 2 + (focalPoint.x / 40.96) * 0.35;
+            view.beta = 1.15;
+            view.radius = 52 + Math.abs(focalPoint.z) * 0.15;
+          } else if (cam === "ball") {
+            view.mode = B.Camera.PERSPECTIVE_CAMERA;
+            view.target.copyFrom(ball.position);
+            view.beta = 1.1;
+            view.radius = 34;
+            view.alpha = -Math.PI / 2;
+          } else if (cam === "player") {
+            view.mode = B.Camera.PERSPECTIVE_CAMERA;
+            const pMesh = cars.get(pid ?? "");
+            if (pMesh) {
+              view.target.copyFrom(pMesh.position);
+              view.beta = 1.18;
+              view.radius = 18;
+              if (pMesh.rotationQuaternion) {
                 const front = new B.Vector3(1, 0, 0).applyRotationQuaternion(pMesh.rotationQuaternion);
                 view.alpha = Math.atan2(-front.z, -front.x);
               }
             } else {
-              view.alpha = -Math.PI / 2;
+              view.target.copyFrom(ball.position);
+              view.radius = 32;
+            }
+          }
+
+          // 2D Tactical Radar update
+          if (radarCanvasRef.current && showRadar) {
+            const ctx = radarCanvasRef.current.getContext("2d");
+            if (ctx) {
+              const rw = radarCanvasRef.current.width;
+              const rh = radarCanvasRef.current.height;
+              ctx.clearRect(0, 0, rw, rh);
+
+              // Field outline
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+              ctx.lineWidth = 1.5;
+              ctx.strokeRect(6, 6, rw - 12, rh - 12);
+
+              // Halfway line
+              ctx.beginPath();
+              ctx.moveTo(6, rh / 2);
+              ctx.lineTo(rw - 6, rh / 2);
+              ctx.stroke();
+
+              // Ball dot
+              if (ball.isEnabled()) {
+                const bx = ((ball.position.x + 40.96) / 81.92) * (rw - 16) + 8;
+                const bz = ((ball.position.z + 51.2) / 102.4) * (rh - 16) + 8;
+                ctx.fillStyle = "#FFFFFF";
+                ctx.shadowColor = "#38BDF8";
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.arc(bx, bz, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+              }
+
+              // Cars dots
+              for (const [id, mesh] of cars) {
+                if (!mesh.isEnabled()) continue;
+                const p = replay.players.find((x) => x.id === id);
+                const isBlue = p?.team === 0;
+                const cx = ((mesh.position.x + 40.96) / 81.92) * (rw - 16) + 8;
+                const cz = ((mesh.position.z + 51.2) / 102.4) * (rh - 16) + 8;
+
+                ctx.fillStyle = isBlue ? "#38BDF8" : "#FB923C";
+                ctx.beginPath();
+                ctx.arc(cx, cz, id === pid ? 4.5 : 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (id === pid) {
+                  ctx.strokeStyle = "#FFFFFF";
+                  ctx.lineWidth = 1.5;
+                  ctx.stroke();
+                }
+              }
             }
           }
 
@@ -446,13 +750,14 @@ export default function ReplayViewer({
       disposed = true;
       cleanup?.();
     };
-  }, [replay]);
+  }, [replay, showRadar]);
 
   const currentFrame = replay.frames.reduce(
     (last, f) => (f.time <= time ? f : last),
     replay.frames[0]
   );
   const currentCar = currentFrame?.cars.find((c) => c.player_id === playerId);
+  const selectedPlayer = replay.players.find((p) => p.id === playerId);
 
   const frameStep = (dir: number) => {
     setPlaying(false);
@@ -474,7 +779,7 @@ export default function ReplayViewer({
       <div
         className="arena-wrapper"
         tabIndex={0}
-        aria-label="Replay arena canvas. Space to toggle play/pause, left/right arrows to step frames, 1-4 for camera views."
+        aria-label="Replay arena canvas. Space to toggle play/pause, left/right arrows to step frames, 1-5 for camera views."
         onKeyDown={(e) => {
           if ((e.target as HTMLElement).closest("input,select,textarea")) return;
           if (e.key === " ") {
@@ -486,62 +791,90 @@ export default function ReplayViewer({
           } else if (e.key === "ArrowRight") {
             e.preventDefault();
             e.shiftKey ? seekRelative(5) : frameStep(1);
-          } else if (["1", "2", "3", "4"].includes(e.key)) {
+          } else if (["1", "2", "3", "4", "5"].includes(e.key)) {
             e.preventDefault();
-            setCamera((["player", "ball", "top", "free"] as const)[Number(e.key) - 1]);
+            setCamera(
+              (["player", "ball", "broadcast", "top", "free"] as const)[Number(e.key) - 1]
+            );
           }
         }}
       >
         <canvas ref={canvasRef} className="arena-canvas" />
 
-        {/* HUD: Score and Game Clock */}
+        {/* 2D Tactical Radar in top-right */}
+        {showRadar && (
+          <div className="arena-radar-card" title="2D Tactical Radar (Top-Down Field Overview)">
+            <div className="radar-header">
+              <span>RADAR</span>
+              <button
+                className="radar-toggle-btn"
+                onClick={() => setShowRadar(false)}
+                title="Hide Radar"
+              >
+                ✕
+              </button>
+            </div>
+            <canvas ref={radarCanvasRef} width={120} height={150} className="radar-canvas" />
+          </div>
+        )}
+
+        {/* HUD: Broadcast Scoreboard and Game Clock */}
         <div className="arena-hud">
-          <div className="hud-score">
-            <span className="score-blue">
-              BLUE {replay.summary.blue_score ?? 0}
-            </span>
-            <span className="score-clock">
-              {currentFrame?.match_clock_seconds != null
-                ? timeLabel(currentFrame.match_clock_seconds)
-                : timeLabel(time)}
-            </span>
-            <span className="score-orange">
-              {replay.summary.orange_score ?? 0} ORANGE
-            </span>
+          <div className="hud-broadcast-scoreboard">
+            <div className="score-side blue">
+              <span className="team-tag">BLUE</span>
+              <span className="score-num">{replay.summary.blue_score ?? 0}</span>
+            </div>
+
+            <div className="score-clock-box">
+              <span className="clock-digits">
+                {currentFrame?.match_clock_seconds != null
+                  ? timeLabel(currentFrame.match_clock_seconds)
+                  : timeLabel(time)}
+              </span>
+              <span className="clock-sub">MATCH CLOCK</span>
+            </div>
+
+            <div className="score-side orange">
+              <span className="score-num">{replay.summary.orange_score ?? 0}</span>
+              <span className="team-tag">ORANGE</span>
+            </div>
           </div>
 
-          <div className="hud-player">
-            <span>
-              {replay.players.find((p) => p.id === playerId)?.name ?? "Global Perspective"}
-            </span>
-            <span>
-              Boost:{" "}
-              <b className="boost-pill">
-                {currentCar?.boost != null ? Math.round(currentCar.boost) : "N/A"}
-              </b>
-            </span>
-          </div>
+          {/* Focused Player Telemetry Pill */}
+          {selectedPlayer && (
+            <div className="hud-telemetry-badge">
+              <div className="telemetry-player-info">
+                <span className={`team-dot ${selectedPlayer.team === 0 ? "blue" : "orange"}`} />
+                <span className="player-label">{selectedPlayer.name}</span>
+              </div>
+              <div className="telemetry-boost-dial">
+                <span className="boost-label">BOOST</span>
+                <span className="boost-val">
+                  {currentCar?.boost != null ? Math.round(currentCar.boost) : "--"}%
+                </span>
+                <div className="boost-mini-bar">
+                  <div
+                    className="boost-mini-fill"
+                    style={{
+                      width: `${currentCar?.boost != null ? Math.round(currentCar.boost) : 0}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {(!ready || error) && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(23, 26, 21, 0.85)",
-              color: error ? "var(--danger)" : "var(--accent)",
-              fontWeight: 600,
-            }}
-          >
-            {error || "Preparing 3D Replay Studio..."}
+          <div className="arena-loading-overlay">
+            <Sparkles size={24} className="spinning" color="#38BDF8" />
+            <span>{error || "Initializing Broadcast 3D Stadium..."}</span>
           </div>
         )}
       </div>
 
-      {/* Timeline & Playback Card */}
+      {/* Timeline & Broadcast Playback Card */}
       <div className="timeline-card">
         {/* Scrubber with Event Pins */}
         <div className="timeline-scrubber-track">
@@ -604,13 +937,13 @@ export default function ReplayViewer({
             </button>
             <button
               className="icon-btn"
-              title="Previous frame"
+              title="Previous frame (Left Arrow)"
               onClick={() => frameStep(-1)}
             >
               <SkipBack size={15} />
             </button>
             <button
-              className="icon-btn primary"
+              className="icon-btn primary play-pulse"
               title={playing ? "Pause (Space)" : "Play (Space)"}
               disabled={!ready || !!error}
               onClick={() => setPlaying((p) => !p)}
@@ -619,76 +952,56 @@ export default function ReplayViewer({
             </button>
             <button
               className="icon-btn"
-              title="Next frame"
+              title="Next frame (Right Arrow)"
               onClick={() => frameStep(1)}
             >
               <SkipForward size={15} />
             </button>
 
-            <span
-              style={{
-                marginLeft: 10,
-                fontSize: 13,
-                fontWeight: 600,
-                fontVariantNumeric: "tabular-nums",
-                color: "var(--text)",
-              }}
-            >
-              {timeLabel(time)} <span style={{ color: "var(--muted)" }}>/ {timeLabel(end)}</span>
+            <span className="time-display-box">
+              {timeLabel(time)} <span className="time-duration">/ {timeLabel(end)}</span>
             </span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* Speed selector */}
-            <select
-              aria-label="Playback Speed"
-              value={speed}
-              onChange={(e) => setSpeed(Number(e.target.value))}
-              style={{
-                background: "var(--surface-raised)",
-                color: "var(--text)",
-                border: "1px solid var(--line)",
-                borderRadius: "var(--radius-sm)",
-                padding: "4px 8px",
-                fontSize: 12,
-                fontWeight: 600,
-              }}
-            >
+          {/* Right Controls: Speeds & Cameras */}
+          <div className="playback-right-controls">
+            {/* Speed Pills */}
+            <div className="speed-pills-row">
               {[0.25, 0.5, 1, 1.5, 2].map((s) => (
-                <option key={s} value={s}>
-                  {s}x speed
-                </option>
+                <button
+                  key={s}
+                  className={`speed-pill ${speed === s ? "active" : ""}`}
+                  onClick={() => setSpeed(s)}
+                >
+                  {s}x
+                </button>
               ))}
-            </select>
+            </div>
 
-            {/* Camera selector */}
-            <select
-              aria-label="Camera Perspective"
-              value={camera}
-              onChange={(e) => setCamera(e.target.value as any)}
-              style={{
-                background: "var(--surface-raised)",
-                color: "var(--text)",
-                border: "1px solid var(--line)",
-                borderRadius: "var(--radius-sm)",
-                padding: "4px 8px",
-                fontSize: 12,
-                fontWeight: 600,
-              }}
-            >
-              <option value="player">Player Chase (1)</option>
-              <option value="ball">Ball Track (2)</option>
-              <option value="top">Overhead Tactics (3)</option>
-              <option value="free">Free Camera (4)</option>
-            </select>
-
-            <button
-              className="icon-btn"
-              title="Toggle Fullscreen"
-              onClick={() => canvasRef.current?.parentElement?.requestFullscreen()}
-            >
-              <Maximize2 size={15} />
-            </button>
+            {/* Camera Switcher Buttons */}
+            <div className="camera-btn-group">
+              {[
+                { id: "player", label: "Player Chase", icon: Video },
+                { id: "ball", label: "Ball Cam", icon: Eye },
+                { id: "broadcast", label: "RLCS TV", icon: Tv },
+                { id: "top", label: "Tactical 2D", icon: Layers },
+                { id: "free", label: "Free Orbit", icon: Compass },
+              ].map((c) => {
+                const Icon = c.icon;
+                const active = camera === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    className={`camera-toggle-btn ${active ? "active" : ""}`}
+                    onClick={() => setCamera(c.id as any)}
+                    title={c.label}
+                  >
+                    <Icon size={14} />
+                    <span>{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

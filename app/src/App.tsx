@@ -21,6 +21,9 @@ import Progress from "./pages/Progress";
 import Teammates from "./pages/Teammates";
 import SettingsPage from "./pages/Settings";
 
+import TitleBar from "./components/TitleBar";
+import OnboardingModal from "./components/OnboardingModal";
+
 import type {
   ReplaySummary,
   ReplayAnalysis,
@@ -81,6 +84,7 @@ export default function App() {
   } | null>(null);
 
   const [coachInitialPrompt, setCoachInitialPrompt] = useState<string>("");
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
 
   // Load initial data from Tauri native backend
   const loadData = async () => {
@@ -275,7 +279,9 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
+    <>
+      <TitleBar activeMatch={selectedReplay?.summary.id} />
+      <div className="app-shell">
       {/* 244px Sidebar Rail */}
       <aside className="sidebar">
         <div className="brand">
@@ -359,7 +365,11 @@ export default function App() {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="profile-pill">
+          <div
+            className="profile-pill"
+            onClick={() => setShowOnboarding(true)}
+            title="Edit Player Profile, Ranks & Playstyle"
+          >
             <div className="profile-avatar">
               {(settings.player_name || "P").slice(0, 1).toUpperCase()}
             </div>
@@ -403,7 +413,8 @@ export default function App() {
             progress={progress}
             onSelectReplay={handleSelectReplay}
             onNavigate={setCurrentPage}
-            onImportFolder={handleImportFolder}
+            onOpenOnboarding={() => setShowOnboarding(true)}
+            onAskCoach={(prompt) => handleNavigateToCoach("", prompt)}
           />
         )}
 
@@ -479,5 +490,14 @@ export default function App() {
         )}
       </main>
     </div>
+
+    {showOnboarding && (
+      <OnboardingModal
+        initialSettings={settings}
+        onSave={handleSaveSettings}
+        onClose={() => setShowOnboarding(false)}
+      />
+    )}
+  </>
   );
 }

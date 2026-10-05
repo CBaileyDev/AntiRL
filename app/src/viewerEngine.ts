@@ -5,6 +5,7 @@ export { Scene } from "@babylonjs/core/scene";
 export { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 export { Camera } from "@babylonjs/core/Cameras/camera";
 export { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
+export { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 export { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 export { DynamicTexture } from "@babylonjs/core/Materials/Textures/dynamicTexture";
 export { Mesh } from "@babylonjs/core/Meshes/mesh";
