@@ -554,9 +554,9 @@ impl CoachService {
                 match self.llm(&key, base, &model, messages, 0.4, 2500, Some(&callback)).await {
                     Ok(text)=>text,
                     Err(error)=>{
-                        let content=filter_pack_codes(&partial.lock().map_err(err)?.clone(), &retrieved);
-                        self.persist_reply(&conv_id,json!({"role":"assistant","content":content,"status":if error.contains("cancel"){"cancelled"}else{"error"},"error":error,"timestamp":now(),"prompt_version":"coach-3","mode":mode,"context_manifest":manifest}))?;
-                        return Ok(json!({"conversation_id":conv_id,"response":content,"status":if error.contains("cancel"){"cancelled"}else{"error"},"error":error,"context_manifest":manifest}));
+                        let (content,status)=failed_chat_reply(&ctx,&partial.lock().map_err(err)?.clone(),&error,&retrieved);
+                        self.persist_reply(&conv_id,json!({"role":"assistant","content":content,"status":status,"source":if status=="offline_fallback"{"offline"}else{"cloud_partial"},"error":error,"timestamp":now(),"prompt_version":"coach-3","mode":mode,"preset":preset,"replay_id":replay_id,"context_manifest":manifest}))?;
+                        return Ok(json!({"conversation_id":conv_id,"response":content,"status":status,"error":error,"context_manifest":manifest}));
                     }
                 }
             }
@@ -848,13 +848,29 @@ fn contains_pack_code(text:&str)->bool {
 }
 fn offline_chat(ctx: &EvidenceContext) -> String {
  let evidence=ctx.text.split("== CROSS-MATCH / LIBRARY ==").nth(1).unwrap_or("Personal evidence unavailable");
- let evidence=evidence.split("== USER COACHING MEMORY").next().unwrap_or(evidence);
- format!("**Offline evidence summary** — cloud AI is off or no credential is configured.\n\n```text\n{}\n```\n\nBoost-active duration at >=2200 uu/s is not supersonic uptime or proven waste. Unknown telemetry remains unavailable. General freeplay alternative: practice one recovery route for five minutes, then review one same-mode turnover. Grades and promotion forecasts await validation.", truncate_chars(evidence,16000))
+ let evidence=evidence.split("== SAVED COACHING MEMORY").next().unwrap_or(evidence).split("== MATCH ==").next().unwrap_or(evidence);
+ let evidence=evidence.lines().filter(|line|!line.starts_with("Context manifest:")).collect::<Vec<_>>().join("\n");
+ format!("**Offline evidence summary** — a local summary, not a generated tactical review.\n\n```text\n{}\n```\n\nBoost-active duration at >=2200 uu/s is not supersonic uptime or proven waste. Unknown telemetry remains unavailable. General freeplay alternative: practice one recovery route for five minutes, then review one same-mode turnover. Grades and promotion forecasts await validation.", truncate_chars(&evidence,5000))
+}
+
+fn failed_chat_reply(ctx:&EvidenceContext,partial:&str,error:&str,retrieved:&Value)->(String,&'static str){
+ let partial=filter_pack_codes(partial,retrieved);
+ if error.to_ascii_lowercase().contains("cancel"){return (partial,"cancelled");}
+ if !partial.trim().is_empty(){return (partial,"error");}
+ (format!("Cloud coaching could not complete. Your provider/model selection is unchanged. The local evidence summary below remains available; retry cloud coaching when the service recovers.\n\n{}",offline_chat(ctx)),"offline_fallback")
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test] fn provider_failure_gives_honest_local_summary_without_replacing_cancelled_or_partial_text(){
+        let ctx=EvidenceContext{text:"== CROSS-MATCH / LIBRARY ==\nLibrary: 29 analyzed replays.\nContext manifest: {\"private\":\"internal\"}\n2v2: lifetime 20 / recent 20 / previous 0\n== SAVED COACHING MEMORY ==\nPrivate memory\n== MATCH ==\nPlayer notes".into(),event_ids:vec![],focus_name:None,has_replay:false};
+        let catalog=json!({"records":[]});
+        let (content,status)=failed_chat_reply(&ctx,"","AI provider error (504 Gateway Timeout)",&catalog);
+        assert_eq!(status,"offline_fallback");assert!(content.contains("29 analyzed")&&content.contains("local summary"));assert!(!content.contains("Private memory")&&!content.contains("internal"));
+        assert_eq!(failed_chat_reply(&ctx,"","AI request cancelled",&catalog),("".into(),"cancelled"));
+        assert_eq!(failed_chat_reply(&ctx,"Partial observed text","network interrupted",&catalog),("Partial observed text".into(),"error"));
+    }
     #[test] fn withheld_pack_codes_include_malformed_and_cancelled_candidates(){
         let retrieved=json!({"records":[{"code":"FC42-A3E1-A202-884A"}]});
         assert_eq!(filter_pack_codes("Use `ABCD-1234-EFGH-5678` or 0000-0000-0000-0000.",&retrieved),"Use `[unverified pack code withheld]` or [unverified pack code withheld].");

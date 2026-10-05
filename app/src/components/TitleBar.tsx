@@ -77,7 +77,7 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
           title={aiConnected ? "Cloud AI consent is on and a provider key is detected" : "Enable cloud consent and add a provider key in Settings"}
         >
           <span className="pill-dot" />
-          <span>{aiConnected ? "AI connected" : "AI disconnected"}</span>
+          <span>{aiConnected ? "Cloud configured" : "Local mode"}</span>
         </div>
       </div>
       <div className="titlebar-center" data-tauri-drag-region />

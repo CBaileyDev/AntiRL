@@ -441,7 +441,7 @@ export default function Coach({
               </div>
 
               {m.legacy_warning&&<small className="legacy-advice">{m.legacy_warning}</small>}
-              {m.status&&m.status!=="complete"&&<small role="status">{m.status} · partial response</small>}
+              {m.status&&m.status!=="complete"&&<small role="status">{m.status==="offline_fallback"?"Local fallback · cloud request failed":`${m.status} · partial response`}</small>}
               {m.role==="assistant"&&<button className="btn secondary" style={{float:"right"}} onClick={()=>navigator.clipboard.writeText(m.content).then(()=>setNotice("Response copied")).catch(e=>setNotice(String(e)))}>Copy response</button>}
               <div className="coach-markdown" style={{ lineHeight: 1.55 }}>{m.role === "user" ? <span style={{ whiteSpace: "pre-wrap" }}>{m.content}</span> : <Markdown text={m.content} />}</div>
 

@@ -46,3 +46,10 @@ Native JSON results and synthetic screenshots are in `docs/validation`. Thirty a
 ## Publication privacy
 
 The public snapshot excludes private local Git history, machine-local agent files, downloaded research tools, raw replays, runtime databases, keys and personal handoff/profile examples. The raw Gemini report stays local; its generic reviewed audit is published. Only synthetic screenshots/results are included. Original files and user data remain in the working checkout.
+
+## Runnable test build follow-up
+
+- Built a self-contained portable app in `dist/AntiRL-Test`, a ZIP and the NSIS installer; created an AntiRL Test Desktop shortcut and launched the app normally. Development servers are not required. These local artifacts contain no runtime databases or replay files.
+- Created and integrity-checked a SQLite-aware backup inside existing app storage before first production-data launch. Verified that the portable build opens the existing library, preserves provider/model and initializes analytics. Locally parsed one existing replay with the packaged worker and checked its native Studio render; original replay data and screenshots remain local and excluded from publication. This is one real-replay smoke test, not the full release corpus.
+- Provider model-list and minimal synthetic chat probes both returned HTTP 504. No provider/model switch. When cloud fails before any content, Coach now saves and displays an explicitly labelled local evidence summary instead of an empty response. Cancellation and partial cloud responses remain intact. The title badge says Cloud configured rather than claiming an established connection.
+- PASS this follow-up: 26 Rust tests (1 live test ignored), frontend/package build, focused synthetic UI regressions and `test-native-fallback.mjs`: actual configured-provider 504 fallback, label/persistence and reload. The local summary excludes saved memory/internal manifests. Fallback is not a tactical AI review. Cloud success remains externally blocked.

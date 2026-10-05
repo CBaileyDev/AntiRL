@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "provider": "neotoken",
+  "model": "glm-5.3-flash",
+  "observed_provider_failure": "HTTP 504",
+  "checks": [
+    "actual provider failure gives local evidence summary",
+    "fallback explicitly labelled and persisted",
+    "reload preserves fallback status",
+    "provider selection unchanged"
+  ]
+}

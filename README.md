@@ -25,3 +25,5 @@ Correct boost percentage ring, retained ceiling with spectator cutaway, correcte
 Grades and rank-up forecasts remain unavailable pending validated datasets and calibration. See `docs/IMPLEMENTATION_LEDGER.md` for actual checks and outstanding gates.
 
 Research source checks and rejected grading/forecast assumptions are documented in [the research audit](docs/RESEARCH_AUDIT.md).
+
+A prepared Windows test build can be launched with `scripts/launch-test.ps1` or `dist/AntiRL-Test/AntiRL.exe`. The portable folder and installer are local build artifacts; they are excluded from source control. Cloud failures before an answer produce an explicitly labelled local evidence summary without changing the selected provider or model.
