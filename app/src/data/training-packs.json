@@ -1,0 +1,132 @@
+[
+  {
+    "id": "shots-1s",
+    "code": "FC42-A3E1-A202-884A",
+    "title": "Kevpert - 1s Shots F8",
+    "creator": "Kevpert",
+    "difficulty": "Gold",
+    "skill_tags": [
+      "shooting",
+      "shots"
+    ],
+    "modes": [
+      "1v1",
+      "2v2",
+      "3v3"
+    ],
+    "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
+    "source_date": "2020-02-27",
+    "last_checked": "2026-10-05",
+    "verification": "source_confirmed",
+    "in_game_tested": false,
+    "source_excerpt": "Kevpert | Kevpert - 1s Shots F8 | Gold | FC42-A3E1-A202-884A",
+    "source_hash": "42f8547ce8923f78c04ced050c41415baca75887d2695e9a1bdd518d01493732",
+    "prerequisites": "Try the first shot; choose a simpler drill if it is consistently out of reach.",
+    "drill_protocol": "Practice for 5 minutes. Track clean attempts on one shot; simplify setup if needed. Next match: use the skill only when space and recovery allow. Pack completion is not proof of match improvement.",
+    "license_notes": "Public factual metadata and brief attribution only; no pack assets redistributed."
+  },
+  {
+    "id": "passing",
+    "code": "CDBB-8953-C052-654F",
+    "title": "Passing (Infield)",
+    "creator": "Mykal",
+    "difficulty": "Platinum",
+    "skill_tags": [
+      "passing"
+    ],
+    "modes": [
+      "2v2",
+      "3v3"
+    ],
+    "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
+    "source_date": "2020-02-27",
+    "last_checked": "2026-10-05",
+    "verification": "source_confirmed",
+    "in_game_tested": false,
+    "source_excerpt": "Mykal | Passing (Infield) | Platinum | CDBB-8953-C052-654F",
+    "source_hash": "6104bf96f3721731f1568f9324635ba4002643fcef27eadc2da7d443d43265b1",
+    "prerequisites": "Try the first shot; choose a simpler drill if it is consistently out of reach.",
+    "drill_protocol": "Practice for 5 minutes. Track clean attempts on one shot; simplify setup if needed. Next match: use the skill only when space and recovery allow. Pack completion is not proof of match improvement.",
+    "license_notes": "Public factual metadata and brief attribution only; no pack assets redistributed."
+  },
+  {
+    "id": "aerials",
+    "code": "537C-F257-0F3A-4CB0",
+    "title": "Intermediate Aerials",
+    "creator": "Mykal",
+    "difficulty": "Diamond",
+    "skill_tags": [
+      "aerial",
+      "aerials"
+    ],
+    "modes": [
+      "1v1",
+      "2v2",
+      "3v3"
+    ],
+    "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
+    "source_date": "2020-02-27",
+    "last_checked": "2026-10-05",
+    "verification": "source_confirmed",
+    "in_game_tested": false,
+    "source_excerpt": "Mykal | Intermediate Aerials | Diamond | 537C-F257-0F3A-4CB0",
+    "source_hash": "da44d8d3e9b004ab73f28b92431333fbb98d59faaaba910523aabc45f59a920e",
+    "prerequisites": "Try the first shot; choose a simpler drill if it is consistently out of reach.",
+    "drill_protocol": "Practice for 5 minutes. Track clean attempts on one shot; simplify setup if needed. Next match: use the skill only when space and recovery allow. Pack completion is not proof of match improvement.",
+    "license_notes": "Public factual metadata and brief attribution only; no pack assets redistributed."
+  },
+  {
+    "id": "wall-defense",
+    "code": "1C1A-041C-862D-5F9C",
+    "title": "wall defence",
+    "creator": "ReaLize",
+    "difficulty": "Champion",
+    "skill_tags": [
+      "wall",
+      "defense",
+      "defence"
+    ],
+    "modes": [
+      "1v1",
+      "2v2",
+      "3v3"
+    ],
+    "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
+    "source_date": "2020-02-27",
+    "last_checked": "2026-10-05",
+    "verification": "source_confirmed",
+    "in_game_tested": false,
+    "source_excerpt": "ReaLize | wall defence | Champion | 1C1A-041C-862D-5F9C",
+    "source_hash": "c5d379761bb8698acfb2af88c9858386b2faa17bf8db3d079b17c47ac315dfa3",
+    "prerequisites": "Try the first shot; choose a simpler drill if it is consistently out of reach.",
+    "drill_protocol": "Practice for 5 minutes. Track clean attempts on one shot; simplify setup if needed. Next match: use the skill only when space and recovery allow. Pack completion is not proof of match improvement.",
+    "license_notes": "Public factual metadata and brief attribution only; no pack assets redistributed."
+  },
+  {
+    "id": "easy-shots",
+    "code": "57EA-B9F0-E066-ED28",
+    "title": "Easy Goals :D",
+    "creator": "FL0",
+    "difficulty": "Silver",
+    "skill_tags": [
+      "shooting",
+      "shots",
+      "goals"
+    ],
+    "modes": [
+      "1v1",
+      "2v2",
+      "3v3"
+    ],
+    "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
+    "source_date": "2020-02-27",
+    "last_checked": "2026-10-05",
+    "verification": "source_confirmed",
+    "in_game_tested": false,
+    "source_excerpt": "FL0 | Easy Goals :D | Silver | 57EA-B9F0-E066-ED28",
+    "source_hash": "edc57693ad994f6dd320fa5b2fd03b57330b03afbecb9303200096684054173b",
+    "prerequisites": "Try the first shot; choose a simpler drill if it is consistently out of reach.",
+    "drill_protocol": "Practice for 5 minutes. Track clean attempts on one shot; simplify setup if needed. Next match: use the skill only when space and recovery allow. Pack completion is not proof of match improvement.",
+    "license_notes": "Public factual metadata and brief attribution only; no pack assets redistributed."
+  }
+]

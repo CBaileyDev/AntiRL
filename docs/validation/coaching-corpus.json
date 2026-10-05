@@ -1,0 +1,242 @@
+[
+  {
+    "id": "screenshot_supersonic_inversion",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "supersonic_boost_seconds=6 is boost-active at speed, not total uptime or a target of 9+",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "threshold_not_cap",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "1v1",
+    "expected_limit": "2250 active boost counts condition, not proven unnecessary",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "missing_speed",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "unknown remains null",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "real_zero",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "2v2",
+    "expected_limit": "observed zero distinct from unavailable",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "weighted_boost",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "10s at20 plus90s at80 equals74, not50",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "duplicate",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "same canonical match contributes once",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "reanalysis",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "2v2",
+    "expected_limit": "replace revision",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "deletion",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "remove lifetime contribution",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "rebuild",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "reconcile source exactly",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "identity_unknown",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "no first-participant attribution",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "player_absent",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "1v1",
+    "expected_limit": "do not attribute another player",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "duplicate_names",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "3v3",
+    "expected_limit": "ambiguous name is not stable identity",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "wrong_mode",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "2v2 cannot occupy recent1v1 slice",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "other_player_library",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "nonuser match excluded",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "benchmark",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "comparison samples excluded from personal totals",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "old_import",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "sort played time, not upload time",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "unknown_date",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "lifetime only, not newest",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "partial_coverage",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "3v3",
+    "expected_limit": "no invented observation weights",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "injected_replay_name",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "1v1",
+    "expected_limit": "name is data, no permission override",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "injected_pack_source",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "external text is untrusted data",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "stale_assistant",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "current dictionary wins over old advice",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "promotion_guarantee",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "abstain from forecast",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "mmr_three_matches",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "2v2",
+    "expected_limit": "no exact MMR estimate",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "low_shot_losses",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "3v3",
+    "expected_limit": "no causal inference from shot count",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "supportive_low_score",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "2v2",
+    "expected_limit": "scoreboard is not responsibility or grade",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "all_modes",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "All",
+    "expected_limit": "separate tactical contexts",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "invented_pack",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "1v1",
+    "expected_limit": "withhold nonretrieved code",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "unknown_evidence",
+    "fixture": "synthetic authored expectation",
+    "route": "selected",
+    "mode": "2v2",
+    "expected_limit": "reject nonexistent citation",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "provider_text_only",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "3v3",
+    "expected_limit": "backend retrieval, no pretend tool calls",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  },
+  {
+    "id": "identity_changed",
+    "fixture": "synthetic authored expectation",
+    "route": "general",
+    "mode": "All",
+    "expected_limit": "scope current identity, retain old lineage",
+    "validation": "deterministic contract only; human tactical/live output review required"
+  }
+]
