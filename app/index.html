@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #080A0F;">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,8 +7,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      html, body, #root {
+        background-color: #080A0F;
+        color: #F8FAFC;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+      }
+    </style>
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('GLOBAL JS ERROR:', e.error || e.message);
+        var box = document.getElementById('error-display');
+        if (!box) {
+          box = document.createElement('div');
+          box.id = 'error-display';
+          box.style.cssText = 'position:fixed;top:40px;left:20px;right:20px;background:#1E1520;border:1px solid #F43F5E;color:#FCA5A5;padding:16px;border-radius:8px;font-family:monospace;font-size:12px;z-index:999999;white-space:pre-wrap;box-shadow:0 10px 30px rgba(0,0,0,0.8);';
+          box.innerHTML = '<strong>Application Initialization Error:</strong><br/><br/>';
+          document.body.appendChild(box);
+        }
+        box.appendChild(document.createTextNode((e.error ? (e.error.stack || e.error.message) : e.message) + '\n'));
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('UNHANDLED REJECTION:', e.reason);
+      });
+    </script>
   </head>
-  <body>
+  <body style="background-color: #080A0F; color: #F8FAFC; margin: 0; padding: 0;">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

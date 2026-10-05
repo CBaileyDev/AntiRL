@@ -13,40 +13,42 @@ export default function TitleBar({ title = "AntiRL", activeMatch }: TitleBarProp
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     try {
-      const appWindow = getCurrentWindow();
-      appWindow.isMaximized().then(setIsMaximized);
-      appWindow.onResized(() => {
-        appWindow.isMaximized().then(setIsMaximized);
-      }).then((fn) => {
-        unlisten = fn;
-      });
-    } catch {
-      // Browser preview mode fallback
+      if (typeof window !== "undefined" && Boolean((window as any).__TAURI_INTERNALS__)) {
+        const appWindow = getCurrentWindow();
+        appWindow.isMaximized().then(setIsMaximized).catch(() => {});
+        appWindow.onResized(() => {
+          appWindow.isMaximized().then(setIsMaximized).catch(() => {});
+        }).then((fn) => {
+          unlisten = fn;
+        }).catch(() => {});
+      }
+    } catch (e) {
+      console.warn("TitleBar window integration unavailable:", e);
     }
     return () => unlisten?.();
   }, []);
 
   const handleMinimize = () => {
     try {
-      getCurrentWindow().minimize();
-    } catch {
-      console.log("Minimize called");
+      getCurrentWindow().minimize().catch(() => {});
+    } catch (e) {
+      console.warn("Minimize failed:", e);
     }
   };
 
   const handleMaximize = () => {
     try {
-      getCurrentWindow().toggleMaximize();
-    } catch {
-      console.log("Maximize called");
+      getCurrentWindow().toggleMaximize().catch(() => {});
+    } catch (e) {
+      console.warn("Maximize failed:", e);
     }
   };
 
   const handleClose = () => {
     try {
-      getCurrentWindow().close();
-    } catch {
-      console.log("Close called");
+      getCurrentWindow().close().catch(() => {});
+    } catch (e) {
+      console.warn("Close failed:", e);
     }
   };
 
