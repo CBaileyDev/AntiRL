@@ -1,0 +1,10 @@
+# Local research tools & downloaded binaries
+.local/
+target/
+node_modules/
+dist/
+build/
+*.tmp
+*.log
+.DS_Store
+Thumbs.db

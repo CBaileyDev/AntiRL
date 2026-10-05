@@ -1,0 +1,7 @@
+{
+  "status": "STOPPED",
+  "reason": "Existing reference executable exceeded bounded research budget",
+  "wall_seconds": 478.8,
+  "cpu_seconds": 473.96875,
+  "note": "Executable predates source edits observed during inspection. This does not establish current source performance or compatibility."
+}

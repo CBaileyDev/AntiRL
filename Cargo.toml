@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "crates/replay-core",
+    "crates/coach-services",
+    "src-tauri",
+]
+resolver = "2"
