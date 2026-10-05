@@ -73,17 +73,20 @@
       ]
     },
     {
-      "key": "supersonic_boost_seconds",
+      "key": "boost_active_at_supersonic_speed_s",
       "label": "Boost active at supersonic speed",
       "unit": "s",
       "formula": "valid seconds at speed >=2200 AND observed boost active",
-      "limitations": "NOT total supersonic uptime. NOT proven waste. Threshold 2200 differs from speed cap 2300; no universal target.",
+      "limitations": "NOT total supersonic uptime. NOT proven waste. Threshold 2200 differs from speed cap 2300; no universal target. Legacy supersonic_boost_seconds is a compatibility alias only.",
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
       "evidence_types": [
         "metric",
         "timeline"
+      ],
+      "aliases": [
+        "supersonic_boost_seconds"
       ]
     },
     {

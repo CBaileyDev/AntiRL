@@ -547,6 +547,7 @@ export default function SettingsPage({
           {/* Note Editor */}
           {selectedNote ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {selectedNote.legacy_warning&&<p className="legacy-advice">{selectedNote.legacy_warning}</p>}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <strong style={{ fontSize: 14, color: "var(--text)" }}>
                   {selectedNote.name}

@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "exact boost after seeks 0/25/50/75/100/null",
+    "player change updates boost to measured 80",
+    "floor/corner/goal/wall/ceiling viewpoints captured",
+    "camera-aware ceiling toggle",
+    "low/high performance samples"
+  ]
+}

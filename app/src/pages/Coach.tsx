@@ -13,6 +13,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { invoke } from "@tauri-apps/api/core";
+import {EvidenceHistory} from "../components/EvidenceHistory";
 import type { Conversation, Message, ReplayAnalysis, ReplaySummary, Settings } from "../types";
 
 export type ChatMsg = {
@@ -219,7 +220,7 @@ export default function Coach({
     const c=await invoke<Conversation>("create_conversation",{mode,preset});
     setSelectedConvId(c.id);scopeRef.current=c.id;setMessages([COACH_INTRO]);setLoading(false);sendingRef.current=false;onRefreshConversations();
   }catch(e){setNotice(String(e));}};
-  const exportChat=async(format:string)=>{try{await invoke("export_conversation",{format,snapshot:{title:conversation?.title || "New chat",mode,preset,messages:messages.map(m=>({...m,status:loading&&m===messages.at(-1)?"partial":m.status||"complete"}))}});}catch(e){setNotice(String(e));}};
+  const exportChat=async(format:string)=>{try{await invoke("export_conversation",{format,snapshot:{title:conversation?.title || "New chat",mode:conversation?.mode||mode,preset:conversation?.preset||preset,messages:messages.map(m=>{const bubble=Array.from(scrollRef.current?.querySelectorAll<HTMLElement>("[data-message-id]")||[]).find(b=>b.dataset.messageId===m.id);return {...m,content:format==="txt"?bubble?.querySelector<HTMLElement>(".coach-markdown")?.innerText||m.content:m.content,status:loading&&m===messages.at(-1)?"partial":m.status||"complete"};})}});}catch(e){setNotice(String(e));}};
 
   const [selectedReplayId, setSelectedReplayId] = useState<string | null>(
     activeReplayId || null
@@ -339,6 +340,7 @@ export default function Coach({
       </div>
       <small>Current chat: {conversation?.mode || mode} · {conversation?.preset || preset}. Changing the controls applies to a new chat.</small>
       {notice&&<div role="status">{notice}</div>}
+      <EvidenceHistory mode={conversation?.mode || mode} onOpen={onSelectReplayStudio}/>
       <details><summary>Find a training pack</summary><div className="coach-chat-toolbar"><input aria-label="Training skill" placeholder="shooting, aerials, passing…" value={packQuery} onChange={e=>setPackQuery(e.target.value)}/><button className="btn secondary" onClick={()=>invoke<any>("search_training_packs",{query:packQuery,mode:conversation?.mode || mode}).then(r=>{setPacks(r.records);setPackStatus(r.live_search);}).catch(e=>setNotice(String(e)))}>Search catalog</button></div><small>{packStatus}</small>{packs.map(p=><div key={p.id} style={{marginTop:8}}><strong>{p.title}</strong> · {p.creator} · {p.difficulty} (advisory)<br/><code>{p.code}</code> <button className="btn secondary" onClick={()=>navigator.clipboard.writeText(p.code).catch(e=>setNotice(String(e)))}>Copy pack code</button> <a href={p.source_url} target="_blank" rel="noreferrer">Source</a><small> · {p.verification}, checked {p.last_checked}; not tested in game</small><p>{p.drill_protocol}</p></div>)}</details>
       {/* Top Context Bar */}
       <div

@@ -1,0 +1,26 @@
+# Research intake and decisions — 2026-10-05
+
+The supplied Gemini report is a set of proposals, not a verified dataset or validation result. The original document stays local because it repeats personal profile examples. This audit records the independent checks used for implementation.
+
+| Report source / claim | Independent result | Integration decision |
+|---|---|---|
+| SRC-01, patch v1.78 | [Official article](https://www.rocketleague.com/news/patch-notes-v1-78) is dated June 16, 2020, not May 20. It records a June 30 rollback of the changed collision checks. Threshold/cap statements are marked unchanged. | Limited physics card only. No current collision-detector claims. |
+| SRC-02, game values | [RLBot reference](https://wiki.rlbot.org/v5/botmaking/useful-game-values/) lists 2200 threshold, 2300 cap and 12 boost per small pad. It warns pad locations can differ across maps. | Facts with limitations; no universal speed/boost targets. |
+| SRC-03, `54sdd3` video | The supplied ID is not a standard 11-character YouTube video ID; the page could not be resolved. | Exclude; no timestamp citation. |
+| SRC-04, benchmark API | [API documentation](https://ballchasing.com/doc/api) confirms authenticated reads, endpoint-specific limits and the legacy rank-filter enum. No MMR field is documented in its response examples. | Discovery architecture is plausible, but match-time MMR extraction is unverified. No automated SSL classification, acquisition or benchmark values. |
+| SRC-05 and training sources | Independently read the seven official published pack tables linked in each catalog record. All 20 submitted codes match those tables. Several suggested rank labels were absent from their sources. | Expand catalog to 20 source-confirmed records. Leave absent difficulty unspecified. No in-game verification claim. Practical drill protocols are authored practice suggestions, not source quotations or proven interventions. |
+| SRC-06–09, coaching videos | Supplied pages could not be inspected through the available fetch path. Their timestamps and claims remain unverified. The works-cited URLs also differ from the source ledger. | Do not integrate tactical cards or numerical detector thresholds from these citations. An inaccessible source is not proof it is false, but cannot pass this review gate. |
+| SRC-10, cognition meta-analysis | [PubMed record](https://pubmed.ncbi.nlm.nih.gov/39131624/) identifies Miao et al., PeerJ, August 7, 2024. The report gives a different journal and date. It compares experts/amateurs across esports; it is not a Rocket League progression cohort. | Evidence-limit card only. No causal practice effectiveness or promotion forecasting claim. |
+| SRC-11, target acquisition | The source-ledger bitstream could not be resolved; the works-cited entry points to a different bitstream. No accessible Rocket League longitudinal dataset was supplied. | Exclude pending source repair and method review. |
+| Benchmark sample-size/power claims | No pilot variance, clustering estimate, executable power analysis or collected manifest supplied. MMR cutoffs, full-match cutoffs and assumed power are proposals. | Reject them as production eligibility/calibration values. |
+| Grade anchors and 15/20/20/20/10/15 weights | No independent reviewer agreement, annotations, fitted model or held-out evaluation supplied. Several required touch/contact features are unavailable. | Do not implement the weights or score ranges. Grades remain unavailable. |
+| Mode cards and waste detector | Include absolute challenge rules, unsupported spatial/time cutoffs and universal boost targets despite exceptions. Ground contact, angular state and reliable touches are not established by this parser. | Retain neutral telemetry and review windows. No automatic blame, possession classification or unnecessary-boost score. |
+| Calendar rank timelines | No mode-specific longitudinal cohort, censoring model or calibration provided. The cognition paper cannot establish a permanent impossibility theorem either. | Abstain now; future forecasts still require the original empirical gates. Practice and reassessment remain available. |
+
+## Implemented from reviewed material
+
+Canonical boost-active metric with an explicit legacy adapter; separate threshold uptime; limited reviewed research-card retrieval with citations and source lineage; a 20-record sourced catalog; saved self-reported practice and rank observations; bounded scoped evidence retrieval. Only approved limited-fact/evidence-limit cards enter prompts. The report is never pasted into a system prompt.
+
+## Evidence still required
+
+Verified comparable replay cohorts with metric compatibility and provenance; qualified independent tactical annotations; grading calibration and held-out evaluation; longitudinal progression data including non-promotions; in-game pack tests; human review of actual provider outputs. Metadata publication and a larger prompt do not meet these gates.

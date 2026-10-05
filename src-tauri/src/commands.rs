@@ -218,6 +218,16 @@ pub async fn rebuild_analytics(state:State<'_,AppState>)->Result<(),String>{let 
 #[tauri::command(rename_all="snake_case")]
 pub fn search_training_packs(state:State<AppState>,query:String,mode:String)->Result<Value,String>{state.service.search_training_packs(&query,&mode,10)}
 #[tauri::command(rename_all="snake_case")]
+pub fn get_practice(state:State<AppState>,mode:String)->Result<Value,String>{state.service.get_practice(&mode)}
+#[tauri::command(rename_all="snake_case")]
+pub fn save_practice_plan(state:State<AppState>,mode:String,body:Value)->Result<Value,String>{state.service.save_practice_plan(&mode,&body)}
+#[tauri::command(rename_all="snake_case")]
+pub fn record_training(state:State<AppState>,mode:String,plan_id:String,minutes:f64,difficulty:String,notes:String)->Result<(),String>{state.service.record_training(&mode,&plan_id,minutes,&difficulty,&notes)}
+#[tauri::command(rename_all="snake_case")]
+pub fn archive_practice(state:State<AppState>,mode:String,id:String)->Result<(),String>{state.service.archive_practice(&mode,&id)}
+#[tauri::command(rename_all="snake_case")]
+pub async fn evidence_tool(state:State<'_,AppState>,tool:String,mode:String,args:Value)->Result<Value,String>{let s=state.service.clone();tokio::task::spawn_blocking(move||s.evidence_tool(&tool,&mode,&args)).await.map_err(|e|e.to_string())?}
+#[tauri::command(rename_all="snake_case")]
 pub async fn export_conversation(app:AppHandle,format:String,snapshot:Value)->Result<bool,String>{
  use tauri_plugin_dialog::DialogExt;
  if !["md","txt","json"].contains(&format.as_str()){return Err("Unsupported export format".into());}

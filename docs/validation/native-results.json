@@ -68,6 +68,8 @@
       }
     },
     "player_id": "synthetic:p",
-    "source": "analytics.sqlite3"
+    "query_version": "personal-windows-2",
+    "source": "analytics.sqlite3",
+    "source_watermark": "b64c107b51b769e741fc52530fca4c44611bed9b9fd9f8ae7cea5954885eea04"
   }
 }

@@ -98,6 +98,9 @@ export default function ReplayViewer({
   const [ready, setReady] = useState(false);
   const [cutaway,setCutaway]=useState(true);
   const cutawayRef=useRef(cutaway);cutawayRef.current=cutaway;
+  const [quality,setQuality]=useState<"low"|"high">(()=>localStorage.getItem("viewer-quality")==="low"?"low":"high");
+  const qualityRef=useRef(quality);qualityRef.current=quality;
+  useEffect(()=>{localStorage.setItem("viewer-quality",quality)},[quality]);
   const [expanded, setExpanded] = useState(false);
 
   stateRef.current = { time, playerId, camera };
@@ -528,12 +531,15 @@ export default function ReplayViewer({
         steel.diffuseColor=C3.White(); steel.diffuseTexture=metalTexture;
         const frameSteel = steel.clone("stadiumFrameSteel");
         frameSteel.diffuseTexture=null;
+        frameSteel.diffuseColor=hex("#647584");
+        // Authored trim overlaps collision surfaces: bias only its depth, never car poses.
+        frameSteel.zOffset=-2;
         frameSteel.disableLighting = false;
         frameSteel.emissiveColor = hex("#3f4c5c");
         const teamTrim = [BLUE, ORANGE].map((color, index) => {
           const m = new B.StandardMaterial(`stadiumTeam-${index}`, scene);
           m.diffuseColor = hex(color); m.emissiveColor = hex(color).scale(0.45);
-          m.specularColor = hex("#b0becb"); m.specularPower = 80; m.backFaceCulling = false;
+          m.zOffset=-2; m.specularColor = hex("#b0becb"); m.specularPower = 80; m.backFaceCulling = false;
           return m;
         });
         const stadiumGlass = new B.StandardMaterial("stadiumGlass", scene);
@@ -878,6 +884,9 @@ export default function ReplayViewer({
         let refreshHz=60, lastRaf=0;
         const refreshIntervals: number[]=[];
         scene.metadata={studio:{refreshHz:60,targetFps:60}};
+        const frameCpu:number[]=[];const frameIntervals:number[]=[];let renderedFrames=0;let priorRender=0;let appliedQuality="";
+        const diagnosticCanvas=canvasRef.current as HTMLCanvasElement & {__antirlDiagnostics?:()=>unknown};
+        diagnosticCanvas.__antirlDiagnostics=()=>({renderer:"WebGL",quality:qualityRef.current,renderedFrames,camera:stateRef.current.camera,ceilingVisible:ceiling.isEnabled(),frameCpuMs:[...frameCpu],frameIntervalsMs:[...frameIntervals],renderWidth:engine.getRenderWidth(),renderHeight:engine.getRenderHeight(),drawCalls:(engine as any)._drawCalls?.current ?? null,meshCount:scene.meshes.length,targetFps:scene.metadata.studio.targetFps});
         let trailsOn = false;
         let resetRequested = true;
         let snap = true;
@@ -895,12 +904,14 @@ export default function ReplayViewer({
           const t = clock.current;
           if (document.hidden) return;
           const renderNow = performance.now();
+          if(appliedQuality!==qualityRef.current){appliedQuality=qualityRef.current;engine.setHardwareScalingLevel(appliedQuality==="low"?1:renderScale(window.devicePixelRatio));shadows.getShadowMap()?.resize(appliedQuality==="low"?512:1024);glow.isEnabled=appliedQuality!=="low";frameCpu.length=0;frameIntervals.length=0;priorRender=0;}
           const rafInterval=renderNow-lastRaf; lastRaf=renderNow;
           if(refreshIntervals.length<48 && rafInterval>2 && rafInterval<40) {
             refreshIntervals.push(rafInterval);
             if(refreshIntervals.length===48) refreshHz=measuredRefresh(refreshIntervals);
           }
-          const targetFps=playbackRef.current || cam === "free" ? playbackFps(refreshHz) : 15;
+          const baseFps=playbackRef.current || cam === "free" ? playbackFps(refreshHz) : 15;
+          const targetFps=qualityRef.current==="low"?Math.min(30,baseFps):baseFps;
           const interval=1000/targetFps;
           scene.metadata.studio.refreshHz=refreshHz;scene.metadata.studio.targetFps=targetFps;
           if(interval!==renderBudget || cam!==lastCam || pid!==lastPlayer) {nextRender=0;renderBudget=interval;}
@@ -1158,9 +1169,10 @@ export default function ReplayViewer({
           scene.getMeshByName("stadium-module-4")?.setEnabled(!spectator);
           for(const mesh of scenery)mesh.setEnabled(!spectator);
           scene.render();
+          renderedFrames++;frameCpu.push(performance.now()-renderNow);if(priorRender)frameIntervals.push(renderNow-priorRender);priorRender=renderNow;if(frameCpu.length>400)frameCpu.shift();if(frameIntervals.length>400)frameIntervals.shift();
         });
 
-        const resize = () => {engine.setHardwareScalingLevel(renderScale(window.devicePixelRatio));engine.resize();};
+        const resize = () => {engine.setHardwareScalingLevel(qualityRef.current==="low"?1:renderScale(window.devicePixelRatio));engine.resize();};
         window.addEventListener("resize", resize);
         const observer = new ResizeObserver(resize);
         observer.observe(canvasRef.current);
@@ -1169,6 +1181,7 @@ export default function ReplayViewer({
           observer.disconnect();
           window.removeEventListener("resize", resize);
           engine.stopRenderLoop();
+          delete diagnosticCanvas.__antirlDiagnostics;
           for (const r of rigs) r.ps.dispose();
           shadows.dispose();
           glow.dispose();
@@ -1271,7 +1284,7 @@ export default function ReplayViewer({
         )}
       </div>
 
-      <div style={{display:"flex",gap:12,alignItems:"center",fontSize:12}}><label><input type="checkbox" checked={cutaway} onChange={e=>setCutaway(e.target.checked)}/> Automatic spectator cutaway</label><span>Pad glow is decorative; pickup/cooldown state unavailable. Exhaust is inferred from observed boost decrease.</span></div>
+      <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap",fontSize:12}}><label><input type="checkbox" checked={cutaway} onChange={e=>setCutaway(e.target.checked)}/> Automatic spectator cutaway</label><label>Render quality <select aria-label="Render quality" value={quality} onChange={e=>setQuality(e.target.value as "low"|"high")}><option value="high">High</option><option value="low">Low · reduced effects</option></select></label><span>Pad glow is decorative; pickup/cooldown state unavailable. Exhaust is inferred from observed boost decrease.</span></div>
       {/* Timeline & Broadcast Playback Card */}
       <div className="timeline-card">
         {/* Scrubber with Event Pins */}

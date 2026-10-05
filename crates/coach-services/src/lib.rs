@@ -16,6 +16,10 @@ mod ai;
 mod analytics;
 mod conversations;
 mod evidence_tools;
+mod practice;
+mod retrieval;
+mod semantics;
+mod research;
 pub use ai::ChatUpdate;
 
 pub type ServiceResult<T> = Result<T, String>;
@@ -217,8 +221,9 @@ impl CoachService {
         .map_err(err)?;
 
         conversations::migrate(&db, &dir)?;
+        practice::migrate(&db)?;
         let analytics = Connection::open(dir.join("analytics.sqlite3")).map_err(err)?;
-        analytics::migrate(&analytics)?;
+        analytics::migrate(&analytics,&dir)?;
 
         // Compact coaching projection avoids repeatedly parsing every render frame.
         // Keep full replay bodies intact for Studio; migrate existing stores once.
@@ -267,17 +272,27 @@ impl CoachService {
         if !settings.is_object() {
             return Err("Settings must be an object".into());
         }
-        let mut merged = self.get_settings()?;
+        let previous = self.get_settings()?;
+        let mut merged = previous.clone();
         for (k, v) in settings.as_object().unwrap() {
             merged[k] = v.clone();
         }
         let text = serde_json::to_string(&merged).map_err(err)?;
-        let db = self.db.lock().map_err(err)?;
-        db.execute(
+        let mut db = self.db.lock().map_err(err)?;
+        let tx=db.transaction().map_err(err)?;
+        tx.execute(
             "INSERT INTO settings (id, body) VALUES (1, ?1) ON CONFLICT(id) DO UPDATE SET body=?1",
             params![text],
         )
         .map_err(err)?;
+        if let Some(player)=merged["player_id"].as_str().filter(|s|!s.is_empty()) {
+            for (mode,key) in [("1v1","rank_1v1"),("2v2","rank_2v2"),("3v3","rank_3v3")] {
+                if (previous[key]!=merged[key]||previous["player_id"]!=merged["player_id"]) && merged[key].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=100){
+                    tx.execute("INSERT INTO rank_observations VALUES(?1,?2,?3,?4,?5,'self_report')",params![ident(),player,mode,merged[key].as_str(),now()]).map_err(err)?;
+                }
+            }
+        }
+        tx.commit().map_err(err)?;
         Ok(merged)
     }
 
@@ -393,7 +408,7 @@ impl CoachService {
         let mut rows = s.query(params![id]).map_err(err)?;
         if let Some(row) = rows.next().map_err(err)? {
             let text: String = row.get(0).map_err(err)?;
-            serde_json::from_str(&text).map_err(err)
+            serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
         } else {
             Err(format!("Replay {id} not found"))
         }
@@ -402,7 +417,7 @@ impl CoachService {
     pub fn get_coach_replay(&self, id: &str) -> ServiceResult<Value> {
         let db = self.db.lock().map_err(err)?;
         let text: String = db.query_row("SELECT coach_body FROM replays WHERE id=?1", params![id], |r| r.get(0)).map_err(err)?;
-        serde_json::from_str(&text).map_err(err)
+        serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
     }
 
     pub fn has_replay_by_hash(&self, hash: &str) -> ServiceResult<bool> {
@@ -518,7 +533,7 @@ impl CoachService {
         if let Some(modes)=projection["modes"].as_object(){for (mode,stats) in modes {
             let matches=stats["lifetime_count"].as_u64().unwrap_or(0);total_matches+=matches as usize;
             let mut row=json!({"matches":matches,"wins":stats["wins"],"win_rate":stats["win_rate"],"aggregation":"per-metric method in analytics manifest"});
-            for key in ["avg_boost","avg_speed","defensive_half_pct","low_boost_pct","supersonic_boost_seconds"] {row[key]=stats["lifetime"][key]["value"].clone();}
+            for key in ["avg_boost","avg_speed","defensive_half_pct","low_boost_pct","boost_active_at_supersonic_speed_s"] {row[key]=stats["lifetime"][key]["value"].clone();}
             modes_map[mode]=row;
         }}
         let player_name=self.get_player_candidates()?.iter().find(|p|p["player_id"].as_str()==player_id).and_then(|p|p["name"].as_str()).map(str::to_string);
@@ -654,6 +669,7 @@ impl CoachService {
                     notes.push(json!({
                         "name": name,
                         "content": content,
+                        "legacy_warning":if content.to_ascii_lowercase().contains("supersonic") {Some("Review legacy metric advice: boosting at >=2200 uu/s is not threshold uptime or proven waste. This note is preserved, not verified.")}else{None},
                         "updated_at": updated
                     }));
                 }
@@ -780,7 +796,7 @@ impl CoachService {
             "telemetry_summary": {
                 "avg_boost": p_metrics.get("avg_boost"),
                 "low_boost_pct": p_metrics.get("low_boost_pct"),
-                "supersonic_boost_seconds": p_metrics.get("supersonic_boost_seconds"),
+                "boost_active_at_supersonic_speed_s": p_metrics.get("boost_active_at_supersonic_speed_s"),
                 "defensive_half_pct": p_metrics.get("defensive_half_pct")
             }
         }))

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "actual process restart retains mode-specific messages and practice sessions",
+    "analytics reconciles on startup",
+    "skipped onboarding does not repeat"
+  ]
+}

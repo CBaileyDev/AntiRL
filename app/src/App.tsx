@@ -112,12 +112,14 @@ export default function App() {
   const coachRestored = useRef(false);
   const [coachInitialPrompt, setCoachInitialPrompt] = useState<string>("");
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const onboardingChecked=useRef(false);
 
   // Load initial data from Tauri native backend
   const loadData = async () => {
     try {
       const cfg = await tauriInvoke<Settings>("get_settings");
       if (cfg && cfg.provider) setSettings(cfg);
+      if(cfg?.provider&&!onboardingChecked.current){onboardingChecked.current=true;if(!cfg.onboarding_status)setShowOnboarding(true);}
 
       const lib = await tauriInvoke<any>("get_library");
       if (lib && lib.replays) {
@@ -590,8 +592,8 @@ export default function App() {
     {showOnboarding && (
       <OnboardingModal
         initialSettings={settings}
-        onSave={handleSaveSettings}
-        onClose={() => setShowOnboarding(false)}
+        onSave={async patch=>{await handleSaveSettings({...patch,onboarding_status:"completed"});setShowOnboarding(false);}}
+        onClose={completed => {setShowOnboarding(false);if(!completed)handleSaveSettings({onboarding_status:settings.onboarding_status || "skipped"}).catch(console.error);}}
       />
     )}
   </>

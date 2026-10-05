@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Trophy, Zap, Gauge, Flame } from "lucide-react";
 import type { ProgressReport, ReplaySummary, Settings } from "../types";
+import PracticePanel from "../components/PracticePanel";
 
 interface ProgressProps {
   progress: ProgressReport | null;
@@ -19,7 +20,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
     avg_speed: null,
     defensive_half_pct: 0,
     low_boost_pct: 0,
-    supersonic_boost_seconds: null,
+    boost_active_at_supersonic_speed_s: null,
     ...(progress?.modes?.[selectedMode] ?? {}),
   };
   const clampPct = (n: number) => Math.min(100, Math.max(0, n || 0));
@@ -101,7 +102,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Avg Boost Level</span>
           </div>
           <span className="pg-value" style={{ color: "var(--accent)" }}>
-            {modeData.avg_boost ? `${modeData.avg_boost}%` : "N/A"}
+            {modeData.avg_boost != null ? `${modeData.avg_boost}%` : "N/A"}
           </span>
           <span className="pg-sub">Aggregation uses valid observation duration where available; legacy means are labelled in Coach</span>
         </div>
@@ -111,7 +112,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Average Speed</span>
           </div>
           <span className="pg-value" style={{ color: "var(--blue-team)" }}>
-            {modeData.avg_speed ? `${modeData.avg_speed} uu/s` : "N/A"}
+            {modeData.avg_speed != null ? `${modeData.avg_speed} uu/s` : "N/A"}
           </span>
           <span className="pg-sub">Linear velocity during live play</span>
         </div>
@@ -121,7 +122,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Boosting at Speed</span>
           </div>
           <span className="pg-value" style={{ color: "var(--danger)" }}>
-            {modeData.supersonic_boost_seconds != null ? `${modeData.supersonic_boost_seconds}s` : "N/A"}
+            {modeData.boost_active_at_supersonic_speed_s != null ? `${modeData.boost_active_at_supersonic_speed_s}s` : "N/A"}
           </span>
           <span className="pg-sub">Equal-match mean at &gt;=2200 uu/s; not proven waste</span>
         </div>
@@ -152,6 +153,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
         )}
       </div>
 
+      <PracticePanel mode={selectedMode} playerId={settings.player_id}/>
       <div className="pg-grid">
         <div className="pg-card">
           <div className="pg-card-head">

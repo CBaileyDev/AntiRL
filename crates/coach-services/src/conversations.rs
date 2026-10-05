@@ -1,5 +1,5 @@
 use super::*;
-pub const PROMPT_VERSION:&str="coach-2";
+pub const PROMPT_VERSION:&str="coach-3";
 pub fn migrate(db:&Connection,dir:&Path)->ServiceResult<()> {
  let exists:bool=db.prepare("PRAGMA table_info(conversations)").map_err(err)?.query_map([],|r|r.get::<_,String>(1)).map_err(err)?.flatten().any(|s|s=="mode");
  if exists{return Ok(());}
@@ -27,4 +27,17 @@ impl CoachService {
 }
 fn validate_scope(mode:&str,preset:&str)->ServiceResult<()> {
  if !["All","1v1","2v2","3v3"].contains(&mode) || !["Balanced","Mechanics practice","Decision review","Match breakdown"].contains(&preset){return Err("Unsupported conversation scope".into());} Ok(())
+}
+
+#[cfg(test)] mod tests {
+ use super::*;
+ #[test] fn legacy_records_survive_scope_migration_and_repeated_open(){
+  let dir=tempfile::tempdir().unwrap();let db=Connection::open(dir.path().join("legacy.sqlite3")).unwrap();
+  db.execute_batch("CREATE TABLE conversations(id TEXT PRIMARY KEY,title TEXT,updated_at TEXT);CREATE TABLE messages(id TEXT,conversation_id TEXT,body TEXT);INSERT INTO conversations VALUES('old','Existing chat','2026-01-01');INSERT INTO messages VALUES('msg','old','{\"role\":\"assistant\",\"content\":\"Legacy content retained\"}');").unwrap();
+  migrate(&db,dir.path()).unwrap();migrate(&db,dir.path()).unwrap();
+  let (mode,version,archived):(String,String,i32)=db.query_row("SELECT mode,prompt_version,archived FROM conversations WHERE id='old'",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?))).unwrap();
+  assert_eq!((mode,version,archived),("All".into(),"legacy".into(),0));
+  let body:String=db.query_row("SELECT body FROM messages WHERE id='msg'",[],|r|r.get(0)).unwrap();assert!(body.contains("Legacy content retained"));
+  let backup=Connection::open(dir.path().join("coach-before-scope-v2.sqlite3")).unwrap();let count:i32=backup.query_row("SELECT COUNT(*) FROM messages",[],|r|r.get(0)).unwrap();assert_eq!(count,1);
+ }
 }

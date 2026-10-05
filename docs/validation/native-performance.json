@@ -1,0 +1,76 @@
+{
+  "fixture": "synthetic two-player six-viewpoint replay",
+  "measurement": "render CPU/driver wall time; not GPU timing; throughput over a 2s sample for playback",
+  "samples": [
+    {
+      "camera": "Chase",
+      "quality": "high",
+      "renderedFrames": 24,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "targetFps": 15,
+      "ceilingVisible": true,
+      "cpuP50Ms": 1.4000000059604645,
+      "cpuP95Ms": 1.5999999940395355,
+      "intervalP95Ms": null
+    },
+    {
+      "camera": "Overhead",
+      "quality": "high",
+      "renderedFrames": 25,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "targetFps": 15,
+      "ceilingVisible": false,
+      "cpuP50Ms": 1.2000000178813934,
+      "cpuP95Ms": 1.4000000059604645,
+      "intervalP95Ms": null
+    },
+    {
+      "camera": "Broadcast",
+      "quality": "high",
+      "renderedFrames": 24,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "targetFps": 15,
+      "ceilingVisible": false,
+      "cpuP50Ms": 1,
+      "cpuP95Ms": 1.199999988079071,
+      "intervalP95Ms": null
+    },
+    {
+      "camera": "Orbit",
+      "quality": "high",
+      "renderedFrames": 145,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "targetFps": 90,
+      "ceilingVisible": false,
+      "cpuP50Ms": 0.699999988079071,
+      "cpuP95Ms": 1,
+      "intervalP95Ms": null
+    },
+    {
+      "camera": "Chase playback",
+      "quality": "low",
+      "renderedFrames": 61,
+      "targetFps": 30,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "cpuP50Ms": 1.2000000178813934,
+      "cpuP95Ms": 1.4000000059604645,
+      "intervalP95Ms": 34.20000001788139
+    },
+    {
+      "camera": "Chase playback",
+      "quality": "high",
+      "renderedFrames": 181,
+      "targetFps": 90,
+      "renderWidth": 759,
+      "renderHeight": 474,
+      "cpuP50Ms": 1,
+      "cpuP95Ms": 1.4000000059604645,
+      "intervalP95Ms": 12.5
+    }
+  ]
+}

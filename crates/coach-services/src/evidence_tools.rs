@@ -3,22 +3,24 @@ impl CoachService {
  pub fn search_training_packs(&self,query:&str,mode:&str,limit:usize)->ServiceResult<Value>{
   let catalog:Vec<Value>=serde_json::from_str(include_str!("../../../app/src/data/training-packs.json")).map_err(err)?;
   let query=query.to_ascii_lowercase();
-  let records:Vec<_>=catalog.into_iter().filter(|p|mode=="All" || p["modes"].as_array().is_some_and(|ms|ms.iter().any(|m|m==mode))).filter(|p|query.is_empty() || p["skill_tags"].as_array().is_some_and(|tags|tags.iter().any(|t|query.contains(t.as_str().unwrap_or("!")))) || p["title"].as_str().is_some_and(|t|t.to_ascii_lowercase().contains(&query))).take(limit.min(10)).collect();
+  let terms:Vec<_>=query.split_whitespace().filter(|s|s.len()>2).collect();
+  let mut catalog:Vec<(usize,Value)>=catalog.into_iter().filter(|p|mode=="All" || p["modes"].as_array().is_some_and(|ms|ms.iter().any(|m|m==mode))).map(|p|{let text=format!("{} {} {}",p["title"],p["creator"],p["skill_tags"]).to_ascii_lowercase();let score=terms.iter().filter(|t|text.contains(**t)).count();(score,p)}).filter(|(score,_)|query.is_empty()||*score>0).collect();
+  catalog.sort_by(|a,b|b.0.cmp(&a.0));let records:Vec<_>=catalog.into_iter().take(limit.min(20)).map(|(_,p)|p).collect();
   Ok(json!({"records":records,"source":"verified_local_catalog","live_search":"unavailable: no supported search connector configured","verification":"source_confirmed does not mean in-game tested; published codes may have changed"}))
  }
  pub fn evidence_tool(&self,tool:&str,mode:&str,args:&Value)->ServiceResult<Value>{
-  let settings=self.get_settings()?;let player=settings["player_id"].as_str().ok_or("Set an explicit player identity before evidence retrieval")?;
+  let settings=self.get_settings()?;let player=settings["player_id"].as_str().filter(|s|!s.is_empty()).ok_or("Set an explicit player identity before evidence retrieval")?;
   if !["All","1v1","2v2","3v3"].contains(&mode){return Err("Unsupported mode".into());}
   match tool {
    "get_player_overview"|"compare_windows"=>self.analytics_context(Some(player),mode),
    "search_training_packs"=>self.search_training_packs(args["query"].as_str().unwrap_or(""),mode,3),
    "get_benchmark_summary"=>Ok(json!({"status":"unavailable","reason":"No validated comparable benchmark cohort"})),
-   "get_training_history"=>Ok(json!({"status":"unavailable","reason":"No recorded training adherence"})),
+   "get_training_history"=>if mode=="All"{Ok(json!({"1v1":self.get_practice("1v1")?,"2v2":self.get_practice("2v2")?,"3v3":self.get_practice("3v3")?}))}else{self.get_practice(mode)},
    "list_matches"=>{
     let ctx=self.analytics_context(Some(player),mode)?;let offset=args["cursor"].as_u64().unwrap_or(0).min(100000) as usize;let limit=args["limit"].as_u64().unwrap_or(20).clamp(1,40) as usize;
     let db=self.analytics.lock().map_err(err)?;let mut q=db.prepare("SELECT body,revision FROM source_matches ORDER BY played_at DESC,id DESC").map_err(err)?;
     let rows=q.query_map([],|r|Ok((r.get::<_,String>(0)?,r.get::<_,String>(1)?))).map_err(err)?;let mut matches=vec![];
-    for row in rows{let (body,revision)=row.map_err(err)?;let a:Value=serde_json::from_str(&body).map_err(err)?;if (mode=="All"||a["summary"]["mode"]==mode)&&a["players"].as_array().is_some_and(|ps|ps.iter().any(|p|p["id"]==player)){matches.push(json!({"summary":a["summary"],"revision":revision}));}}
+    for row in rows{let (body,revision)=row.map_err(err)?;let a:Value=serde_json::from_str(&body).map_err(err)?;if a["summary"]["dataset_role"]!="benchmark"&&(mode=="All"||a["summary"]["mode"]==mode)&&a["players"].as_array().is_some_and(|ps|ps.iter().any(|p|p["id"]==player)){matches.push(json!({"summary":a["summary"],"revision":revision}));}}
     Ok(json!({"matches":matches.iter().skip(offset).take(limit).collect::<Vec<_>>(),"next_cursor":if matches.len()>offset+limit{Some(offset+limit)}else{None},"scope":ctx["player_id"]}))
    },
    "get_match_metrics"|"get_evidence_events"|"get_timeline_window"=>{

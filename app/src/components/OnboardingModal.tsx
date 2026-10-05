@@ -18,7 +18,7 @@ import type { Settings } from "../types";
 interface OnboardingModalProps {
   initialSettings: Settings;
   onSave: (settings: Partial<Settings>) => Promise<void>;
-  onClose: () => void;
+  onClose: (completed?:boolean) => void;
 }
 
 export default function OnboardingModal({
@@ -31,7 +31,9 @@ export default function OnboardingModal({
 
   // Form State
   const [playerName, setPlayerName] = useState(initialSettings.player_name || "");
-  const [playstyle, setPlaystyle] = useState(initialSettings.playstyle || "Rotational 2nd Man");
+  const [playstyle, setPlaystyle] = useState(initialSettings.playstyle || "");
+  const [primaryMode,setPrimaryMode]=useState(initialSettings.primary_mode || "");
+  const [teamPreference,setTeamPreference]=useState(initialSettings.team_preference || "unknown");
   const [rank1v1, setRank1v1] = useState(initialSettings.rank_1v1 || "");
   const [rank2v2, setRank2v2] = useState(initialSettings.rank_2v2 || "");
   const [rank3v3, setRank3v3] = useState(initialSettings.rank_3v3 || "");
@@ -69,8 +71,9 @@ export default function OnboardingModal({
         focus: selectedFocus,
         playstyle,
         coach_persona: coachPersona,
+        primary_mode:primaryMode || undefined,team_preference:teamPreference,
       });
-      onClose();
+      onClose(true);
     } catch (e) {
       console.error("Failed to complete onboarding:", e);
     } finally {
@@ -93,7 +96,7 @@ export default function OnboardingModal({
               </div>
             ))}
           </div>
-          <button className="icon-btn" onClick={onClose} title="Skip / Close" aria-label="Close">
+          <button className="icon-btn" onClick={()=>onClose()} title="Skip / Close" aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -123,7 +126,9 @@ export default function OnboardingModal({
               </div>
 
               <div className="form-group">
-                <label className="form-label">Primary Playstyle / Role</label>
+                <label className="form-label">Primary mode (optional)<select aria-label="Primary mode" value={primaryMode} onChange={e=>setPrimaryMode(e.target.value)}><option value="">Not sure yet</option>{["1v1","2v2","3v3"].map(m=><option key={m}>{m}</option>)}</select></label>
+                <label className="form-label">Queue preference<select aria-label="Queue preference" value={teamPreference} onChange={e=>setTeamPreference(e.target.value as "unknown"|"solo"|"fixed")}><option value="unknown">Not specified</option><option value="solo">Solo queue</option><option value="fixed">Fixed teammates</option></select></label>
+                <label className="form-label">Playstyle preference (optional; roles change during play)</label>
                 <div className="role-grid">
                   {[
                     {

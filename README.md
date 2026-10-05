@@ -20,6 +20,8 @@ The source contains no replay corpus, runtime databases, account profile, creden
 
 ## Current upgrade
 
-Correct boost percentage ring, retained ceiling with spectator cutaway, corrected boost/speed semantics, durable analytical projection, mode-specific chat scopes, coaching presets, streaming scroll pause, editable onboarding goals/time, safe Markdown and native conversation export. Pack search uses source-confirmed local records; live search is unavailable without a supported connector. Source-confirmed codes have not been tested in game.
+Correct boost percentage ring, retained ceiling with spectator cutaway, corrected boost/speed semantics, durable analytical projection, mode-specific chat scopes, coaching presets, streaming scroll pause, editable onboarding goals/time, safe Markdown and native conversation export, persistent practice reports, deeper-history browsing and bounded evidence retrieval. Pack search uses source-confirmed local records; live search is unavailable without a supported connector. Source-confirmed codes have not been tested in game.
 
 Grades and rank-up forecasts remain unavailable pending validated datasets and calibration. See `docs/IMPLEMENTATION_LEDGER.md` for actual checks and outstanding gates.
+
+Research source checks and rejected grading/forecast assumptions are documented in [the research audit](docs/RESEARCH_AUDIT.md).

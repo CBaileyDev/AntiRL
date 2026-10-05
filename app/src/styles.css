@@ -2135,6 +2135,13 @@ select.chat-input { appearance: auto; cursor: pointer; color-scheme: dark; }
 .onboarding-card { max-height:calc(100dvh - 48px); }
 .onboarding-body { min-height:0;overflow-y:auto; }
 .onboarding-header,.onboarding-footer { flex-shrink:0; }
+.practice-panel { padding:20px;margin:20px 0; }
+.practice-panel p,.practice-panel small { color:var(--muted);line-height:1.5; }
+.practice-panel form { display:flex;gap:12px;flex-wrap:wrap;margin:12px 0; }
+.practice-panel label { display:flex;flex-direction:column;gap:6px;font-size:13px; }
+.practice-panel textarea,.practice-panel input,.practice-panel select { background:var(--surface);color:var(--text);border:1px solid var(--line-strong);padding:8px;border-radius:6px; }
+.practice-panel textarea { width:min(320px,70vw);min-height:70px; }
+.practice-plan { border-top:1px solid var(--line);padding:14px 0; }
 
 .playlist-rank-section>label {display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;}
 .playlist-rank-section>label:has(.rank-select-field) {display:block;}

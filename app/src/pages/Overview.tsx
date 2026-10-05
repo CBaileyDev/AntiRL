@@ -141,9 +141,9 @@ export default function Overview({
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-number">{fmt(mode?.supersonic_boost_seconds, "s")}</span>
+            <span className="kpi-number">{fmt(mode?.boost_active_at_supersonic_speed_s, "s")}</span>
           </div>
-          <span className="kpi-subtext">Duration boosting while already supersonic</span>
+          <span className="kpi-subtext">Boost-active time at ≥2200 uu/s</span>
         </div>
 
         <div className="kpi-card">

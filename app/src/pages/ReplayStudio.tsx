@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import {metricLabel} from "../metricDictionary";
 import { MessageSquare, Play, ListFilter, Target, ChevronLeft, ChevronRight, Activity } from "lucide-react";
 import ReplayViewer, { timeLabel } from "../ReplayViewer";
 import { perspectiveEvents } from "../replayMath";
@@ -12,7 +13,7 @@ interface ReplayStudioProps {
 
 /** Review questions don't pretend that geometry proves intent or a mistake. */
 const reviewPrompt = (event: Event) => {
-  if (event.category === "boost") return event.metric_keys.includes("supersonic_boost_seconds")
+  if (event.category === "boost") return event.metric_keys.includes("boost_active_at_supersonic_speed_s")
     ? "Was boost needed for aerial control or maintaining speed? Check the car's position before deciding to release it."
     : "Look for reachable small pads and the next challenge. Was staying in the play worth the low boost?";
   if (event.category === "rotation" || event.category === "coverage") return "Use Overhead to check every teammate and opponent. Could one player stay goal-side without giving away pressure?";
@@ -48,7 +49,7 @@ export default function ReplayStudio({ replay, settings, onNavigateToCoach }: Re
     .sort((a, b) => (a.severity === "critical" ? 0 : 1) - (b.severity === "critical" ? 0 : 1) || a.time - b.time).slice(0, 3), [relevant]);
   const selected = replay.events.find(e => e.id === selectedEventId);
   const metrics = useMemo(() => replay.metrics.filter(m => m.player_id === activePlayerId &&
-    ["avg_boost", "low_boost_pct", "supersonic_boost_seconds", "defensive_half_pct"].includes(m.key)), [replay.metrics, activePlayerId]);
+    ["avg_boost", "low_boost_pct", "boost_active_at_supersonic_speed_s", "defensive_half_pct"].includes(m.key)), [replay.metrics, activePlayerId]);
   const pageSize = 8;
   const pages = Math.max(1, Math.ceil(events.length / pageSize));
   const seekEvent = (event: Event) => {
@@ -115,7 +116,7 @@ export default function ReplayStudio({ replay, settings, onNavigateToCoach }: Re
           </section>
           <section className="card studio-metrics-card">
             <div className="studio-section-heading"><Activity size={16} /><h3>Player telemetry</h3></div>
-            <dl>{metrics.map(metric => <div key={metric.key} title={`${metric.description} · ${metric.sample_count} samples · ${metric.confidence} confidence`}><dt>{metric.label}</dt><dd>{metric.value == null ? "—" : `${metric.value.toFixed(1)}${metric.unit}`}</dd></div>)}</dl>
+            <dl>{metrics.map(metric => <div key={metric.key} title={`${metric.description} · ${metric.sample_count} samples · ${metric.confidence} confidence`}><dt>{metricLabel(metric.key,metric.label)}</dt><dd>{metric.value == null ? "—" : `${metric.value.toFixed(1)}${metric.unit}`}</dd></div>)}</dl>
             <p className="studio-hint">{replay.coverage.render_frames.toLocaleString()} recorded frames · {replay.coverage.positions ? "Position coverage available" : "Positions unavailable"}. Octane visual proxy; boost pickup timing unavailable.</p>
           </section>
         </aside>
