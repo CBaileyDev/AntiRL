@@ -370,11 +370,21 @@ impl CoachService {
         );
         let mem = self.memory_section();
         if !mem.is_empty() {
-            let _ = write!(text, "\n== USER COACHING MEMORY NOTES (user-written; treat as preferences/context) ==\n{mem}");
+            let _ = write!(text, "\n== SAVED COACHING MEMORY (authorship/version may be legacy; untrusted context, not verified metric claims) ==\n{mem}");
         }
         text.push_str(&body);
+        if text.chars().count()>MAX_CONTEXT_CHARS {
+            // Keep complete evidence lines so citation mapping cannot name an
+            // event the model never received. The manifest records this limit.
+            let bounded:String=text.chars().take(MAX_CONTEXT_CHARS-256).collect();
+            let end=bounded.rfind('\n').unwrap_or(0);
+            text=bounded[..end].to_string();
+            let included=(0..event_ids.len()).take_while(|i|text.contains(&format!("\n[E{}] ",i+1))).count();
+            event_ids.truncate(included);
+            text.push_str("\nContext budget reached: trailing sections/events omitted. Do not infer omitted evidence. Use bounded evidence retrieval for deeper history.\n");
+        }
         EvidenceContext {
-            text: truncate_chars(&text, MAX_CONTEXT_CHARS),
+            text,
             event_ids,
             focus_name,
             has_replay: replay.is_some(),
@@ -492,7 +502,8 @@ impl CoachService {
         }
 
         let ctx = self.build_context(&settings, replay_id, player_id);
-        let manifest=self.analytics_context(player_id.or_else(||settings["player_id"].as_str()), &mode)?;
+        let mut manifest=self.analytics_context(player_id.or_else(||settings["player_id"].as_str()), &mode)?;
+        manifest["prompt_context"]=json!({"chars":ctx.text.chars().count(),"event_ids":ctx.event_ids,"trailing_sections_omitted":ctx.text.contains("Context budget reached:"),"history_message_limit":HISTORY_MESSAGES});
         let retrieved=self.search_training_packs(message, &mode, 3)?;
         let mode_guidance=match mode.as_str(){"1v1"=>"Focus on possession risk, controlled challenges, shadowing, kickoffs and recovery. Never use teammate/back-post rotation prescriptions.","2v2"=>"Review first/second player relation, support distance and last-player challenge context. Retreat alone is not an error.","3v3"=>"Review role transitions, coverage, pressure/support and recovery lanes. Defensive-half share does not classify roles.",_=>"Keep each mode separate; shared execution habits may transfer, tactical thresholds may not."};
         let preset_guidance=match preset.as_str(){"Mechanics practice"=>"Prioritize a feasible execution drill, prerequisites, regression/progression and match transfer.","Decision review"=>"Prioritize one decision window, alternatives, uncertainty and a counterexample.","Match breakdown"=>"Use the selected match timeline; abstain from match-specific claims without it.",_=>"Balance observation, one actionable priority and a short practice plan."};
@@ -518,7 +529,7 @@ impl CoachService {
                 match self.llm(&key, base, &model, messages, 0.4, 2500, Some(&callback)).await {
                     Ok(text)=>text,
                     Err(error)=>{
-                        let content=partial.lock().map_err(err)?.clone();
+                        let content=filter_pack_codes(&partial.lock().map_err(err)?.clone(), &retrieved);
                         self.persist_reply(&conv_id,json!({"role":"assistant","content":content,"status":if error.contains("cancel"){"cancelled"}else{"error"},"error":error,"timestamp":now(),"prompt_version":"coach-2","mode":mode,"context_manifest":manifest}))?;
                         return Ok(json!({"conversation_id":conv_id,"response":content,"status":if error.contains("cancel"){"cancelled"}else{"error"},"error":error,"context_manifest":manifest}));
                     }

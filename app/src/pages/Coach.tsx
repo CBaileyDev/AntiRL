@@ -207,6 +207,7 @@ export default function Coach({
   useEffect(()=>{ if(conversation){setMode(conversation.mode || "All");setPreset(conversation.preset || "Balanced");setTitle(conversation.title);} },[selectedConvId,conversation?.title]);
   useEffect(()=>{let alive=true;invoke("get_context_manifest",{mode:conversation?.mode || mode}).then(m=>{if(alive)setManifest(m)}).catch(()=>{});return()=>{alive=false};},[selectedConvId,mode,settings.player_id,replays.length]);
   const selectChat=async(id:string)=>{
+    if(!id){await newChat();return;}
     requestRef.current++; if(loading) await onCancelAi?.();
     sendingRef.current=false;setLoading(false);setSelectedConvId(id);scopeRef.current=id;
     const records=await invoke<Message[]>("get_messages",{conversation_id:id});
@@ -227,20 +228,30 @@ export default function Coach({
   const [input, setInput] = useState(initialPrompt || "");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const readingAnchor=useRef<{id:string;offset:number}|null>(null);
+  const captureAnchor=()=>{const el=scrollRef.current;if(!el)return;const top=el.getBoundingClientRect().top;
+    const bubble=Array.from(el.querySelectorAll<HTMLElement>("[data-message-id]")).find(b=>b.getBoundingClientRect().bottom>top);
+    if(bubble)readingAnchor.current={id:bubble.dataset.messageId!,offset:bubble.getBoundingClientRect().top-top};};
+  const restoreAnchor=()=>{const el=scrollRef.current;const a=readingAnchor.current;if(!el||!a)return;
+    const bubble=Array.from(el.querySelectorAll<HTMLElement>("[data-message-id]")).find(b=>b.dataset.messageId===a.id);
+    if(bubble)el.scrollTop+=bubble.getBoundingClientRect().top-el.getBoundingClientRect().top-a.offset;};
   const followRef=useRef(true);
   const [following,setFollowing]=useState(true);
   const positionKey=selectedConvId || "new";
-  const pauseFollow=()=>{followRef.current=false;setFollowing(false)};
+  const pauseFollow=()=>{followRef.current=false;setFollowing(false);captureAnchor()};
   const resumeFollow=()=>{followRef.current=true;setFollowing(true);const el=scrollRef.current;if(el)el.scrollTop=el.scrollHeight;};
   useLayoutEffect(()=>{
     const el=scrollRef.current;if(!el)return;
     const saved=sessionStorage.getItem(`coach-scroll-${positionKey}`);
-    const state=saved?JSON.parse(saved):{top:el.scrollHeight,follow:true};
+    let state:{top:number;follow:boolean;anchor?:{id:string;offset:number}}={top:el.scrollHeight,follow:true};
+    try{if(saved)state=JSON.parse(saved);}catch{/* Ignore stale browser session metadata. */}
+    readingAnchor.current=state.anchor || null;
     followRef.current=state.follow;setFollowing(state.follow);el.scrollTop=state.follow?el.scrollHeight:state.top;
-    return()=>{sessionStorage.setItem(`coach-scroll-${positionKey}`,JSON.stringify({top:el.scrollTop,follow:followRef.current}));};
+    return()=>{sessionStorage.setItem(`coach-scroll-${positionKey}`,JSON.stringify({top:el.scrollTop,follow:followRef.current,anchor:readingAnchor.current}));};
   },[positionKey]);
-  useLayoutEffect(()=>{const el=scrollRef.current;if(el&&followRef.current&&!window.getSelection()?.toString())el.scrollTop=el.scrollHeight;},[messages,loading]);
-  useEffect(()=>{const el=scrollRef.current;if(!el)return;const observer=new ResizeObserver(()=>{if(followRef.current&&!window.getSelection()?.toString())el.scrollTop=el.scrollHeight;});observer.observe(el);return()=>observer.disconnect();},[]);
+  useLayoutEffect(()=>{const el=scrollRef.current;if(!el)return;if(followRef.current&&!window.getSelection()?.toString())el.scrollTop=el.scrollHeight;else restoreAnchor();},[messages,loading]);
+  useEffect(()=>{const el=scrollRef.current;if(!el)return;const observer=new ResizeObserver(()=>{if(followRef.current&&!window.getSelection()?.toString())el.scrollTop=el.scrollHeight;else restoreAnchor();});observer.observe(el);if(contentRef.current)observer.observe(contentRef.current);return()=>observer.disconnect();},[]);
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
@@ -404,10 +415,12 @@ export default function Coach({
           onWheel={e=>{if(e.deltaY<0)pauseFollow();}}
           onKeyDown={e=>{if(["PageUp","Home","ArrowUp"].includes(e.key))pauseFollow();}}
           onPointerDown={pauseFollow}
-          onScroll={()=>{const el=scrollRef.current;if(!el)return;const atBottom=el.scrollHeight-el.clientHeight-el.scrollTop<40;if(!window.getSelection()?.toString()){followRef.current=atBottom;setFollowing(atBottom);}sessionStorage.setItem(`coach-scroll-${positionKey}`,JSON.stringify({top:el.scrollTop,follow:followRef.current}));}}>
+          onScroll={()=>{const el=scrollRef.current;if(!el)return;captureAnchor();const atBottom=el.scrollHeight-el.clientHeight-el.scrollTop<40;if(!window.getSelection()?.toString()){followRef.current=atBottom;setFollowing(atBottom);}sessionStorage.setItem(`coach-scroll-${positionKey}`,JSON.stringify({top:el.scrollTop,follow:followRef.current}));}}>
+          <div ref={contentRef} className="chat-message-list">
           {messages.map((m) => (
             <div
               key={m.id}
+              data-message-id={m.id}
               className={`chat-bubble ${m.role === "user" ? "bubble-user" : "bubble-assistant"}`}
             >
               <div
@@ -475,6 +488,7 @@ export default function Coach({
           )}
 
           <div ref={messagesEndRef} />
+          </div>
         </div>
 
         {!following&&<button className="btn secondary" onClick={resumeFollow}>Jump to latest</button>}

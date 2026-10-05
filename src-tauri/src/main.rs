@@ -38,6 +38,11 @@ fn main() {
         .setup(|app| {
             let data_dir = std::env::var_os("ANTIRL_QA_DATA_DIR").map(std::path::PathBuf::from).unwrap_or(app.path().app_data_dir()?);
             let service = Arc::new(CoachService::open(&data_dir).map_err(std::io::Error::other)?);
+            if std::env::var_os("ANTIRL_QA_DATA_DIR").is_some() {
+                let mut settings=service.get_settings().map_err(std::io::Error::other)?;
+                settings["auto_import"]=serde_json::json!(false);
+                service.save_settings(settings).map_err(std::io::Error::other)?;
+            }
 
             app.manage(AppState {
                 service,

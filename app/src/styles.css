@@ -2126,8 +2126,9 @@ select.chat-input { appearance: auto; cursor: pointer; color-scheme: dark; }
 .coach-markdown pre { overflow-x:auto; }
 .legacy-advice { display:block;color:var(--orange-team);margin:8px 0; }
 .chat-messages { overflow-anchor:none; }
+.chat-message-list { display:flex;flex-direction:column;gap:14px;flex-shrink:0; }
 
-.boost-ring { position:relative;width:64px;height:64px;flex-shrink:0; }
+.boost-ring { position:relative;width:64px;height:64px;flex-shrink:0;background:rgba(8,12,18,.92);border-radius:50%;color:#fff; }
 .boost-ring svg { width:100%;height:100%; }
 .boost-ring>span {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:18px;font-variant-numeric:tabular-nums;}
 .boost-ring small {font-size:7px;letter-spacing:1px;color:var(--muted);}

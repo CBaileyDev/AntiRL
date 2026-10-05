@@ -8,7 +8,7 @@
     "replay library and Studio"
   ],
   "manifest": {
-    "date_policy": "Unknown dates included in lifetime only; latest 20 per mode by normalized played time.",
+    "date_policy": "Unknown dates included in lifetime only. Latest 20 per mode by replay clock; offset-aware timestamps normalized to UTC. Offset-free headers retain unknown timezone; ordering across timezone changes is uncertain.",
     "excluded": {},
     "lag": false,
     "library_count": 1,
@@ -49,7 +49,7 @@
             "played_at": "2026-01-01T00:00:00+00:00",
             "result": "win",
             "revision": "7af1fba4d3d3ba4d2467572d039e72bf400aed4591428f7f41a161347327ef36",
-            "time_provenance": "replay_header"
+            "time_provenance": "replay_header_with_offset"
           }
         ],
         "recent_count": 1,

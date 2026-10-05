@@ -887,7 +887,7 @@ export default function ReplayViewer({
         let ballOn = false;
         const resetTrails = () => {
           ballTrail.reset();
-          for (const r of rigs) r.trail.reset();
+          for (const r of rigs) { r.trail.reset(); r.ps.stop(); r.ps.reset(); r.boosting=false; }
         };
 
         engine.runRenderLoop(() => {
@@ -1065,7 +1065,7 @@ export default function ReplayViewer({
               rig.contact.visibility=Math.max(0,1-Math.max(0,gap-0.18)/1.32);
             }
 
-            const isBoosting = moving && carA.boost != null && carB?.boost != null && carB.boost < carA.boost;
+            const isBoosting = moving && cont && !resetRequested && carA.boost != null && carB?.boost != null && carB.boost < carA.boost;
             if (isBoosting !== rig.boosting) {
               rig.boosting = isBoosting;
               if (isBoosting) rig.ps.start();
