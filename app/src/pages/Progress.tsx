@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Trophy, Zap, Gauge, Flame } from "lucide-react";
 import type { ProgressReport, ReplaySummary, Settings } from "../types";
 import PracticePanel from "../components/PracticePanel";
+import { formatStat } from "../formatStat";
 
 interface ProgressProps {
   progress: ProgressReport | null;
@@ -102,7 +103,9 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Win Rate ({selectedMode})</span>
           </div>
           <span className="pg-value" style={{ color: "var(--sage)" }}>
-            {modeData.matches ? `${modeData.win_rate}%` : "N/A"}
+            {modeData.matches && modeData.win_rate != null
+              ? `${formatStat(modeData.win_rate, 0)}%`
+              : "N/A"}
           </span>
           <span className="pg-sub">
             {modeData.wins} wins in {modeData.matches} matches
@@ -114,7 +117,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Avg Boost Level</span>
           </div>
           <span className="pg-value" style={{ color: "var(--accent)" }}>
-            {modeData.avg_boost != null ? `${modeData.avg_boost}%` : "N/A"}
+            {modeData.avg_boost != null ? `${formatStat(modeData.avg_boost)}%` : "N/A"}
           </span>
           <span className="pg-sub">
             Aggregation uses valid observation duration where available; legacy means are labelled
@@ -127,7 +130,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Average Speed</span>
           </div>
           <span className="pg-value" style={{ color: "var(--blue-team)" }}>
-            {modeData.avg_speed != null ? `${modeData.avg_speed} uu/s` : "N/A"}
+            {modeData.avg_speed != null ? `${formatStat(modeData.avg_speed, 0)} uu/s` : "N/A"}
           </span>
           <span className="pg-sub">Linear velocity during live play</span>
         </div>
@@ -138,7 +141,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
           </div>
           <span className="pg-value" style={{ color: "var(--danger)" }}>
             {modeData.boost_active_at_supersonic_speed_s != null
-              ? `${modeData.boost_active_at_supersonic_speed_s}s`
+              ? `${formatStat(modeData.boost_active_at_supersonic_speed_s)}s`
               : "N/A"}
           </span>
           <span className="pg-sub">Equal-match mean at &gt;=2200 uu/s; not proven waste</span>
@@ -187,7 +190,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
                   Defensive Half Presence
                 </span>
                 <span style={{ color: "var(--accent)", fontWeight: 700 }}>
-                  {modeData.defensive_half_pct}%
+                  {formatStat(modeData.defensive_half_pct)}%
                 </span>
               </div>
               <div className="pg-bar">
@@ -208,7 +211,7 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
                   Low Boost Exposure (&lt;10 Boost)
                 </span>
                 <span style={{ color: "var(--orange-team)", fontWeight: 700 }}>
-                  {modeData.low_boost_pct}%
+                  {formatStat(modeData.low_boost_pct)}%
                 </span>
               </div>
               <div className="pg-bar">

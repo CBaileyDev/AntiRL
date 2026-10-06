@@ -3,6 +3,7 @@ import { Play, Shield, Zap, Flame, Award, SlidersHorizontal, ChevronRight } from
 import type { ReplaySummary, Settings, ProgressReport } from "../types";
 import { timeLabel } from "../ReplayViewer";
 import RankBadge from "../components/RankBadge";
+import { formatStat } from "../formatStat";
 
 interface OverviewProps {
   replays: ReplaySummary[];
@@ -41,7 +42,7 @@ export default function Overview({
   }, [replays, settings.player_id]);
   const mode = progress?.modes?.["2v2"] ?? Object.values(progress?.modes ?? {})[0];
   const fmt = (v: number | undefined, suffix: string, digits = 1) =>
-    v == null || !isFinite(v) || v === 0 ? "—" : `${Number(v.toFixed(digits))}${suffix}`;
+    v == null || !Number.isFinite(v) ? "—" : `${formatStat(v, digits)}${suffix}`;
 
   return (
     <div className="content-pane overview-pane">

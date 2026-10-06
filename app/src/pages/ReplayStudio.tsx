@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { metricLabel } from "../metricDictionary";
+import { formatStat } from "../formatStat";
 import {
   MessageSquare,
   Play,
@@ -299,7 +300,9 @@ export default function ReplayStudio({ replay, settings, onNavigateToCoach }: Re
                   title={`${metric.description} · ${metric.sample_count} samples · ${metric.confidence} confidence`}
                 >
                   <dt>{metricLabel(metric.key, metric.label)}</dt>
-                  <dd>{metric.value == null ? "—" : `${metric.value.toFixed(1)}${metric.unit}`}</dd>
+                  <dd>
+                    {metric.value == null ? "—" : `${formatStat(metric.value)}${metric.unit}`}
+                  </dd>
                 </div>
               ))}
             </dl>

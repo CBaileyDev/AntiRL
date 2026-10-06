@@ -1,4 +1,5 @@
 import { errorMessage } from "../errors";
+import { formatStat } from "../formatStat";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "../ipc";
 import {
@@ -150,7 +151,7 @@ export function EvidenceHistory({ mode, onOpen }: { mode: string; onOpen: (id: s
                   <tr key={i}>
                     <td>{metricLabel(m.key, m.label || m.key)}</td>
                     <td>
-                      {m.value == null ? "Unknown" : String(m.value)} {m.unit}
+                      {formatStat(m.value, 1, "Unknown")} {m.unit}
                     </td>
                     <td>{m.confidence || "Unspecified"}</td>
                   </tr>
