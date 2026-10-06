@@ -60,7 +60,9 @@ test("counterfactual gates by mode, refuses honestly, and plots simulated vs act
   const run = page.getByRole("button", { name: "Run simulation" });
   await expect(run).toBeEnabled();
   await run.click();
-  await expect(page.getByLabel("Simulation result")).toContainText("unknown skill, not a model of any player");
+  await expect(page.getByLabel("Simulation result")).toContainText(
+    "unknown skill, not a model of any player",
+  );
   await expect(page.getByTestId("sim-rollout-note")).toContainText(
     "not a recommendation, not what would have happened",
   );

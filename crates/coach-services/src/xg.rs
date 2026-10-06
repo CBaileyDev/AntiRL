@@ -220,8 +220,9 @@ fn solve(mut h: [[f64; N + 1]; N + 1], mut g: [f64; N + 1]) -> Option<[f64; N + 
         g.swap(c, p);
         for r in c + 1..=N {
             let f = h[r][c] / h[c][c];
-            for k in c..=N {
-                h[r][k] -= f * h[c][k];
+            let pivot = h[c];
+            for (value, pivot_value) in h[r][c..].iter_mut().zip(&pivot[c..]) {
+                *value -= f * pivot_value;
             }
             g[r] -= f * g[c];
         }
@@ -289,8 +290,8 @@ fn fit(data: &[([f64; N], bool)]) -> Option<Model> {
 impl Model {
     fn predict(&self, x: &[f64; N]) -> f64 {
         let mut z = self.w[0];
-        for j in 0..N {
-            z += self.w[j + 1] * (x[j] - self.mean[j]) / self.std[j];
+        for (j, value) in x.iter().enumerate() {
+            z += self.w[j + 1] * (value - self.mean[j]) / self.std[j];
         }
         sigmoid(z).clamp(1e-6, 1.0 - 1e-6)
     }
@@ -531,12 +532,12 @@ impl CoachService {
             .collect();
         let status = assess(&others_rows, &ex);
         if mine.is_empty() {
-            return Ok(json!({"version":XG_VERSION,"status":"unavailable","replay_id":replay_id,
-                "reason":"No analysis-3 shot events for this replay; re-enrich or re-import it","shots":[]}));
+            return Ok(
+                json!({"version":XG_VERSION,"status":"unavailable","replay_id":replay_id,
+                "reason":"No analysis-3 shot events for this replay; re-enrich or re-import it","shots":[]}),
+            );
         }
-        let basis = |s: &str, r: Option<String>| {
-            json!({"version":XG_VERSION,"status":s,"replay_id":replay_id,"reason":r,"library":status.doc})
-        };
+        let basis = |s: &str, r: Option<String>| json!({"version":XG_VERSION,"status":s,"replay_id":replay_id,"reason":r,"library":status.doc});
         if !status.available {
             let mut v = basis(
                 "unavailable",
@@ -603,8 +604,10 @@ impl CoachService {
         let (rows, ex) = self.xg_rows()?;
         let a = assess(&rows, &ex);
         if !a.available {
-            return Ok(json!({"version":XG_VERSION,"status":"unavailable","player_id":player,
-                "reason":a.doc["reason"],"library":a.doc}));
+            return Ok(
+                json!({"version":XG_VERSION,"status":"unavailable","player_id":player,
+                "reason":a.doc["reason"],"library":a.doc}),
+            );
         }
         let mine: Vec<usize> = (0..rows.len())
             .filter(|&i| rows[i].player_id == player)
@@ -616,13 +619,15 @@ impl CoachService {
             .collect();
         let xg: f64 = scored.iter().map(|i| a.oof[i]).sum();
         let goals = scored.iter().filter(|&&i| rows[i].goal).count();
-        Ok(json!({"version":XG_VERSION,"status":"available","player_id":player,
+        Ok(
+            json!({"version":XG_VERSION,"status":"available","player_id":player,
             "shots_scored":scored.len(),"shots_without_xg":mine.len()-scored.len(),
             "goals_on_scored_shots":goals,"xg_sum":r4(xg),"goals_minus_xg":r4(goals as f64 - xg),
             "basis":"out-of-fold predictions: every shot is scored by a model that never saw its match",
             "caveat":"With few shots this difference is within noise; it is not a finishing-skill verdict.",
             "usage_note":"Small sample, not a finishing-skill measure.",
-            "library":a.doc}))
+            "library":a.doc}),
+        )
     }
 }
 

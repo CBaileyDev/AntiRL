@@ -635,7 +635,9 @@ pub async fn sim_what_if(
     options: SimOptionsInput,
 ) -> Result<Value, AppError> {
     if !time.is_finite() || time < 0.0 {
-        return Err(AppError::Validation("Time must be a non-negative number".into()));
+        return Err(AppError::Validation(
+            "Time must be a non-negative number".into(),
+        ));
     }
     let s = state.service.clone();
     let options = options.into_value();

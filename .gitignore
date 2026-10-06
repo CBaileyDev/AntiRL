@@ -31,3 +31,13 @@ replay-cache/
 docs/validation/qa-process-id.txt
 app/test-results/
 app/playwright-report/
+
+# Credentials and local authentication configuration
+secrets.json
+secrets.*.json
+opencode.json
+opencode.jsonc
+auth.json
+*.p12
+*.keystore
+.ssh/

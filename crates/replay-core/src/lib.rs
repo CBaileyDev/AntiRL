@@ -475,8 +475,10 @@ pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
             && b.rotation.iter().map(|v| v * v).sum::<f32>() < 1.2
             && b.velocity
                 .is_none_or(|v| v.iter().all(|n| n.is_finite() && n.abs() < 200_000.0))
-            && b.angular_velocity
-                .is_none_or(|v| v.iter().all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY))
+            && b.angular_velocity.is_none_or(|v| {
+                v.iter()
+                    .all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY)
+            })
     };
     let valid_pos = |p: &[f32; 3]| p.iter().all(|v| v.is_finite() && v.abs() < 200_000.0);
     let mut previous = -1.0;
@@ -613,8 +615,17 @@ fn body(r: boxcars::RigidBody) -> Option<Body> {
         // subtr-actor reports the replicated angular velocity in 1/100 rad/s (observed
         // maximum 549.97, matching Rocket League's 5.5 rad/s cap). Convert to rad/s. A value
         // beyond the physical cap means an unrecognised scale: treat as unavailable.
-        .map(|v| [quantize(v.x / 100.0), quantize(v.y / 100.0), quantize(v.z / 100.0)])
-        .filter(|v| v.iter().all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY));
+        .map(|v| {
+            [
+                quantize(v.x / 100.0),
+                quantize(v.y / 100.0),
+                quantize(v.z / 100.0),
+            ]
+        })
+        .filter(|v| {
+            v.iter()
+                .all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY)
+        });
     Some(Body {
         position,
         rotation,
@@ -1651,7 +1662,10 @@ mod tests {
         assert!(validate_analysis(&bad).is_err());
         let mut bad = analysis.clone();
         bad.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
-        assert!(validate_analysis(&bad).is_err(), "torque without dodge_active");
+        assert!(
+            validate_analysis(&bad).is_err(),
+            "torque without dodge_active"
+        );
         let mut ok = analysis.clone();
         ok.frames[0].cars[0].dodge_active = Some(true);
         ok.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
@@ -1716,17 +1730,41 @@ mod tests {
     fn angular_velocity_is_quantized_and_nonfinite_dropped() {
         let rb = |w: boxcars::Vector3f| boxcars::RigidBody {
             sleeping: false,
-            location: boxcars::Vector3f { x: 0.0, y: 0.0, z: 17.0 },
-            rotation: boxcars::Quaternion { x: 0.0, y: 0.0, z: 0.0, w: 1.0 },
+            location: boxcars::Vector3f {
+                x: 0.0,
+                y: 0.0,
+                z: 17.0,
+            },
+            rotation: boxcars::Quaternion {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 1.0,
+            },
             linear_velocity: None,
             angular_velocity: Some(w),
         };
-        let b = body(rb(boxcars::Vector3f { x: 123.456, y: -0.4, z: 550.0 })).unwrap();
+        let b = body(rb(boxcars::Vector3f {
+            x: 123.456,
+            y: -0.4,
+            z: 550.0,
+        }))
+        .unwrap();
         assert_eq!(b.angular_velocity, Some([1.23, 0.0, 5.5]));
         // Unrecognised scale (beyond physical cap) is unavailable, not stored.
-        let b = body(rb(boxcars::Vector3f { x: 5000.0, y: 0.0, z: 0.0 })).unwrap();
+        let b = body(rb(boxcars::Vector3f {
+            x: 5000.0,
+            y: 0.0,
+            z: 0.0,
+        }))
+        .unwrap();
         assert_eq!(b.angular_velocity, None);
-        let b = body(rb(boxcars::Vector3f { x: f32::NAN, y: 0.0, z: 0.0 })).unwrap();
+        let b = body(rb(boxcars::Vector3f {
+            x: f32::NAN,
+            y: 0.0,
+            z: 0.0,
+        }))
+        .unwrap();
         assert_eq!(b.angular_velocity, None);
     }
 }

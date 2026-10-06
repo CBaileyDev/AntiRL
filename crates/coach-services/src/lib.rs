@@ -237,7 +237,9 @@ impl CoachService {
         if merged["rltrain_path"] != previous["rltrain_path"] {
             match merged["rltrain_path"].as_str().map(str::trim) {
                 None | Some("") => merged["rltrain_path"] = Value::Null,
-                Some(p) => merged["rltrain_path"] = json!(sim::validate_rltrain_root(p)?.to_string_lossy()),
+                Some(p) => {
+                    merged["rltrain_path"] = json!(sim::validate_rltrain_root(p)?.to_string_lossy())
+                }
             }
         }
         normalize_cloud_consent(&mut merged);

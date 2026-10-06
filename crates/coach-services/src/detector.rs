@@ -418,7 +418,9 @@ impl CoachService {
         let rows: Vec<Row> = {
             let db = self.db.lock().map_err(err)?;
             let mut q = db
-                .prepare("SELECT player_id,confirmed_bot,index_value,detector_version FROM bot_labels")
+                .prepare(
+                    "SELECT player_id,confirmed_bot,index_value,detector_version FROM bot_labels",
+                )
                 .map_err(err)?;
             let rows = q
                 .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))
@@ -691,7 +693,12 @@ mod tests {
         let rep = s.bot_calibration_report().unwrap();
         assert_eq!(rep["calibrated"], false);
         assert_eq!(rep["auc"].as_f64(), Some(1.0), "{rep}");
-        assert!(rep["in_sample_best_youden_threshold"]["youden_j"].as_f64().unwrap() > 0.9);
+        assert!(
+            rep["in_sample_best_youden_threshold"]["youden_j"]
+                .as_f64()
+                .unwrap()
+                > 0.9
+        );
         assert!(s.set_bot_label("r0", "nobody", Some(true)).is_err());
         assert_eq!(
             s.bot_labels().unwrap()["labels"].as_array().unwrap().len(),
@@ -707,7 +714,9 @@ mod tests {
     #[test]
     fn real_replays_when_provided() {
         let Some(dir) = std::env::var_os("ANTIRL_DETECTOR_REPLAYS") else {
-            eprintln!("SKIPPED: ANTIRL_DETECTOR_REPLAYS not set; real-replay detection unavailable here");
+            eprintln!(
+                "SKIPPED: ANTIRL_DETECTOR_REPLAYS not set; real-replay detection unavailable here"
+            );
             return;
         };
         for e in fs::read_dir(dir).unwrap().flatten().take(3) {

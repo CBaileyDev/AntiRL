@@ -130,7 +130,9 @@ pub fn parse_checkpoint(run_id: &str, dir: &Path) -> CheckpointInfo {
     };
     if let (Some(o), Some(_)) = (&observation, team_size) {
         if observation_width.is_none() {
-            problems.push(format!("observation layout {o:?} is not one this app knows how to check"));
+            problems.push(format!(
+                "observation layout {o:?} is not one this app knows how to check"
+            ));
         }
     }
     let action_version = meta
@@ -265,7 +267,11 @@ pub fn select_checkpoint<'a>(
         let have: Vec<_> = sizes.iter().map(|s| format!("{s}v{s}")).collect();
         format!(
             "No compatible checkpoint trained for {mode} (team size {size}); available: {}",
-            if have.is_empty() { "none".into() } else { have.join(", ") }
+            if have.is_empty() {
+                "none".into()
+            } else {
+                have.join(", ")
+            }
         )
     })
 }
@@ -285,7 +291,8 @@ pub fn validate_rltrain_root(path: &str) -> Result<PathBuf, String> {
     if !p.is_absolute() {
         return Err("The RLTRAIN_2 folder must be an absolute path".into());
     }
-    let canon = fs::canonicalize(&p).map_err(|e| format!("The RLTRAIN_2 folder cannot be opened: {e}"))?;
+    let canon =
+        fs::canonicalize(&p).map_err(|e| format!("The RLTRAIN_2 folder cannot be opened: {e}"))?;
     let text = canon.to_string_lossy().to_string();
     if text.starts_with(r"\\?\UNC\") {
         return Err("Network (UNC) paths are not accepted for the RLTRAIN_2 folder".into());
@@ -321,7 +328,10 @@ impl Drop for TempFile {
 fn root_from_settings(settings: &Value) -> (PathBuf, &'static str) {
     match settings["rltrain_path"].as_str().filter(|s| !s.is_empty()) {
         Some(p) => (PathBuf::from(p), "settings"),
-        None => (PathBuf::from(DEFAULT_RLTRAIN_PATH), "default (not configured)"),
+        None => (
+            PathBuf::from(DEFAULT_RLTRAIN_PATH),
+            "default (not configured)",
+        ),
     }
 }
 
@@ -335,7 +345,11 @@ fn up_z(q: [f64; 4]) -> f64 {
 fn grounded(pos: [f64; 3], rot: [f64; 4]) -> Option<bool> {
     if pos[2] <= 22.0 && up_z(rot) >= 0.95 {
         Some(true)
-    } else if pos[2] >= 150.0 && pos[2] <= 1700.0 && pos[0].abs() <= 3700.0 && pos[1].abs() <= 4700.0 {
+    } else if pos[2] >= 150.0
+        && pos[2] <= 1700.0
+        && pos[0].abs() <= 3700.0
+        && pos[1].abs() <= 4700.0
+    {
         Some(false)
     } else {
         None
@@ -378,13 +392,17 @@ pub fn reconstruct(a: &Value, team_size: u64, time: f64) -> Result<Reconstructio
         ));
     }
     let Some(idx) = nearest_frame(&frames, time) else {
-        why.push(format!("No recorded frame within {MAX_FRAME_GAP_S} s of {time} s"));
+        why.push(format!(
+            "No recorded frame within {MAX_FRAME_GAP_S} s of {time} s"
+        ));
         return Err(why);
     };
     let frame = &frames[idx];
     let ft = f(&frame["time"]).unwrap_or(time);
     if frame["live_play"] != true || frame["discontinuity"] == true {
-        why.push("Frame is not continuous live play (kickoff countdown, replay, or a data gap)".into());
+        why.push(
+            "Frame is not continuous live play (kickoff countdown, replay, or a data gap)".into(),
+        );
     }
     let ball = &frame["ball"];
     let (bp, bv, bw) = (
@@ -409,7 +427,8 @@ pub fn reconstruct(a: &Value, team_size: u64, time: f64) -> Result<Reconstructio
         .collect();
     players.sort_by_key(|p| p.0);
     let per_team = |t: u64| players.iter().filter(|p| p.0 == t).count() as u64;
-    if per_team(0) != team_size || per_team(1) != team_size || players.len() as u64 != team_size * 2 {
+    if per_team(0) != team_size || per_team(1) != team_size || players.len() as u64 != team_size * 2
+    {
         why.push(format!(
             "Replay has {} blue and {} orange players; the {team_size}v{team_size} checkpoint needs exactly {team_size} each",
             per_team(0),
@@ -419,7 +438,9 @@ pub fn reconstruct(a: &Value, team_size: u64, time: f64) -> Result<Reconstructio
     let mut cars = vec![];
     for (team, id) in &players {
         let Some(c) = frame_car(frame, id) else {
-            why.push(format!("Player {id} has no valid car in this frame (demolished, gap or discontinuity)"));
+            why.push(format!(
+                "Player {id} has no valid car in this frame (demolished, gap or discontinuity)"
+            ));
             continue;
         };
         let (p, q, v, w) = (
@@ -445,7 +466,13 @@ pub fn reconstruct(a: &Value, team_size: u64, time: f64) -> Result<Reconstructio
             why.push(format!("Player {id}: unknown {}", missing.join(", ")));
             continue;
         }
-        let (p, q, v, w, boost) = (p.unwrap(), q.unwrap(), v.unwrap(), w.unwrap(), boost.unwrap());
+        let (p, q, v, w, boost) = (
+            p.unwrap(),
+            q.unwrap(),
+            v.unwrap(),
+            w.unwrap(),
+            boost.unwrap(),
+        );
         let mut car = json!({"team":team,"pos":p,"vel":v,"angVel":w,"rotation":q,"boost":boost});
         match grounded(p, q) {
             Some(true) => car["onGround"] = json!(true),
@@ -495,16 +522,23 @@ fn air_time(frames: &[Value], idx: usize, player: &str) -> Result<f64, String> {
         if now - t > 3.0 {
             return Err("no grounded frame in the last 3 s, so time since jump is unknown".into());
         }
-        let car = frame_car(fr, player).ok_or("car history has a gap, so time since jump is unknown")?;
+        let car =
+            frame_car(fr, player).ok_or("car history has a gap, so time since jump is unknown")?;
         if i < idx {
             if let (Some(p), Some(q)) = (vec3(&car["position"]), quat(&car["rotation"])) {
                 if grounded(p, q) == Some(true) {
                     let air = now - t;
                     let expired = air - 0.2 >= 1.25;
                     if !(spent || expired || !unknown_flags) {
-                        return Err("jump/dodge flags are unavailable, so the flip state is unknown".into());
+                        return Err(
+                            "jump/dodge flags are unavailable, so the flip state is unknown".into(),
+                        );
                     }
-                    return Ok(if spent || expired { 1.25 } else { (air - 0.2).max(0.0) });
+                    return Ok(if spent || expired {
+                        1.25
+                    } else {
+                        (air - 0.2).max(0.0)
+                    });
                 }
             }
         }
@@ -588,7 +622,11 @@ pub fn compare_ball_path(
             let a = vec3(&frames[hi - 1]["ball"]["position"])?;
             let tl = f(&frames[hi - 1]["time"])?;
             let k = ((at - tl) / (th - tl)).clamp(0.0, 1.0);
-            [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]
+            [
+                a[0] + (b[0] - a[0]) * k,
+                a[1] + (b[1] - a[1]) * k,
+                a[2] + (b[2] - a[2]) * k,
+            ]
         };
         let e = dist(*pos, rec);
         max = max.max(e);
@@ -661,9 +699,14 @@ pub fn run_engine(
             break Some(s);
         }
         if out.lock().unwrap().1 {
-            failure = Some(format!("Engine output exceeded {max_out} bytes and was stopped"));
+            failure = Some(format!(
+                "Engine output exceeded {max_out} bytes and was stopped"
+            ));
         } else if start.elapsed() > timeout {
-            failure = Some(format!("Engine timed out after {} s and was stopped", timeout.as_secs()));
+            failure = Some(format!(
+                "Engine timed out after {} s and was stopped",
+                timeout.as_secs()
+            ));
         }
         if failure.is_some() {
             kill_tree(child.id());
@@ -680,12 +723,21 @@ pub fn run_engine(
     }
     let _ = t1.join();
     if out.lock().unwrap().1 {
-        return Err(format!("Engine output exceeded {max_out} bytes and was discarded"));
+        return Err(format!(
+            "Engine output exceeded {max_out} bytes and was discarded"
+        ));
     }
     let _ = t2.join();
     let stdout = std::mem::take(&mut out.lock().unwrap().0);
-    let stderr = String::from_utf8_lossy(&errs.lock().unwrap()).chars().take(2000).collect();
-    Ok(EngineRun { stdout, stderr, code: status.and_then(|s| s.code()) })
+    let stderr = String::from_utf8_lossy(&errs.lock().unwrap())
+        .chars()
+        .take(2000)
+        .collect();
+    Ok(EngineRun {
+        stdout,
+        stderr,
+        code: status.and_then(|s| s.code()),
+    })
 }
 /// Best effort: ends the child and everything it started. std has no process groups on Windows,
 /// so `taskkill /T` is used instead of a job object; a grandchild that detaches itself escapes.
@@ -719,11 +771,20 @@ pub fn parse_engine_output(run: &EngineRun) -> Result<EngineOutcome, String> {
         return Ok(EngineOutcome::Refused(
             e["code"].as_str().unwrap_or("engine_error").into(),
             e["gate"] == true,
-            e["message"].as_str().unwrap_or("").chars().take(500).collect(),
+            e["message"]
+                .as_str()
+                .unwrap_or("")
+                .chars()
+                .take(500)
+                .collect(),
         ));
     }
     if run.code != Some(0) {
-        return Err(format!("Engine exited with code {:?}: {}", run.code, run.stderr.trim()));
+        return Err(format!(
+            "Engine exited with code {:?}: {}",
+            run.code,
+            run.stderr.trim()
+        ));
     }
     let start = lines.iter().any(|l| l["type"] == "rollout_start");
     let end = lines.iter().any(|l| l["type"] == "rollout_end");
@@ -751,39 +812,60 @@ impl CoachService {
     /// and offers the `rollout` command.
     pub fn sim_status(&self, probe: bool) -> ServiceResult<Value> {
         let (root, source) = root_from_settings(&self.get_settings()?);
-        let mut status = json!({"path":root.to_string_lossy(),"path_source":source,"label":WHAT_IF_LABEL});
+        let mut status =
+            json!({"path":root.to_string_lossy(),"path_source":source,"label":WHAT_IF_LABEL});
         if !root.join("engine").is_dir() {
             status["status"] = "unavailable".into();
-            status["reason"] = format!("RLTRAIN_2 was not found at {}; set its location in Settings", root.display()).into();
+            status["reason"] = format!(
+                "RLTRAIN_2 was not found at {}; set its location in Settings",
+                root.display()
+            )
+            .into();
             return Ok(status);
         }
         let checkpoints = discover_checkpoints(&root);
         status["checkpoints"] = checkpoints.iter().map(CheckpointInfo::to_value).collect();
-        let mut modes: Vec<u64> = checkpoints.iter().filter(|c| c.compatible()).filter_map(|c| c.team_size).collect();
+        let mut modes: Vec<u64> = checkpoints
+            .iter()
+            .filter(|c| c.compatible())
+            .filter_map(|c| c.team_size)
+            .collect();
         modes.sort_unstable();
         modes.dedup();
-        status["supported_modes"] = modes.iter().map(|s| format!("{s}v{s}")).collect::<Vec<_>>().into();
+        status["supported_modes"] = modes
+            .iter()
+            .map(|s| format!("{s}v{s}"))
+            .collect::<Vec<_>>()
+            .into();
         match discover_engine(&root) {
             None => {
                 status["status"] = "unavailable".into();
-                status["reason"] = "rl-engine was not found in engine/build/bin; build RLTRAIN_2 first".into();
+                status["reason"] =
+                    "rl-engine was not found in engine/build/bin; build RLTRAIN_2 first".into();
             }
             Some(e) if !e.missing_dlls.is_empty() => {
                 status["engine"] = e.path.to_string_lossy().into();
                 status["status"] = "unavailable".into();
-                status["reason"] = format!("Engine DLLs missing beside rl-engine: {}", e.missing_dlls.join(", ")).into();
+                status["reason"] = format!(
+                    "Engine DLLs missing beside rl-engine: {}",
+                    e.missing_dlls.join(", ")
+                )
+                .into();
             }
             Some(e) => {
                 status["engine"] = e.path.to_string_lossy().into();
                 if modes.is_empty() {
                     status["status"] = "unavailable".into();
-                    status["reason"] = "No compatible discrete90_v1 checkpoint was found under runs/".into();
+                    status["reason"] =
+                        "No compatible discrete90_v1 checkpoint was found under runs/".into();
                 } else {
                     status["status"] = "ready".into();
                 }
                 if probe && status["status"] == "ready" {
                     match run_engine(&e.path, &root, &[], Duration::from_secs(15), 64 * 1024) {
-                        Ok(r) if r.code == Some(0) && String::from_utf8_lossy(&r.stdout).contains("rollout") => {}
+                        Ok(r)
+                            if r.code == Some(0)
+                                && String::from_utf8_lossy(&r.stdout).contains("rollout") => {}
                         Ok(r) => {
                             status["status"] = "unavailable".into();
                             status["reason"] = format!("Engine started but does not offer `rollout` (exit {:?}); rebuild it", r.code).into();
@@ -799,30 +881,58 @@ impl CoachService {
         Ok(status)
     }
     fn sim_setup(&self) -> Result<Setup, Value> {
-        let (root, _) = root_from_settings(&self.get_settings().map_err(|e| unavailable(e))?);
+        let (root, _) = root_from_settings(&self.get_settings().map_err(unavailable)?);
         if !root.join("engine").is_dir() {
-            return Err(unavailable(format!("RLTRAIN_2 was not found at {}", root.display())));
+            return Err(unavailable(format!(
+                "RLTRAIN_2 was not found at {}",
+                root.display()
+            )));
         }
-        let engine = discover_engine(&root).ok_or_else(|| unavailable("rl-engine was not found; build RLTRAIN_2 first"))?;
+        let engine = discover_engine(&root)
+            .ok_or_else(|| unavailable("rl-engine was not found; build RLTRAIN_2 first"))?;
         if !engine.missing_dlls.is_empty() {
-            return Err(unavailable(format!("Engine DLLs missing beside rl-engine: {}", engine.missing_dlls.join(", "))));
+            return Err(unavailable(format!(
+                "Engine DLLs missing beside rl-engine: {}",
+                engine.missing_dlls.join(", ")
+            )));
         }
-        Ok(Setup { checkpoints: discover_checkpoints(&root), engine: engine.path, root })
+        Ok(Setup {
+            checkpoints: discover_checkpoints(&root),
+            engine: engine.path,
+            root,
+        })
     }
     fn sim_replay(&self, id: &str) -> Result<(Value, String), Value> {
         let a = self.get_replay(id).map_err(unavailable)?;
         let mode = a["summary"]["mode"].as_str().unwrap_or("").to_string();
         Ok((a, mode))
     }
-    fn run_state(&self, setup: &Setup, state: &Value, extra: Vec<OsString>) -> Result<EngineOutcome, Value> {
+    fn run_state(
+        &self,
+        setup: &Setup,
+        state: &Value,
+        extra: Vec<OsString>,
+    ) -> Result<EngineOutcome, Value> {
         let dir = self.dir.join("sim-tmp");
-        fs::create_dir_all(&dir).map_err(|e| unavailable(format!("Cannot create a temp folder: {e}")))?;
+        fs::create_dir_all(&dir)
+            .map_err(|e| unavailable(format!("Cannot create a temp folder: {e}")))?;
         let file = dir.join(format!("{}.json", ident()));
         let _guard = TempFile(file.clone());
-        fs::write(&file, state.to_string()).map_err(|e| unavailable(format!("Cannot write the state file: {e}")))?;
-        let mut args: Vec<OsString> = vec!["rollout".into(), "--state".into(), file.clone().into_os_string()];
+        fs::write(&file, state.to_string())
+            .map_err(|e| unavailable(format!("Cannot write the state file: {e}")))?;
+        let mut args: Vec<OsString> = vec![
+            "rollout".into(),
+            "--state".into(),
+            file.clone().into_os_string(),
+        ];
         args.extend(extra);
-        let run = run_engine(&setup.engine, &setup.root, &args, ENGINE_TIMEOUT, MAX_ENGINE_OUTPUT);
+        let run = run_engine(
+            &setup.engine,
+            &setup.root,
+            &args,
+            ENGINE_TIMEOUT,
+            MAX_ENGINE_OUTPUT,
+        );
         parse_engine_output(&run.map_err(unavailable)?).map_err(unavailable)
     }
     /// Reconstructs the start state at `time` and says exactly what is unknown.
@@ -835,7 +945,9 @@ impl CoachService {
             return Ok(unavailable(format!("Mode {mode:?} is not supported")));
         };
         Ok(match reconstruct(&a, size, time) {
-            Ok(r) => json!({"status":"ok","frame_time":r.frame_time,"state":r.state,"players":r.players,"limitations":r.limitations}),
+            Ok(r) => {
+                json!({"status":"ok","frame_time":r.frame_time,"state":r.state,"players":r.players,"limitations":r.limitations})
+            }
             Err(why) => refused(why),
         })
     }
@@ -854,9 +966,13 @@ impl CoachService {
     fn validate_ball(&self, setup: &Setup, a: &Value, time: f64) -> Result<Value, Value> {
         let frames: Vec<Value> = a["frames"].as_array().cloned().unwrap_or_default();
         if a["analysis_version"] != replay_core::ANALYSIS_VERSION {
-            return Err(refused(vec!["Ball angular velocity is unknown: replay predates the current capture version".into()]));
+            return Err(refused(vec![
+                "Ball angular velocity is unknown: replay predates the current capture version"
+                    .into(),
+            ]));
         }
-        let idx = nearest_frame(&frames, time).ok_or_else(|| unavailable("No recorded frame near that time"))?;
+        let idx = nearest_frame(&frames, time)
+            .ok_or_else(|| unavailable("No recorded frame near that time"))?;
         if !free_frame(&frames[idx]) {
             return Err(unavailable("The requested state frame is not free flight (a car is within contact distance of the ball, or the frame is not continuous live play), so the ball-only reconstruction check cannot be applied here"));
         }
@@ -865,26 +981,46 @@ impl CoachService {
         })?;
         let b = &frames[first]["ball"];
         let state = json!({"ball":{"pos":b["position"],"vel":b["velocity"],"angVel":b["angular_velocity"]},"cars":[]});
-        let span = f(&frames[last]["time"]).unwrap_or(0.0) - f(&frames[first]["time"]).unwrap_or(0.0);
+        let span =
+            f(&frames[last]["time"]).unwrap_or(0.0) - f(&frames[first]["time"]).unwrap_or(0.0);
         let steps = ((span / (8.0 / 120.0)).ceil() as u64 + 1).min(60);
-        let lines = match self.run_state(setup, &state, vec!["--ball-only".into(), "--steps".into(), steps.to_string().into()])? {
+        let lines = match self.run_state(
+            setup,
+            &state,
+            vec![
+                "--ball-only".into(),
+                "--steps".into(),
+                steps.to_string().into(),
+            ],
+        )? {
             EngineOutcome::Ok(l) => l,
-            EngineOutcome::Refused(code, _, m) => return Err(refused(vec![format!("Engine refused ball-only validation ({code}): {m}")])),
+            EngineOutcome::Refused(code, _, m) => {
+                return Err(refused(vec![format!(
+                    "Engine refused ball-only validation ({code}): {m}"
+                )]))
+            }
         };
-        let sps = lines.iter().find(|l| l["type"] == "rollout_start").and_then(|l| f(&l["secondsPerStep"])).unwrap_or(8.0 / 120.0);
+        let sps = lines
+            .iter()
+            .find(|l| l["type"] == "rollout_start")
+            .and_then(|l| f(&l["secondsPerStep"]))
+            .unwrap_or(8.0 / 120.0);
         let engine: Vec<(f64, [f64; 3])> = lines
             .iter()
             .filter(|l| l["type"] == "decision")
             .filter_map(|l| Some((l["step"].as_f64()? * sps, vec3(&l["ball"]["pos"])?)))
             .collect();
-        let (max, mean, n) = compare_ball_path(&engine, &frames, first, last)
-            .ok_or_else(|| unavailable("Too few comparable samples to validate the reconstruction"))?;
+        let (max, mean, n) = compare_ball_path(&engine, &frames, first, last).ok_or_else(|| {
+            unavailable("Too few comparable samples to validate the reconstruction")
+        })?;
         let pass = max <= BALL_MAX_ERROR_UU && mean <= BALL_MEAN_ERROR_UU;
-        Ok(json!({"status":if pass {"validated"} else {"failed"},"max_error_uu":max,"mean_error_uu":mean,"samples":n,
+        Ok(
+            json!({"status":if pass {"validated"} else {"failed"},"max_error_uu":max,"mean_error_uu":mean,"samples":n,
             "window_start":frames[first]["time"],"window_end":frames[last]["time"],
             "thresholds":{"max_uu":BALL_MAX_ERROR_UU,"mean_uu":BALL_MEAN_ERROR_UU,"calibrated":false,
                 "note":"Engineering thresholds, not statistically calibrated. Validation covers free-flight ball motion only; it says nothing about car state or about the policy."},
-            "ball_contact_proxy_uu":CONTACT_UU}))
+            "ball_contact_proxy_uu":CONTACT_UU}),
+        )
     }
     /// The what-if: validated reconstruction, then the checkpoint's own decisions in simulation.
     /// `options`: steps (1..=300, default 90), deterministic (default true), run (explicit run id).
@@ -916,24 +1052,45 @@ impl CoachService {
         let validation = match self.validate_ball(&setup, &a, recon.frame_time) {
             Ok(v) if v["status"] == "validated" => v,
             Ok(v) => {
-                return Ok(json!({"status":"refused","reasons":[format!("Ball-only reconstruction check failed: max {:.0} uu, mean {:.0} uu (limits {BALL_MAX_ERROR_UU} / {BALL_MEAN_ERROR_UU})",
-                    v["max_error_uu"].as_f64().unwrap_or(f64::NAN), v["mean_error_uu"].as_f64().unwrap_or(f64::NAN))],"validation":v,"label":WHAT_IF_LABEL}))
+                return Ok(
+                    json!({"status":"refused","reasons":[format!("Ball-only reconstruction check failed: max {:.0} uu, mean {:.0} uu (limits {BALL_MAX_ERROR_UU} / {BALL_MEAN_ERROR_UU})",
+                    v["max_error_uu"].as_f64().unwrap_or(f64::NAN), v["mean_error_uu"].as_f64().unwrap_or(f64::NAN))],"validation":v,"label":WHAT_IF_LABEL}),
+                )
             }
-            Err(v) => return Ok(json!({"status":v["status"],"reasons":[v["reason"].clone()],"reason":format!("Reconstruction could not be validated: {}", v["reason"].as_str().unwrap_or("see reasons")),"validation":v,"label":WHAT_IF_LABEL})),
+            Err(v) => {
+                return Ok(
+                    json!({"status":v["status"],"reasons":[v["reason"].clone()],"reason":format!("Reconstruction could not be validated: {}", v["reason"].as_str().unwrap_or("see reasons")),"validation":v,"label":WHAT_IF_LABEL}),
+                )
+            }
         };
-        let mut args: Vec<OsString> = vec!["--checkpoint".into(), ck.dir.clone().into_os_string(), "--steps".into(), steps.to_string().into()];
+        let mut args: Vec<OsString> = vec![
+            "--checkpoint".into(),
+            ck.dir.clone().into_os_string(),
+            "--steps".into(),
+            steps.to_string().into(),
+        ];
         if deterministic {
             args.push("--deterministic".into());
         }
         let lines = match self.run_state(&setup, &recon.state, args) {
             Ok(EngineOutcome::Ok(l)) => l,
             Ok(EngineOutcome::Refused(code, gate, message)) => {
-                return Ok(json!({"status":"refused","reasons":[format!("Engine refused ({code}): {message}")],"gate":gate,"label":WHAT_IF_LABEL}))
+                return Ok(
+                    json!({"status":"refused","reasons":[format!("Engine refused ({code}): {message}")],"gate":gate,"label":WHAT_IF_LABEL}),
+                )
             }
             Err(v) => return Ok(v),
         };
-        let start = lines.iter().find(|l| l["type"] == "rollout_start").cloned().unwrap_or(Value::Null);
-        let end = lines.iter().find(|l| l["type"] == "rollout_end").cloned().unwrap_or(Value::Null);
+        let start = lines
+            .iter()
+            .find(|l| l["type"] == "rollout_start")
+            .cloned()
+            .unwrap_or(Value::Null);
+        let end = lines
+            .iter()
+            .find(|l| l["type"] == "rollout_end")
+            .cloned()
+            .unwrap_or(Value::Null);
         let sps = f(&start["secondsPerStep"]).unwrap_or(8.0 / 120.0);
         let mut decisions: Vec<Value> = vec![];
         for l in lines.iter().filter(|l| l["type"] == "decision") {
@@ -979,9 +1136,21 @@ mod tests {
         fs::write(p, s).unwrap();
     }
     fn checkpoint(root: &Path, run: &str, n: u32, team: u64, action: &str) {
-        let d = root.join("runs").join(run).join("checkpoints").join(n.to_string());
-        write(&d.join("config.json"), &format!(r#"{{"teamSize":{team},"observation":"advanced_v1","architecture":"split_v2"}}"#));
-        write(&d.join("metadata.json"), &format!(r#"{{"formatVersion":1,"actionVersion":"{action}","iteration":{n}}}"#));
+        let d = root
+            .join("runs")
+            .join(run)
+            .join("checkpoints")
+            .join(n.to_string());
+        write(
+            &d.join("config.json"),
+            &format!(
+                r#"{{"teamSize":{team},"observation":"advanced_v1","architecture":"split_v2"}}"#
+            ),
+        );
+        write(
+            &d.join("metadata.json"),
+            &format!(r#"{{"formatVersion":1,"actionVersion":"{action}","iteration":{n}}}"#),
+        );
         write(&d.join("model.pt"), "x");
         // Never read: a directory would make any read fail.
         fs::create_dir_all(root.join("runs").join(run).join("metrics.jsonl")).unwrap();
@@ -1008,12 +1177,18 @@ mod tests {
         let found = discover_checkpoints(t.path());
         assert_eq!(found.len(), 3);
         let r3 = found.iter().find(|c| c.run_id == "run-3v3").unwrap();
-        assert_eq!((r3.iteration, r3.team_size, r3.compatible()), (20, Some(3), true));
+        assert_eq!(
+            (r3.iteration, r3.team_size, r3.compatible()),
+            (20, Some(3), true)
+        );
         let old = found.iter().find(|c| c.run_id == "run-old").unwrap();
         assert!(!old.compatible() && old.problems[0].contains("discrete90_v1"));
         assert!(discover_engine(t.path()).unwrap().missing_dlls.is_empty());
         let no_dll = fake_root(false);
-        assert_eq!(discover_engine(no_dll.path()).unwrap().missing_dlls.len(), 2);
+        assert_eq!(
+            discover_engine(no_dll.path()).unwrap().missing_dlls.len(),
+            2
+        );
         assert!(discover_engine(tempfile::tempdir().unwrap().path()).is_none());
     }
 
@@ -1021,10 +1196,27 @@ mod tests {
     fn observation_layout_is_checked_before_the_engine_runs() {
         let t = fake_root(true);
         let found = discover_checkpoints(t.path());
-        assert_eq!(found.iter().find(|c| c.run_id == "run-3v3").unwrap().observation_width, Some(81 + 27 * 5));
-        assert_eq!(found.iter().find(|c| c.run_id == "run-1v1").unwrap().observation_width, Some(108));
+        assert_eq!(
+            found
+                .iter()
+                .find(|c| c.run_id == "run-3v3")
+                .unwrap()
+                .observation_width,
+            Some(81 + 27 * 5)
+        );
+        assert_eq!(
+            found
+                .iter()
+                .find(|c| c.run_id == "run-1v1")
+                .unwrap()
+                .observation_width,
+            Some(108)
+        );
         let d = t.path().join("runs/run-1v1/checkpoints/10");
-        write(&d.join("config.json"), r#"{"teamSize":1,"observation":"mystery_v9"}"#);
+        write(
+            &d.join("config.json"),
+            r#"{"teamSize":1,"observation":"mystery_v9"}"#,
+        );
         let c = parse_checkpoint("run-1v1", &d);
         assert!(!c.compatible() && c.problems.iter().any(|p| p.contains("mystery_v9")));
     }
@@ -1033,12 +1225,20 @@ mod tests {
     fn mode_gate_requires_matching_team_size() {
         let t = fake_root(true);
         let found = discover_checkpoints(t.path());
-        assert_eq!(select_checkpoint(&found, "3v3", None).unwrap().run_id, "run-3v3");
-        assert_eq!(select_checkpoint(&found, "1v1", None).unwrap().run_id, "run-1v1");
+        assert_eq!(
+            select_checkpoint(&found, "3v3", None).unwrap().run_id,
+            "run-3v3"
+        );
+        assert_eq!(
+            select_checkpoint(&found, "1v1", None).unwrap().run_id,
+            "run-1v1"
+        );
         let e = select_checkpoint(&found, "2v2", None).unwrap_err();
         assert!(e.contains("2v2") && e.contains("1v1, 3v3"), "{e}");
         assert!(select_checkpoint(&found, "3v3", Some("run-1v1")).is_err());
-        assert!(select_checkpoint(&found, "3v3", Some("run-old")).unwrap_err().contains("unusable"));
+        assert!(select_checkpoint(&found, "3v3", Some("run-old"))
+            .unwrap_err()
+            .contains("unusable"));
         assert!(select_checkpoint(&found, "Hoops", None).is_err());
     }
 
@@ -1058,7 +1258,14 @@ mod tests {
 
     #[test]
     fn reconstruction_refuses_unknowns_and_never_defaults() {
-        let ok = analysis(vec![frame(1.0, [0.0, 0.0, 500.0], vec![car("a", -2000.0, -1000.0, 17.0, json!({})), car("b", 2000.0, 1000.0, 17.0, json!({}))])]);
+        let ok = analysis(vec![frame(
+            1.0,
+            [0.0, 0.0, 500.0],
+            vec![
+                car("a", -2000.0, -1000.0, 17.0, json!({})),
+                car("b", 2000.0, 1000.0, 17.0, json!({})),
+            ],
+        )]);
         let r = reconstruct(&ok, 1, 1.0).unwrap();
         assert_eq!(r.players, ["a", "b"]);
         assert_eq!(r.state["cars"][0]["onGround"], true);
@@ -1068,16 +1275,25 @@ mod tests {
         // missing car angular velocity
         let mut bad = ok.clone();
         bad["frames"][0]["cars"][0]["angular_velocity"] = Value::Null;
-        assert!(reconstruct(&bad, 1, 1.0).unwrap_err().iter().any(|w| w.contains("angular velocity")));
+        assert!(reconstruct(&bad, 1, 1.0)
+            .unwrap_err()
+            .iter()
+            .any(|w| w.contains("angular velocity")));
         // old capture version, ball spin unknown, wall car
         let mut old = ok.clone();
         old["analysis_version"] = Value::Null;
         old["frames"][0]["ball"]["angular_velocity"] = Value::Null;
         let why = reconstruct(&old, 1, 1.0).unwrap_err();
-        assert!(why.iter().any(|w| w.contains("re-enrich")) && why.iter().any(|w| w.contains("Ball angular")));
+        assert!(
+            why.iter().any(|w| w.contains("re-enrich"))
+                && why.iter().any(|w| w.contains("Ball angular"))
+        );
         let mut wall = ok.clone();
         wall["frames"][0]["cars"][0]["position"] = json!([-4000.0, 0.0, 600.0]);
-        assert!(reconstruct(&wall, 1, 1.0).unwrap_err().iter().any(|w| w.contains("ambiguous")));
+        assert!(reconstruct(&wall, 1, 1.0)
+            .unwrap_err()
+            .iter()
+            .any(|w| w.contains("ambiguous")));
         // time with no nearby frame
         assert!(reconstruct(&ok, 1, 9.0).is_err());
     }
@@ -1085,17 +1301,42 @@ mod tests {
     #[test]
     fn airborne_flip_state_comes_from_history() {
         let air = |t: f64, z: f64, dodge: Value| {
-            frame(t, [0.0, 0.0, 500.0], vec![car("a", 0.0, 0.0, z, json!({"dodge_active":dodge})), car("b", 2000.0, 1000.0, 17.0, json!({}))])
+            frame(
+                t,
+                [0.0, 0.0, 500.0],
+                vec![
+                    car("a", 0.0, 0.0, z, json!({"dodge_active":dodge})),
+                    car("b", 2000.0, 1000.0, 17.0, json!({})),
+                ],
+            )
         };
-        let a = analysis(vec![air(0.0, 17.0, json!(false)), air(0.5, 300.0, json!(false)), air(0.6, 400.0, json!(false))]);
+        let a = analysis(vec![
+            air(0.0, 17.0, json!(false)),
+            air(0.5, 300.0, json!(false)),
+            air(0.6, 400.0, json!(false)),
+        ]);
         let r = reconstruct(&a, 1, 0.6).unwrap();
         let t = r.state["cars"][0]["airTimeSinceJump"].as_f64().unwrap();
         assert!((t - 0.4).abs() < 1e-9, "{t}");
-        let spent = analysis(vec![air(0.0, 17.0, json!(false)), air(0.5, 300.0, json!(true)), air(0.6, 400.0, json!(false))]);
-        assert_eq!(reconstruct(&spent, 1, 0.6).unwrap().state["cars"][0]["airTimeSinceJump"], 1.25);
-        let unknown = analysis(vec![air(0.0, 17.0, json!(false)), air(0.5, 300.0, Value::Null), air(0.6, 400.0, json!(false))]);
+        let spent = analysis(vec![
+            air(0.0, 17.0, json!(false)),
+            air(0.5, 300.0, json!(true)),
+            air(0.6, 400.0, json!(false)),
+        ]);
+        assert_eq!(
+            reconstruct(&spent, 1, 0.6).unwrap().state["cars"][0]["airTimeSinceJump"],
+            1.25
+        );
+        let unknown = analysis(vec![
+            air(0.0, 17.0, json!(false)),
+            air(0.5, 300.0, Value::Null),
+            air(0.6, 400.0, json!(false)),
+        ]);
         assert!(reconstruct(&unknown, 1, 0.6).unwrap_err()[0].contains("flip state is unknown"));
-        let no_ground = analysis(vec![air(0.5, 300.0, json!(false)), air(0.6, 400.0, json!(false))]);
+        let no_ground = analysis(vec![
+            air(0.5, 300.0, json!(false)),
+            air(0.6, 400.0, json!(false)),
+        ]);
         assert!(reconstruct(&no_ground, 1, 0.6).unwrap_err()[0].contains("unknown"));
     }
 
@@ -1103,7 +1344,14 @@ mod tests {
         (0..n)
             .map(|i| {
                 let t = i as f64 / 30.0;
-                frame(t, [300.0 * t, 0.0, 500.0], vec![car("a", -2000.0, -3000.0, 17.0, json!({})), car("b", 2000.0, 3000.0, 17.0, json!({}))])
+                frame(
+                    t,
+                    [300.0 * t, 0.0, 500.0],
+                    vec![
+                        car("a", -2000.0, -3000.0, 17.0, json!({})),
+                        car("b", 2000.0, 3000.0, 17.0, json!({})),
+                    ],
+                )
             })
             .collect()
     }
@@ -1112,10 +1360,24 @@ mod tests {
         let frames = flight_frames(90);
         let (first, last) = free_flight_window(&frames, 80).unwrap();
         assert!(first >= 1 && last > first);
-        let on_path: Vec<_> = (0..30).map(|k| (k as f64 / 15.0, [300.0 * (frames[first]["time"].as_f64().unwrap() + k as f64 / 15.0), 0.0, 500.0])).collect();
+        let on_path: Vec<_> = (0..30)
+            .map(|k| {
+                (
+                    k as f64 / 15.0,
+                    [
+                        300.0 * (frames[first]["time"].as_f64().unwrap() + k as f64 / 15.0),
+                        0.0,
+                        500.0,
+                    ],
+                )
+            })
+            .collect();
         let (max, mean, _) = compare_ball_path(&on_path, &frames, first, last).unwrap();
         assert!(max < 1e-6 && mean < 1e-6);
-        let off: Vec<_> = on_path.iter().map(|(t, p)| (*t, [p[0], p[1] + 400.0, p[2]])).collect();
+        let off: Vec<_> = on_path
+            .iter()
+            .map(|(t, p)| (*t, [p[0], p[1] + 400.0, p[2]]))
+            .collect();
         assert!(compare_ball_path(&off, &frames, first, last).unwrap().0 > BALL_MAX_ERROR_UU);
         // a car beside the ball is contact, not free flight; a short leg is unavailable
         let mut touched = frames.clone();
@@ -1139,11 +1401,16 @@ mod tests {
         {
             use std::os::unix::fs::PermissionsExt;
             write(&dir.join("rl-engine.sh"), "#!/bin/sh\ncase \"$*\" in *--ball-only*) cat \"$(dirname \"$0\")/out_ball.txt\";; *) cat \"$(dirname \"$0\")/out_policy.txt\";; esac\n");
-            fs::set_permissions(dir.join("rl-engine.sh"), fs::Permissions::from_mode(0o755)).unwrap();
+            fs::set_permissions(dir.join("rl-engine.sh"), fs::Permissions::from_mode(0o755))
+                .unwrap();
         }
     }
     fn stub_path(dir: &Path) -> PathBuf {
-        dir.join(if cfg!(windows) { "rl-engine.cmd" } else { "rl-engine.sh" })
+        dir.join(if cfg!(windows) {
+            "rl-engine.cmd"
+        } else {
+            "rl-engine.sh"
+        })
     }
     fn lines(v: &[Value]) -> String {
         v.iter().map(|x| x.to_string() + "\n").collect()
@@ -1152,25 +1419,69 @@ mod tests {
     #[test]
     fn runner_parses_output_enforces_limits_and_never_uses_a_shell() {
         let t = tempfile::tempdir().unwrap();
-        let good = lines(&[json!({"type":"rollout_start"}), json!({"type":"decision","step":0}), json!({"type":"rollout_end"})]);
+        let good = lines(&[
+            json!({"type":"rollout_start"}),
+            json!({"type":"decision","step":0}),
+            json!({"type":"rollout_end"}),
+        ]);
         stub(t.path(), &good, &good);
-        let run = run_engine(&stub_path(t.path()), t.path(), &["rollout".into(), "a b".into()], Duration::from_secs(20), 1 << 20).unwrap();
+        let run = run_engine(
+            &stub_path(t.path()),
+            t.path(),
+            &["rollout".into(), "a b".into()],
+            Duration::from_secs(20),
+            1 << 20,
+        )
+        .unwrap();
         assert!(matches!(parse_engine_output(&run).unwrap(), EngineOutcome::Ok(l) if l.len() == 3));
         // output cap
         let big = "x".repeat(200_000);
         stub(t.path(), &big, &big);
-        let e = run_engine(&stub_path(t.path()), t.path(), &[], Duration::from_secs(20), 10_000).err().unwrap();
+        let e = run_engine(
+            &stub_path(t.path()),
+            t.path(),
+            &[],
+            Duration::from_secs(20),
+            10_000,
+        )
+        .err()
+        .unwrap();
         assert!(e.contains("exceeded"), "{e}");
         // gate error line
-        let gate = lines(&[json!({"type":"error","gate":true,"code":"gate_team_size","message":"3 blue 1 orange"})]);
+        let gate = lines(&[
+            json!({"type":"error","gate":true,"code":"gate_team_size","message":"3 blue 1 orange"}),
+        ]);
         stub(t.path(), &gate, &gate);
-        let run = run_engine(&stub_path(t.path()), t.path(), &[], Duration::from_secs(20), 1 << 20).unwrap();
-        assert!(matches!(parse_engine_output(&run).unwrap(), EngineOutcome::Refused(c, true, _) if c == "gate_team_size"));
+        let run = run_engine(
+            &stub_path(t.path()),
+            t.path(),
+            &[],
+            Duration::from_secs(20),
+            1 << 20,
+        )
+        .unwrap();
+        assert!(
+            matches!(parse_engine_output(&run).unwrap(), EngineOutcome::Refused(c, true, _) if c == "gate_team_size")
+        );
         // incomplete output
         stub(t.path(), "{\"type\":\"rollout_start\"}\n", "");
-        let run = run_engine(&stub_path(t.path()), t.path(), &[], Duration::from_secs(20), 1 << 20).unwrap();
+        let run = run_engine(
+            &stub_path(t.path()),
+            t.path(),
+            &[],
+            Duration::from_secs(20),
+            1 << 20,
+        )
+        .unwrap();
         assert!(parse_engine_output(&run).is_err());
-        assert!(run_engine(&t.path().join("missing.exe"), t.path(), &[], Duration::from_secs(5), 1024).is_err());
+        assert!(run_engine(
+            &t.path().join("missing.exe"),
+            t.path(),
+            &[],
+            Duration::from_secs(5),
+            1024
+        )
+        .is_err());
     }
 
     #[test]
@@ -1187,8 +1498,19 @@ mod tests {
             fs::set_permissions(t.path().join(name), fs::Permissions::from_mode(0o755)).unwrap();
         }
         let start = Instant::now();
-        let e = run_engine(&t.path().join(name), t.path(), &[], Duration::from_millis(400), 1024).err().unwrap();
-        assert!(e.contains("timed out") && start.elapsed() < Duration::from_secs(10), "{e}");
+        let e = run_engine(
+            &t.path().join(name),
+            t.path(),
+            &[],
+            Duration::from_millis(400),
+            1024,
+        )
+        .err()
+        .unwrap();
+        assert!(
+            e.contains("timed out") && start.elapsed() < Duration::from_secs(10),
+            "{e}"
+        );
     }
 
     fn service_with_root(root: &Path) -> (tempfile::TempDir, CoachService) {
@@ -1203,15 +1525,24 @@ mod tests {
         let data = tempfile::tempdir().unwrap();
         let s = CoachService::open(data.path()).unwrap();
         let missing = tempfile::tempdir().unwrap();
-        assert!(s.save_settings(json!({"rltrain_path": missing.path().join("nope").to_string_lossy()})).is_err());
+        assert!(s
+            .save_settings(json!({"rltrain_path": missing.path().join("nope").to_string_lossy()}))
+            .is_err());
         assert!(s.set_sim_path(&missing.path().to_string_lossy()).is_err());
         // save_settings uses the same validation
-        assert!(s.save_settings(json!({"rltrain_path":"relative/dir"})).is_err());
-        assert!(s.save_settings(json!({"rltrain_path":r"\\server\share\x"})).is_err());
+        assert!(s
+            .save_settings(json!({"rltrain_path":"relative/dir"}))
+            .is_err());
+        assert!(s
+            .save_settings(json!({"rltrain_path":r"\\server\share\x"}))
+            .is_err());
         // no DLLs, then no checkpoint
         let t = fake_root(false);
         let (_d, s) = service_with_root(t.path());
-        assert!(s.sim_status(false).unwrap()["reason"].as_str().unwrap().contains("DLLs"));
+        assert!(s.sim_status(false).unwrap()["reason"]
+            .as_str()
+            .unwrap()
+            .contains("DLLs"));
         let bare = tempfile::tempdir().unwrap();
         fs::create_dir_all(bare.path().join("engine/build/bin")).unwrap();
         fs::create_dir_all(bare.path().join("runs")).unwrap();
@@ -1220,12 +1551,21 @@ mod tests {
         }
         write(&bare.path().join("engine/build/bin/rl-engine.exe"), "");
         let (_d2, s2) = service_with_root(bare.path());
-        assert!(s2.sim_status(false).unwrap()["reason"].as_str().unwrap().contains("checkpoint"));
-        assert_eq!(s2.sim_what_if("x", 1.0, &json!({})).unwrap()["status"], "unavailable");
+        assert!(s2.sim_status(false).unwrap()["reason"]
+            .as_str()
+            .unwrap()
+            .contains("checkpoint"));
+        assert_eq!(
+            s2.sim_what_if("x", 1.0, &json!({})).unwrap()["status"],
+            "unavailable"
+        );
         let ready = fake_root(true);
         let (_d3, s3) = service_with_root(ready.path());
         let st = s3.sim_status(false).unwrap();
-        assert_eq!((st["status"].as_str(), st["supported_modes"].to_string()), (Some("ready"), "[\"1v1\",\"3v3\"]".to_string()));
+        assert_eq!(
+            (st["status"].as_str(), st["supported_modes"].to_string()),
+            (Some("ready"), "[\"1v1\",\"3v3\"]".to_string())
+        );
     }
 
     #[test]
@@ -1255,10 +1595,17 @@ mod tests {
             json!({"type":"decision","step":0,"ball":{"pos":[1,2,3],"vel":[0,0,0]},"cars":[{"id":0,"pos":[0,0,17],"vel":[0,0,0],"forward":[0,1,0],"up":[0,0,1],"boost":40,"onGround":true},{"id":1,"pos":[5,5,17],"vel":[0,0,0],"forward":[0,1,0],"up":[0,0,1],"boost":40,"onGround":true}],"actions":[8,8]}),
             json!({"type":"rollout_end","reason":"steps","steps":1}),
         ]);
-        stub(&root.path().join("engine/build/bin"), &lines(&ball), &policy);
+        stub(
+            &root.path().join("engine/build/bin"),
+            &lines(&ball),
+            &policy,
+        );
         let r = s.sim_what_if("r1", 3.0, &json!({"steps":5})).unwrap();
         assert_eq!(r["status"], "ok", "{r}");
-        assert!(r["label"].as_str().unwrap().contains("unknown skill, not a model of any player"));
+        assert!(r["label"]
+            .as_str()
+            .unwrap()
+            .contains("unknown skill, not a model of any player"));
         assert!(r["label"].as_str().unwrap().contains("not a prediction"));
         assert_eq!(r["policy"]["run_id"], "run-1v1");
         assert_eq!(r["policy"]["measured_skill"], "none");
@@ -1276,10 +1623,17 @@ mod tests {
                 l
             })
             .collect();
-        stub(&root.path().join("engine/build/bin"), &lines(&shifted), &policy);
+        stub(
+            &root.path().join("engine/build/bin"),
+            &lines(&shifted),
+            &policy,
+        );
         let r = s.sim_what_if("r1", 3.0, &json!({"steps":5})).unwrap();
         assert_eq!(r["status"], "refused", "{r}");
-        assert!(r["reasons"][0].as_str().unwrap().contains("reconstruction check failed"));
+        assert!(r["reasons"][0]
+            .as_str()
+            .unwrap()
+            .contains("reconstruction check failed"));
         assert!(r.get("decisions").is_none());
         // 2v2 replay has no trained checkpoint
         let mut b = a.clone();

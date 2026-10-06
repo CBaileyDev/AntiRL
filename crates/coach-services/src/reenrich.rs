@@ -73,7 +73,9 @@ impl CoachService {
                 Err(e) => json!({"id":id,"status":"failed","reason":e}),
             });
         }
-        Ok(json!({"processed":results.len(),"results":results,"remaining":all.saturating_sub(ids.len())}))
+        Ok(
+            json!({"processed":results.len(),"results":results,"remaining":all.saturating_sub(ids.len())}),
+        )
     }
 
     /// Decode one replay's snapshot in-process (panic-isolated, hash- and identity-verified)
@@ -104,8 +106,10 @@ impl CoachService {
         let analysis = std::panic::catch_unwind(|| replay_core::decode(&path, &bytes))
             .map_err(|_| "Replay decoder failed safely".to_string())??;
         self.apply_reenrichment(id, &hash, &analysis)?;
-        Ok(json!({"id":id,"status":"updated","analysis_version":ANALYSIS_VERSION,
-            "frames":analysis.frames.len(),"pad_events":analysis.pad_events.len(),"shots":analysis.shots.len()}))
+        Ok(
+            json!({"id":id,"status":"updated","analysis_version":ANALYSIS_VERSION,
+            "frames":analysis.frames.len(),"pad_events":analysis.pad_events.len(),"shots":analysis.shots.len()}),
+        )
     }
 
     pub(crate) fn apply_reenrichment(
@@ -203,16 +207,15 @@ mod tests {
             .unwrap()
             .execute("INSERT INTO situation_cache VALUES('m1',0,'{}')", [])
             .unwrap();
-        let rev: i64 = s
-            .db
-            .lock()
-            .unwrap()
-            .query_row(
-                "SELECT intelligence_revision FROM replays WHERE id='m1'",
-                [],
-                |r| r.get(0),
-            )
-            .unwrap();
+        let rev: i64 =
+            s.db.lock()
+                .unwrap()
+                .query_row(
+                    "SELECT intelligence_revision FROM replays WHERE id='m1'",
+                    [],
+                    |r| r.get(0),
+                )
+                .unwrap();
         s.apply_reenrichment("m1", &hash, &decoded(&hash)).unwrap();
         let after = s.get_replay("m1").unwrap();
         assert_eq!(after["analysis_version"], ANALYSIS_VERSION);
@@ -265,7 +268,11 @@ mod tests {
         assert_eq!(st["snapshot_unavailable"][0], "m1");
         assert_eq!(s.reenrich_replay("m1").unwrap()["status"], "unavailable");
         fs::create_dir_all(s.snapshot_dir()).unwrap();
-        fs::write(s.snapshot_dir().join(format!("{hash}.replay")), b"not a replay").unwrap();
+        fs::write(
+            s.snapshot_dir().join(format!("{hash}.replay")),
+            b"not a replay",
+        )
+        .unwrap();
         assert_eq!(s.reenrichment_status().unwrap()["can_reenrich"][0], "m1");
         assert!(s.reenrich_replay("m1").is_err());
         let batch = s.reenrich_replays(5).unwrap();
@@ -289,7 +296,12 @@ mod tests {
         }
         s.save_replay(&stale).unwrap();
         fs::create_dir_all(s.snapshot_dir()).unwrap();
-        fs::copy(&src, s.snapshot_dir().join(format!("{}.replay", a.summary.file_hash))).unwrap();
+        fs::copy(
+            &src,
+            s.snapshot_dir()
+                .join(format!("{}.replay", a.summary.file_hash)),
+        )
+        .unwrap();
         let r = s.reenrich_replays(1).unwrap();
         assert_eq!(r["results"][0]["status"], "updated", "{r}");
         let got = s.get_replay(&a.summary.id).unwrap();

@@ -238,16 +238,22 @@ impl CoachService {
         replay_id: Option<&str>,
         player_id: Option<&str>,
     ) -> EvidenceContext {
-        let replay = replay_id
-            .and_then(|id| self.get_coach_replay(id).ok())
-            .filter(|r| {
-                settings["chat_mode"]
-                    .as_str()
-                    .is_none_or(|mode| mode == "All" || r["summary"]["mode"] == mode)
-            });
+        let selected_replay = replay_id.and_then(|id| self.get_coach_replay(id).ok());
+        let replay = selected_replay.clone().filter(|r| {
+            settings["chat_mode"]
+                .as_str()
+                .is_none_or(|mode| mode == "All" || r["summary"]["mode"] == mode)
+        });
         let mut event_ids: Vec<String> = vec![];
-        let mut focus: Option<String> = None;
-        let mut focus_name: Option<String> = None;
+        // Personal library scope must survive an unavailable or out-of-mode selection.
+        let mut focus = player_id
+            .filter(|p| !p.is_empty())
+            .or_else(|| settings["player_id"].as_str().filter(|p| !p.is_empty()))
+            .map(str::to_string);
+        let mut focus_name = settings["player_name"]
+            .as_str()
+            .filter(|n| !n.is_empty())
+            .map(str::to_string);
         let mut body = String::new();
 
         if let Some(r) = &replay {
@@ -513,17 +519,13 @@ impl CoachService {
             }
             body.push_str("Event categories: boost = boost-usage windows; rotation = team defensive-exposure heuristics; goal/demo = measured replay events.\n");
         } else if replay_id.is_some() {
-            body.push_str("== MATCH ==\nThe selected replay could not be loaded.\n");
+            if let Some(selected) = &selected_replay {
+                let _ = writeln!(body, "== MATCH ==\nThe selected replay belongs to {} and is excluded from this {} chat. Personal library evidence for the active mode remains available below.", selected["summary"]["mode"].as_str().unwrap_or("unknown"), settings["chat_mode"].as_str().unwrap_or("All"));
+            } else {
+                body.push_str("== MATCH ==\nThe selected replay could not be loaded. Personal library evidence remains available below.\n");
+            }
         } else {
             body.push_str("== MATCH ==\nNo match is loaded in chat. Only library-wide data is available below.\n");
-            focus = settings["player_id"]
-                .as_str()
-                .filter(|s| !s.is_empty())
-                .map(str::to_string);
-            focus_name = settings["player_name"]
-                .as_str()
-                .filter(|s| !s.is_empty())
-                .map(str::to_string);
         }
 
         let mut text = format!(
@@ -1827,6 +1829,31 @@ mod tests {
         let no_replay = svc.build_context(&settings, None, None);
         assert!(no_replay.text.contains("No match is loaded"));
         assert!(no_replay.text.contains("Most recent matches"));
+    }
+
+    #[test]
+    fn personal_library_identity_survives_missing_or_out_of_mode_replay() {
+        let dir = tempfile::tempdir().unwrap();
+        let svc = CoachService::open(dir.path()).unwrap();
+        svc.save_replay(&sample_replay()).unwrap();
+        let mut duel = sample_replay();
+        duel["summary"]["id"] = json!("duel");
+        duel["summary"]["mode"] = json!("1v1");
+        svc.save_replay(&duel).unwrap();
+        let settings = json!({"player_id":"p1", "player_name":"Alice", "chat_mode":"1v1"});
+        for selected in [Some("m1"), Some("missing"), None] {
+            let ctx = svc.build_context(&settings, selected, None);
+            assert_eq!(ctx.focus_name.as_deref(), Some("Alice"));
+            assert!(ctx.text.contains("\"lifetime_count\":1"), "{}", ctx.text);
+            assert!(!ctx.text.contains("identity_unknown"));
+        }
+        let ctx = svc.build_context(&settings, Some("m1"), None);
+        assert!(ctx.text.contains("belongs to 2v2"));
+        assert!(!ctx.text.contains("could not be loaded"));
+        let unknown = svc.build_context(&json!({"chat_mode":"1v1"}), Some("missing"), None);
+        assert!(unknown.text.contains("identity_unknown"));
+        let explicit = svc.build_context(&json!({"chat_mode":"1v1"}), None, Some("p1"));
+        assert!(explicit.text.contains("\"lifetime_count\":1"));
     }
 
     #[test]
