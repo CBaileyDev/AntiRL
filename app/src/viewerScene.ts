@@ -1,6 +1,7 @@
+import type { CameraProfile } from "./bindings";
 import type { RefObject } from "react";
 import type { ReplayAnalysis, Frame } from "./types";
-import { chasePose, damping, frameIndex, PRO_CAMERA } from "./replayMath";
+import { chasePose, damping, frameIndex } from "./replayMath";
 import { loadViewerMesh } from "./viewerAssets";
 import { measuredRefresh, playbackFps, renderScale } from "./viewerQuality";
 import { drawBrushedMetal, drawTurfDetail } from "./surfaceTextures";
@@ -52,7 +53,11 @@ export interface ReplaySceneOptions {
   replay: ReplayAnalysis;
   canvasRef: RefObject<HTMLCanvasElement | null>;
   clock: RefObject<number>;
-  stateRef: RefObject<{ playerId: string | null | undefined; camera: string }>;
+  stateRef: RefObject<{
+    playerId: string | null | undefined;
+    camera: string;
+    profile: CameraProfile;
+  }>;
   cutawayRef: RefObject<boolean>;
   qualityRef: RefObject<"low" | "high">;
   playbackRef: RefObject<boolean>;
@@ -1070,6 +1075,7 @@ export function mountReplayScene({
           );
         if ((cam === "player" || cam === "ball") && followed) {
           scene.activeCamera = chase;
+          chase.fov = (stateRef.current.profile.fov * Math.PI) / 180;
           const pp = followed.root.position;
           const rq = followed.root.rotationQuaternion!;
           const forward = {
@@ -1083,6 +1089,7 @@ export function mountReplayScene({
             pp,
             chaseHeading,
             cam === "ball" && ballOn ? { x: bx, y: by, z: bz } : undefined,
+            stateRef.current.profile,
           );
           desiredEye.set(pose.eye.x, pose.eye.y, pose.eye.z);
           desiredTarget.set(pose.target.x, pose.target.y, pose.target.z);
@@ -1095,7 +1102,7 @@ export function mountReplayScene({
             B.Vector3.LerpToRef(
               chase.position,
               desiredEye,
-              damping(18 + PRO_CAMERA.stiffness * 20, dt),
+              damping(18 + stateRef.current.profile.stiffness * 20, dt),
               chase.position,
             );
             B.Vector3.LerpToRef(lookTarget, desiredTarget, damping(12, dt), lookTarget);

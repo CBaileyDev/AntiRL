@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "data": "isolated clone of 29 local replays",
+  "camera_source": "your recorded replay camera",
+  "camera": {
+    "angle": -3,
+    "distance": 270,
+    "fov": 110,
+    "height": 120,
+    "stiffness": 0.5
+  },
+  "index_query_ms": 27,
+  "matches_searched": 11,
+  "overtime_conceded": 0,
+  "recorded_overtime_goals": 1,
+  "unknown_phase_events": 143,
+  "opponents": 22,
+  "checks": [
+    "schema 5 to 7 migration preserves imported library",
+    "camera discovered by exact replay player identity",
+    "native fingerprint review persisted",
+    "bounded full-library OT query uses event phase",
+    "unknown flags remain unknown",
+    "local opponent encounters",
+    "confirmed recurring mistakes create a durable weekly drill",
+    "real recorded overtime goals are returned from the full library",
+    "native camera edit and rediscovery",
+    "same-mode recorded reference ghost",
+    "no WebView page errors"
+  ],
+  "not_run": [
+    "live AI tool planning",
+    "live Discord delivery",
+    "trained xG or RLGym inference",
+    "external bot detector upload"
+  ]
+}

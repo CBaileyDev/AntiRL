@@ -52,6 +52,7 @@ interface ImportProgress {
 export default function App() {
   const [currentPage, setCurrentPage] = useState<string>("overview");
   const [replays, setReplays] = useState<ReplaySummary[]>([]);
+  const [initialReplayTime, setInitialReplayTime] = useState<number | undefined>();
   const [selectedReplay, setSelectedReplay] = useState<ReplayAnalysis | null>(null);
   const [rawSettings, setSettings] = useState<Settings>({
     replay_folder: "",
@@ -221,10 +222,11 @@ export default function App() {
     };
   }, []);
 
-  const handleSelectReplay = async (id: string) => {
+  const handleSelectReplay = async (id: string, time?: number) => {
     try {
       const full = await ipc.getReplay(id);
       if (full && full.summary) {
+        setInitialReplayTime(time);
         setSelectedReplay(full);
         setCurrentPage("studio");
       }
@@ -563,6 +565,8 @@ export default function App() {
 
           {currentPage === "studio" && selectedReplay && (
             <ReplayStudio
+              initialTime={initialReplayTime}
+              library={replays}
               replay={selectedReplay}
               settings={settings}
               onNavigateToCoach={handleNavigateToCoach}
@@ -606,7 +610,16 @@ export default function App() {
           )}
 
           {currentPage === "progress" && (
-            <Progress progress={progress} settings={settings} replays={replays} />
+            <Progress
+              onAskCoach={(question) => {
+                setCoachInitialPrompt(question);
+                setCurrentPage("coach");
+              }}
+              onOpenReplay={handleSelectReplay}
+              progress={progress}
+              settings={settings}
+              replays={replays}
+            />
           )}
 
           {currentPage === "teammates" && <Teammates teammates={teammates} />}

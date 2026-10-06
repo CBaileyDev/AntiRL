@@ -3700,3 +3700,237 @@ select.chat-input {
   color: var(--muted);
   line-height: 1.5;
 }
+
+.transfer-panel {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border, #303641);
+}
+.transfer-cycle,
+.transfer-checkin,
+.transfer-measurements {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--border, #303641);
+  border-radius: 12px;
+}
+.transfer-cycle h4,
+.transfer-measurements h5,
+.transfer-window h5 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+.transfer-windows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+.transfer-window strong {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.transfer-match-heading,
+.transfer-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.transfer-checkin form,
+.transfer-setup form {
+  margin-top: 16px;
+}
+.transfer-panel small,
+.transfer-setup small {
+  display: block;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.transfer-panel summary,
+.transfer-setup summary {
+  cursor: pointer;
+  padding: 12px 0;
+}
+.transfer-panel li {
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .transfer-windows {
+    grid-template-columns: 1fr;
+  }
+  .transfer-cycle,
+  .transfer-checkin,
+  .transfer-measurements {
+    padding: 14px;
+  }
+}
+
+.transfer-checkin form > label {
+  flex: 1 1 250px;
+  min-width: 0;
+}
+.transfer-checkin select,
+.transfer-checkin textarea {
+  width: 100%;
+  max-width: 100%;
+}
+.transfer-checkin .transfer-actions {
+  flex: 1 1 100%;
+  justify-content: flex-start;
+}
+.transfer-setup form > label {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.transfer-setup select {
+  max-width: 100%;
+  width: 100%;
+}
+.transfer-setup button {
+  align-self: flex-end;
+}
+
+.intelligence-tabs,
+.intelligence-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.fingerprint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 12px;
+}
+.fingerprint {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  min-width: 0;
+  margin: 10px 0;
+}
+.fingerprint-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fingerprint-heading span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.fingerprint-example {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.fingerprint-example .btn {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  text-align: left;
+}
+.intelligence-panel label,
+.camera-settings label,
+.reference-settings label,
+.detector-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  margin: 8px 0;
+}
+.intelligence-search {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.intelligence-search label {
+  flex: 1;
+  min-width: min(100%, 240px);
+}
+.intelligence-result {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+  max-width: 100%;
+}
+.camera-settings,
+.reference-settings,
+.detector-panel {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  min-width: 0;
+}
+.camera-settings summary,
+.reference-settings summary,
+.detector-panel summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.camera-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+}
+.camera-fields input,
+.reference-settings select,
+.detector-panel input {
+  width: 100%;
+  min-width: 0;
+}
+.detector-panel ul {
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.detector-panel p {
+  overflow-wrap: anywhere;
+}
+.ghost-overlay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+}
+.ghost-overlay > div {
+  flex: 1;
+  min-width: min(100%, 220px);
+}
+.ghost-overlay canvas {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+:is(.intelligence-panel, .camera-settings, .reference-settings, .detector-panel)
+  :is(input, select) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 8px 10px;
+  min-height: 36px;
+  max-width: 100%;
+}
+:is(.intelligence-panel, .camera-settings, .reference-settings, .detector-panel)
+  :is(input, select):focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 2px;
+}

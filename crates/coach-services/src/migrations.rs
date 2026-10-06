@@ -1,7 +1,7 @@
 //! Numbered, transactional migrations. Only the one-time legacy bridge inspects
 //! columns: older releases did not record a database user_version.
 use super::*;
-pub const SCHEMA_VERSION: i64 = 5;
+pub const SCHEMA_VERSION: i64 = 7;
 
 fn has_column(db: &Connection, table: &str, column: &str) -> ServiceResult<bool> {
     let mut q = db
@@ -101,6 +101,12 @@ pub fn migrate(db: &mut Connection, dir: &Path) -> ServiceResult<()> {
             }
             5 => tx
                 .execute_batch(include_str!("migrations/005_deleted_match_ids.sql"))
+                .map_err(err)?,
+            6 => tx
+                .execute_batch(include_str!("migrations/006_transfer.sql"))
+                .map_err(err)?,
+            7 => tx
+                .execute_batch(include_str!("migrations/007_intelligence.sql"))
                 .map_err(err)?,
             _ => unreachable!(),
         }

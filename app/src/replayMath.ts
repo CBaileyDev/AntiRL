@@ -1,3 +1,4 @@
+import type { CameraProfile } from "./bindings";
 import type { Event, Frame, Player } from "./types";
 
 // Source: https://blast.tv/rl/player/0f1c26cc/zen (checked 2026-10-05).
@@ -53,7 +54,12 @@ export function scoreAt(
 }
 
 export type Point = { x: number; y: number; z: number };
-export function chasePose(car: Point, forward: Point, ball?: Point) {
+export function chasePose(
+  car: Point,
+  forward: Point,
+  ball?: Point,
+  profile: CameraProfile = PRO_CAMERA,
+) {
   let dx = ball ? ball.x - car.x : forward.x;
   let dz = ball ? ball.z - car.z : forward.z;
   if (Math.hypot(dx, dz) < 0.001) {
@@ -67,10 +73,10 @@ export function chasePose(car: Point, forward: Point, ball?: Point) {
   const length = Math.hypot(dx, dz) || 1;
   dx /= length;
   dz /= length;
-  const distance = PRO_CAMERA.distance * 0.01;
+  const distance = profile.distance * 0.01;
   const eye = {
     x: car.x - dx * distance,
-    y: Math.max(0.3, car.y + PRO_CAMERA.height * 0.01),
+    y: Math.max(0.3, car.y + profile.height * 0.01),
     z: car.z - dz * distance,
   };
   // Keep the eye in the standard arena, with room inside the goal tunnel.
@@ -82,7 +88,7 @@ export function chasePose(car: Point, forward: Point, ball?: Point) {
     ? { ...ball }
     : {
         x: eye.x + dx * 20,
-        y: eye.y + Math.tan((PRO_CAMERA.angle * Math.PI) / 180) * 20,
+        y: eye.y + Math.tan((profile.angle * Math.PI) / 180) * 20,
         z: eye.z + dz * 20,
       };
   return { eye, target };

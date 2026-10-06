@@ -26,14 +26,41 @@ async getPractice(mode: string) : Promise<PracticeDataDto> {
 async savePracticePlan(mode: string, body: PracticePlanInput) : Promise<PracticePlanDto> {
     return await TAURI_INVOKE("save_practice_plan", { mode, body });
 },
-async recordTraining(mode: string, planId: string, minutes: number, difficulty: string, notes: string) : Promise<null> {
-    return await TAURI_INVOKE("record_training", { mode, planId, minutes, difficulty, notes });
+async recordTraining(mode: string, planId: string, minutes: number, difficulty: string, notes: string, completedAt: string | null) : Promise<null> {
+    return await TAURI_INVOKE("record_training", { mode, planId, minutes, difficulty, notes, completedAt });
+},
+async startTransfer(mode: string, planId: string, metricKey: string | null, referenceReplayId: string | null, replayOffsetMinutes: number | null) : Promise<null> {
+    return await TAURI_INVOKE("start_transfer", { mode, planId, metricKey, referenceReplayId, replayOffsetMinutes });
+},
+async saveTransferCheckin(mode: string, cycleId: string, replayId: string, stateValue: string, notes: string) : Promise<null> {
+    return await TAURI_INVOKE("save_transfer_checkin", { mode, cycleId, replayId, stateValue, notes });
 },
 async archivePractice(mode: string, id: string) : Promise<null> {
     return await TAURI_INVOKE("archive_practice", { mode, id });
 },
 async evidenceTool(tool: string, mode: string, args: JsonValue) : Promise<JsonValue> {
     return await TAURI_INVOKE("evidence_tool", { tool, mode, args });
+},
+async cameraProfile() : Promise<JsonValue> {
+    return await TAURI_INVOKE("camera_profile");
+},
+async resetCameraProfile() : Promise<JsonValue> {
+    return await TAURI_INVOKE("reset_camera_profile");
+},
+async detectorReports() : Promise<JsonValue> {
+    return await TAURI_INVOKE("detector_reports");
+},
+async saveCameraProfile(body: JsonValue) : Promise<JsonValue> {
+    return await TAURI_INVOKE("save_camera_profile", { body });
+},
+async reviewSituation(mode: string, replayId: string, eventId: string, verdict: string) : Promise<null> {
+    return await TAURI_INVOKE("review_situation", { mode, replayId, eventId, verdict });
+},
+async drillFromFingerprint(mode: string, fingerprint: string) : Promise<JsonValue> {
+    return await TAURI_INVOKE("drill_from_fingerprint", { mode, fingerprint });
+},
+async saveDetectorReport(replayId: string, playerId: string, body: JsonValue) : Promise<null> {
+    return await TAURI_INVOKE("save_detector_report", { replayId, playerId, body });
 },
 async exportConversation(format: string, snapshot: JsonValue) : Promise<boolean> {
     return await TAURI_INVOKE("export_conversation", { format, snapshot });
@@ -140,13 +167,14 @@ async retryFailedImports(folder: string) : Promise<JsonValue> {
 export type AiStatusDto = { current_provider: string; cloud_consent: boolean; chat_model: string; analysis_model: string; providers: Partial<{ [key in string]: ProviderStatus }> }
 export type AppError = { code: "cancelled"; message: string } | { code: "busy"; message: string } | { code: "authentication"; message: string } | { code: "unsupported"; message: string } | { code: "network"; message: string } | { code: "validation"; message: string } | { code: "storage"; message: string } | { code: "internal"; message: string }
 export type Body = { position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null }
+export type CameraProfile = { fov: number; distance: number; height: number; angle: number; stiffness: number }
 export type Car = ({ position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null }) & { player_id: string; boost: number | null; discontinuity: boolean }
 export type ChatResultDto = { conversation_id: string; response: string; status: string; error: string | null; evidence_ids: string[] | null; replay_id: string | null; context_chars: number | null; context_manifest: JsonValue | null }
 export type CloudPreviewDto = { provider: string; endpoint: string | null; model: string; characters: number; upper_bound_characters: number; approx_tokens: number; estimated: boolean; cost_label: string; categories: string[]; estimate_note: string }
 export type ConversationDto = { id: string; title: string; updated_at: string; mode: string | null; preset: string | null; prompt_version: string | null }
 export type Coverage = { metadata: boolean; positions: boolean; boost: boolean; goals: boolean; touches: boolean; decoded_frames: number; render_frames: number; live_play_seconds: number; notes: string[] }
 export type Event = { id: string; player_id: string | null; team?: number | null; time: number; end_time: number; category: string; title: string; description: string; severity: string; confidence: string; metric_keys: string[] }
-export type Frame = { time: number; ball: Body | null; cars: Car[]; match_clock_seconds: number | null; live_play: boolean;
+export type Frame = { time: number; ball: Body | null; cars: Car[]; match_clock_seconds: number | null; overtime?: boolean | null; live_play: boolean;
 /**
  * Frame marks the beginning of a new continuous motion segment.
  */
@@ -165,8 +193,8 @@ export type ModeProfile = { current_rank: string | null; target_rank: string | n
 export type ModeProgress = { matches: number; wins: number | null; win_rate: number | null; avg_boost: number | null; avg_speed: number | null; defensive_half_pct: number | null; low_boost_pct: number | null; boost_active_at_supersonic_speed_s: number | null }
 export type ModelCatalog = { provider: string; models: ModelDto[] }
 export type ModelDto = { id: string; name: string | null; description: string | null }
-export type Player = { id: string; name: string; team: number; platform: string | null; is_bot: boolean }
-export type PracticeDataDto = { plans: PracticePlanDto[]; sessions: TrainingSessionDto[]; source: string; forecast: string; reassessment: string }
+export type Player = { id: string; name: string; team: number; platform: string | null; is_bot: boolean; camera?: CameraProfile | null }
+export type PracticeDataDto = { transfer: TransferDataDto; plans: PracticePlanDto[]; sessions: TrainingSessionDto[]; source: string; forecast: string; reassessment: string }
 export type PracticePlanBodyDto = { title: string; drill: string; success_criterion: string; next_match_cue: string; intended_minutes: number | null; pack_id: string | null; provenance: string; prompt_version: string }
 export type PracticePlanDto = { id: string; mode: string; body: PracticePlanBodyDto; created_at: string }
 export type PracticePlanInput = { title: string; drill: string; success_criterion: string; next_match_cue: string; intended_minutes: number | null; pack_id: string | null }
@@ -180,7 +208,14 @@ export type TeammateDto = { player_id: string; name: string; platform: string | 
 export type TrainingPackCatalogDto = { records: TrainingPackDto[]; source: string; live_search: string; verification: string }
 export type TrainingPackDto = { id: string; code: string; title: string; creator: string; difficulty: string; skill_tags: string[]; modes: string[]; source_url: string; source_date: string; last_checked: string; verification: string; in_game_tested: boolean; source_excerpt: string; source_hash: string; prerequisites: string; drill_protocol: string; license_notes: string; success_criterion: string; regression: string; progression: string; next_match_cue: string; freeplay_alternative: string }
 export type TrainingSessionBodyDto = { completed_minutes: number; difficulty: string; notes: string; provenance: string }
-export type TrainingSessionDto = { plan_id: string; body: TrainingSessionBodyDto; completed_at: string }
+export type TrainingSessionDto = { logged_at: string; completion_source: string; plan_id: string; body: TrainingSessionBodyDto; completed_at: string }
+export type TransferCheckinDto = { replay_id: string; state: string; notes: string; updated_at: string; available: boolean; in_window: boolean; source: string }
+export type TransferCycleDto = { id: string; plan_id: string; created_at: string; active: boolean; anchor_at: string | null; snapshot: TransferSnapshotDto; before: TransferWindowDto; after: TransferWindowDto; manual_matches: TransferMatchDto[]; checkins: TransferCheckinDto[]; reflection_counts: Partial<{ [key in string]: number }>; excluded: Partial<{ [key in string]: number }>; delta: number | null }
+export type TransferDataDto = { cycles: TransferCycleDto[]; metric_options: TransferMetricDto[]; match_options: TransferMatchDto[]; computed_at: string; privacy: string; window_policy: string }
+export type TransferMatchDto = { replay_id: string; file_name: string | null; played_at: string | null; comparable_at: string | null; context: JsonValue | null; eligibility_note: string | null; revision: string; metric_value: number | null; metric_note: string | null; valid_seconds: number | null }
+export type TransferMetricDto = { key: string; label: string; unit: string; formula: string; limitations: string; version: string; aggregation: string }
+export type TransferSnapshotDto = { cue: string; title: string; metric: TransferMetricDto | null; context: JsonValue | null; replay_offset_minutes: number | null; policy_version: string; eligible_since: string | null }
+export type TransferWindowDto = { matches: TransferMatchDto[]; selected_count: number; valid_count: number; value: number | null; valid_seconds: number; tracked_seconds: number | null; excluded: Partial<{ [key in string]: number }>; source: string; method: string }
 
 /** tauri-specta globals **/
 

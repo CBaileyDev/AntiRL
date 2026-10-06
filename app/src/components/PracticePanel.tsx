@@ -1,6 +1,7 @@
 import { errorMessage } from "../errors";
 import React, { useEffect, useState, useRef } from "react";
 import { ipc } from "../ipc";
+import { TransferPanel, TransferSetup, utcOffsets, offsetLabel } from "./TransferPanel";
 import type { PracticeDataDto } from "../bindings";
 
 const emptyPractice: PracticeDataDto = {
@@ -9,16 +10,34 @@ const emptyPractice: PracticeDataDto = {
   source: "self_report",
   forecast: "unavailable",
   reassessment: "",
+  transfer: {
+    cycles: [],
+    metric_options: [],
+    match_options: [],
+    computed_at: new Date().toISOString(),
+    privacy: "",
+    window_policy: "",
+  },
 };
 
+function completionIso(local: string, offset: number) {
+  const parsed = new Date(`${local}${local.length === 16 ? ":00" : ""}Z`);
+  if (!Number.isFinite(parsed.getTime())) throw new Error("Enter a valid practice completion time");
+  return new Date(parsed.getTime() - offset * 60000).toISOString();
+}
 export default function PracticePanel({
   mode,
   playerId,
+  onOpenReplay,
+  libraryRevision,
 }: {
   mode: string;
   playerId?: string | null;
+  onOpenReplay?: (id: string) => void;
+  libraryRevision?: unknown;
 }) {
   const [data, setData] = useState<PracticeDataDto>(emptyPractice);
+  const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [body, setBody] = useState({
@@ -30,32 +49,46 @@ export default function PracticePanel({
   });
   const [minutes, setMinutes] = useState<Record<string, string>>({});
   const [difficulty, setDifficulty] = useState<Record<string, string>>({});
+  const [completed, setCompleted] = useState<Record<string, string>>({});
+  const [completionOffsets, setCompletionOffsets] = useState<Record<string, string>>({});
+  const requestRef = useRef(0);
   const scopeRef = useRef("");
   scopeRef.current = `${mode}:${playerId || ""}`;
   const load = async () => {
     const scope = scopeRef.current;
     if (playerId) {
+      const request = ++requestRef.current;
       const result = await ipc.getPractice(mode);
-      if (scopeRef.current === scope) setData(result);
+      if (scopeRef.current === scope && requestRef.current === request) {
+        setData(result);
+        setLoading(false);
+      }
     }
   };
   useEffect(() => {
-    let alive = true;
     setData(emptyPractice);
+    setLoading(!!playerId);
     setNotice("");
+  }, [mode, playerId]);
+  useEffect(() => {
+    let alive = true;
+    const request = ++requestRef.current;
     if (playerId)
       ipc
         .getPractice(mode)
         .then((d) => {
-          if (alive) setData(d);
+          if (alive && requestRef.current === request) setData(d);
         })
         .catch((e) => {
-          if (alive) setNotice(errorMessage(e));
+          if (alive && requestRef.current === request) setNotice(errorMessage(e));
+        })
+        .finally(() => {
+          if (alive && requestRef.current === request) setLoading(false);
         });
     return () => {
       alive = false;
     };
-  }, [mode, playerId]);
+  }, [mode, playerId, libraryRevision]);
   const run = async (fn: () => Promise<unknown>) => {
     setBusy(true);
     const scope = scopeRef.current;
@@ -80,6 +113,8 @@ export default function PracticePanel({
       </p>
       {!playerId ? (
         <p>Confirm your account in Settings to keep a personal practice history.</p>
+      ) : loading ? (
+        <p role="status">Loading practice history...</p>
       ) : (
         <>
           <details>
@@ -168,6 +203,12 @@ export default function PracticePanel({
                       Number(minutes[p.id]),
                       difficulty[p.id] || "appropriate",
                       "",
+                      completed[p.id]
+                        ? completionIso(
+                            completed[p.id],
+                            Number(completionOffsets[p.id] ?? -new Date().getTimezoneOffset()),
+                          )
+                        : null,
                     ),
                   );
                 }}
@@ -196,6 +237,36 @@ export default function PracticePanel({
                     <option value="hard">Hard</option>
                   </select>
                 </label>
+                <label>
+                  Actual completion time (optional; defaults to now)
+                  <input
+                    type="datetime-local"
+                    aria-label={`Practice completed at for ${p.body.title}`}
+                    value={completed[p.id] || ""}
+                    onChange={(e) => setCompleted({ ...completed, [p.id]: e.target.value })}
+                  />
+                </label>
+                {completed[p.id] && (
+                  <label>
+                    Completion time UTC offset
+                    <select
+                      aria-label={`Completion offset for ${p.body.title}`}
+                      value={completionOffsets[p.id] ?? String(-new Date().getTimezoneOffset())}
+                      onChange={(e) =>
+                        setCompletionOffsets({ ...completionOffsets, [p.id]: e.target.value })
+                      }
+                    >
+                      {utcOffsets.map((n) => (
+                        <option key={n} value={n}>
+                          {offsetLabel(n)}
+                        </option>
+                      ))}
+                    </select>
+                    <small>
+                      Use the offset when practice happened, including daylight saving time.
+                    </small>
+                  </label>
+                )}
                 <button className="btn secondary" disabled={busy}>
                   Record practice
                 </button>
@@ -208,8 +279,24 @@ export default function PracticePanel({
                   Archive plan
                 </button>
               </form>
+              <TransferSetup
+                key={`${scopeRef.current}:${p.id}`}
+                plan={p}
+                mode={mode}
+                data={data.transfer}
+                busy={busy}
+                action={run}
+              />
             </article>
           ))}
+          <TransferPanel
+            key={scopeRef.current}
+            data={data.transfer}
+            mode={mode}
+            busy={busy}
+            action={run}
+            onOpen={onOpenReplay}
+          />
           {data.sessions.length > 0 && (
             <details>
               <summary>Recent practice · {data.sessions.length} recorded sessions</summary>
@@ -217,7 +304,10 @@ export default function PracticePanel({
                 {data.sessions.map((s, i) => (
                   <li key={i}>
                     {new Date(s.completed_at).toLocaleDateString()} · {s.body.completed_minutes}{" "}
-                    minutes · {s.body.difficulty} · self-reported
+                    minutes · {s.body.difficulty} · self-reported ·{" "}
+                    {s.completion_source === "legacy_logged_time"
+                      ? "time logged; completion unknown"
+                      : "actual completion time"}
                   </li>
                 ))}
               </ul>

@@ -2,7 +2,7 @@
 use super::*;
 
 impl CoachService {
-    fn practice_scope(&self, mode: &str) -> ServiceResult<String> {
+    pub(crate) fn practice_scope(&self, mode: &str) -> ServiceResult<String> {
         if !["1v1", "2v2", "3v3"].contains(&mode) {
             return Err("Choose a single mode for practice".into());
         }
@@ -56,21 +56,27 @@ impl CoachService {
             .collect::<Result<Vec<_>, _>>()
             .map_err(err)?;
         let plans:Vec<_>=plans.into_iter().map(|(id,b,at)|json!({"id":id,"body":serde_json::from_str::<Value>(&b).unwrap_or(Value::Null),"created_at":at,"mode":mode})).collect();
-        let mut q=db.prepare("SELECT plan_id,body,completed_at FROM training_sessions WHERE player_id=?1 AND mode=?2 ORDER BY completed_at DESC LIMIT 40").map_err(err)?;
+        drop(q);
+        let mut q=db.prepare("SELECT plan_id,body,completed_at,logged_at,completion_source FROM training_sessions WHERE player_id=?1 AND mode=?2 ORDER BY completed_at DESC LIMIT 40").map_err(err)?;
         let sessions = q
             .query_map(params![player, mode], |r| {
                 Ok((
                     r.get::<_, String>(0)?,
                     r.get::<_, String>(1)?,
                     r.get::<_, String>(2)?,
+                    r.get::<_, String>(3)?,
+                    r.get::<_, String>(4)?,
                 ))
             })
             .map_err(err)?
             .collect::<Result<Vec<_>, _>>()
             .map_err(err)?;
-        let sessions:Vec<_>=sessions.into_iter().map(|(id,b,at)|json!({"plan_id":id,"body":serde_json::from_str::<Value>(&b).unwrap_or(Value::Null),"completed_at":at})).collect();
+        let sessions:Vec<_>=sessions.into_iter().map(|(id,b,at,logged,source)|json!({"plan_id":id,"body":serde_json::from_str::<Value>(&b).unwrap_or(Value::Null),"completed_at":at,"logged_at":logged,"completion_source":source})).collect();
+        drop(q);
+        drop(db);
+        let transfer = self.get_transfer(mode, &player)?;
         Ok(
-            json!({"plans":plans,"sessions":sessions,"source":"self_report","forecast":"unavailable: no calibrated longitudinal cohort","reassessment":"Review the cue in your next same-mode matches; this is a checkpoint, not a promotion date."}),
+            json!({"plans":plans,"sessions":sessions,"source":"self_report","forecast":"unavailable: no calibrated longitudinal cohort","reassessment":"Review the cue in your next same-mode matches; this is a checkpoint, not a promotion date.","transfer":transfer}),
         )
     }
     pub fn record_training(
@@ -81,6 +87,17 @@ impl CoachService {
         difficulty: &str,
         notes: &str,
     ) -> ServiceResult<()> {
+        self.record_training_at(mode, plan_id, minutes, difficulty, notes, None)
+    }
+    pub fn record_training_at(
+        &self,
+        mode: &str,
+        plan_id: &str,
+        minutes: f64,
+        difficulty: &str,
+        notes: &str,
+        completed_at: Option<&str>,
+    ) -> ServiceResult<()> {
         let player = self.practice_scope(mode)?;
         if !minutes.is_finite()
             || minutes <= 0.0
@@ -90,25 +107,32 @@ impl CoachService {
             return Err("Enter 0-240 minutes and a valid difficulty".into());
         }
         check_note_content(notes)?;
-        let db = self.db.lock().map_err(err)?;
-        let owned:bool=db.query_row("SELECT EXISTS(SELECT 1 FROM practice_plans WHERE id=?1 AND player_id=?2 AND mode=?3 AND archived=0)",params![plan_id,player,mode],|r|r.get(0)).map_err(err)?;
+        let completed = transfer::completion_time(completed_at)?;
+        let mut db = self.db.lock().map_err(err)?;
+        let tx = db.transaction().map_err(err)?;
+        let owned:bool=tx.query_row("SELECT EXISTS(SELECT 1 FROM practice_plans WHERE id=?1 AND player_id=?2 AND mode=?3 AND archived=0)",params![plan_id,player,mode],|r|r.get(0)).map_err(err)?;
         if !owned {
             return Err("Practice plan outside personal mode scope".into());
         }
-        db.execute("INSERT INTO training_sessions VALUES(?1,?2,?3,?4,?5,?6)",params![ident(),plan_id,player,mode,now(),json!({"completed_minutes":minutes,"difficulty":difficulty,"notes":notes,"provenance":"self_report"}).to_string()]).map_err(err)?;
-        Ok(())
+        tx.execute("INSERT INTO training_sessions(id,plan_id,player_id,mode,completed_at,body,logged_at,completion_source) VALUES(?1,?2,?3,?4,?5,?6,?7,'actual_completion')",params![ident(),plan_id,player,mode,completed,json!({"completed_minutes":minutes,"difficulty":difficulty,"notes":notes,"provenance":"self_report"}).to_string(),now()]).map_err(err)?;
+        tx.execute("UPDATE transfer_cycles SET anchor_at=?1 WHERE plan_id=?2 AND player_id=?3 AND mode=?4 AND active=1 AND anchor_at IS NULL AND (json_extract(body,'$.eligible_since') IS NULL OR julianday(json_extract(body,'$.eligible_since'))<=julianday(?1))",params![completed,plan_id,player,mode]).map_err(err)?;
+        tx.commit().map_err(err)
     }
     pub fn archive_practice(&self, mode: &str, id: &str) -> ServiceResult<()> {
         let player = self.practice_scope(mode)?;
-        self.db
-            .lock()
-            .map_err(err)?
-            .execute(
-                "UPDATE practice_plans SET archived=1 WHERE id=?1 AND player_id=?2 AND mode=?3",
-                params![id, player, mode],
-            )
-            .map_err(err)?;
-        Ok(())
+        let mut db = self.db.lock().map_err(err)?;
+        let tx = db.transaction().map_err(err)?;
+        tx.execute(
+            "UPDATE practice_plans SET archived=1 WHERE id=?1 AND player_id=?2 AND mode=?3",
+            params![id, player, mode],
+        )
+        .map_err(err)?;
+        tx.execute(
+            "UPDATE transfer_cycles SET active=0 WHERE plan_id=?1 AND player_id=?2 AND mode=?3",
+            params![id, player, mode],
+        )
+        .map_err(err)?;
+        tx.commit().map_err(err)
     }
 }
 #[cfg(test)]

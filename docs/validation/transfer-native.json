@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "fixture": "isolated copy of local replay library; synthetic practice and reflection",
+  "checks": [
+    "release WebView IPC and schema-5 migration",
+    "known context and explicit offset window selection",
+    "legacy metric versions correctly remain unknown",
+    "native check-in form writes SQLite",
+    "reflection retained across navigation",
+    "real Replay Studio navigation",
+    "cloud retrieval excludes transfer payload",
+    "no WebView page errors"
+  ],
+  "selected_after": 10,
+  "valid_after": 0
+}

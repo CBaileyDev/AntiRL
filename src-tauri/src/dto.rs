@@ -269,13 +269,97 @@ pub struct TrainingSessionBodyDto {
 
 #[derive(Debug, Serialize, Deserialize, Type)]
 pub struct TrainingSessionDto {
+    pub logged_at: String,
+    pub completion_source: String,
     pub plan_id: String,
     pub body: TrainingSessionBodyDto,
     pub completed_at: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferMetricDto {
+    pub key: String,
+    pub label: String,
+    pub unit: String,
+    pub formula: String,
+    pub limitations: String,
+    pub version: String,
+    pub aggregation: String,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferMatchDto {
+    pub replay_id: String,
+    pub file_name: Option<String>,
+    pub played_at: Option<String>,
+    pub comparable_at: Option<String>,
+    pub context: Option<Value>,
+    pub eligibility_note: Option<String>,
+    pub revision: String,
+    pub metric_value: Option<f64>,
+    pub metric_note: Option<String>,
+    pub valid_seconds: Option<f64>,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferWindowDto {
+    pub matches: Vec<TransferMatchDto>,
+    pub selected_count: u32,
+    pub valid_count: u32,
+    pub value: Option<f64>,
+    pub valid_seconds: f64,
+    pub tracked_seconds: Option<f64>,
+    pub excluded: BTreeMap<String, u32>,
+    pub source: String,
+    pub method: String,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferSnapshotDto {
+    pub cue: String,
+    pub title: String,
+    pub metric: Option<TransferMetricDto>,
+    pub context: Option<Value>,
+    pub replay_offset_minutes: Option<i32>,
+    pub policy_version: String,
+    pub eligible_since: Option<String>,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferCheckinDto {
+    pub replay_id: String,
+    pub state: String,
+    pub notes: String,
+    pub updated_at: String,
+    pub available: bool,
+    pub in_window: bool,
+    pub source: String,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferCycleDto {
+    pub id: String,
+    pub plan_id: String,
+    pub created_at: String,
+    pub active: bool,
+    pub anchor_at: Option<String>,
+    pub snapshot: TransferSnapshotDto,
+    pub before: TransferWindowDto,
+    pub after: TransferWindowDto,
+    pub manual_matches: Vec<TransferMatchDto>,
+    pub checkins: Vec<TransferCheckinDto>,
+    pub reflection_counts: BTreeMap<String, u32>,
+    pub excluded: BTreeMap<String, u32>,
+    pub delta: Option<f64>,
+}
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct TransferDataDto {
+    pub cycles: Vec<TransferCycleDto>,
+    pub metric_options: Vec<TransferMetricDto>,
+    pub match_options: Vec<TransferMatchDto>,
+    pub computed_at: String,
+    pub privacy: String,
+    pub window_policy: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Type)]
 pub struct PracticeDataDto {
+    pub transfer: TransferDataDto,
     pub plans: Vec<PracticePlanDto>,
     pub sessions: Vec<TrainingSessionDto>,
     pub source: String,
@@ -320,6 +404,48 @@ pub struct TrainingPackCatalogDto {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn transfer_contract_decodes_measurements_and_missing_values() {
+        let data = tempfile::tempdir().unwrap();
+        let service = coach_services::CoachService::open(data.path()).unwrap();
+        service
+            .save_settings(serde_json::json!({"player_id":"p"}))
+            .unwrap();
+        let plan=service.save_practice_plan("2v2",&serde_json::json!({"title":"Route","drill":"Pads","success_criterion":"Five attempts","next_match_cue":"Recover via pads"})).unwrap();
+        for (id, date) in [
+            ("base", "2026-01-01T00:00:00Z"),
+            ("after", "2026-01-03T00:00:00Z"),
+        ] {
+            service.save_replay(&serde_json::json!({"summary":{"id":id,"mode":"2v2","status":"ready","playlist_id":2,"duration_seconds":300,"played_at":date},"players":[{"id":"p"}],"metrics":[]})).unwrap();
+        }
+        service
+            .record_training_at(
+                "2v2",
+                plan["id"].as_str().unwrap(),
+                5.0,
+                "easy",
+                "",
+                Some("2026-01-02T00:00:00Z"),
+            )
+            .unwrap();
+        service
+            .start_transfer(
+                "2v2",
+                plan["id"].as_str().unwrap(),
+                Some("avg_boost"),
+                Some("base"),
+                None,
+            )
+            .unwrap();
+        let practice: PracticeDataDto = decode(service.get_practice("2v2").unwrap()).unwrap();
+        assert_eq!(practice.transfer.cycles.len(), 1);
+        assert_eq!(practice.transfer.cycles[0].after.selected_count, 1);
+        assert!(practice.transfer.cycles[0].after.value.is_none());
+        assert!(practice.transfer.cycles[0].after.matches[0]
+            .metric_value
+            .is_none());
+    }
 
     #[test]
     fn practice_and_catalog_contracts_match_service_payloads() {

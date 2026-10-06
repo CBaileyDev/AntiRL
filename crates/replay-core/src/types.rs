@@ -7,6 +7,8 @@ pub struct Player {
     pub team: u8,
     pub platform: Option<String>,
     pub is_bot: bool,
+    #[serde(default)]
+    pub camera: Option<CameraProfile>,
 }
 
 #[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
@@ -54,6 +56,8 @@ pub struct Frame {
     pub ball: Option<Body>,
     pub cars: Vec<Car>,
     pub match_clock_seconds: Option<i32>,
+    #[serde(default)]
+    pub overtime: Option<bool>,
     pub live_play: bool,
     /// Frame marks the beginning of a new continuous motion segment.
     pub discontinuity: bool,
@@ -114,4 +118,26 @@ pub struct ReplayAnalysis {
     pub metrics: Vec<Metric>,
     pub events: Vec<Event>,
     pub coverage: Coverage,
+}
+
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CameraProfile {
+    pub fov: f32,
+    pub distance: f32,
+    pub height: f32,
+    pub angle: f32,
+    pub stiffness: f32,
+}
+impl CameraProfile {
+    pub fn is_valid(&self) -> bool {
+        [
+            (self.fov, 60., 110.),
+            (self.distance, 100., 400.),
+            (self.height, 40., 200.),
+            (self.angle, -15., 0.),
+            (self.stiffness, 0., 1.),
+        ]
+        .iter()
+        .all(|(v, lo, hi)| v.is_finite() && v >= lo && v <= hi)
+    }
 }

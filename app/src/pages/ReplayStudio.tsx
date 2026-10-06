@@ -10,12 +10,17 @@ import {
   ChevronRight,
   Activity,
 } from "lucide-react";
+import DetectorPanel from "../components/DetectorPanel";
+import ReferenceComparison from "../components/ReferenceComparison";
+import type { GhostReference } from "../components/GhostOverlay";
 import ReplayViewer, { timeLabel } from "../ReplayViewer";
 import { perspectiveEvents } from "../replayMath";
-import type { ReplayAnalysis, Settings, Event } from "../types";
+import type { ReplayAnalysis, ReplaySummary, Settings, Event } from "../types";
 
 interface ReplayStudioProps {
   replay: ReplayAnalysis;
+  library?: ReplaySummary[];
+  initialTime?: number;
   settings: Settings;
   onNavigateToCoach: (replayId: string, initialPrompt?: string) => void;
 }
@@ -35,13 +40,20 @@ const reviewPrompt = (event: Event) => {
   return "Watch the lead-in from the player's view, then Overhead. Compare available options before judging the outcome.";
 };
 
-export default function ReplayStudio({ replay, settings, onNavigateToCoach }: ReplayStudioProps) {
+export default function ReplayStudio({
+  replay,
+  settings,
+  onNavigateToCoach,
+  library = [],
+  initialTime,
+}: ReplayStudioProps) {
+  const [ghost, setGhost] = useState<GhostReference | null>(null);
   const defaultPlayer =
     replay.players.find((p) => p.id === settings.player_id)?.id ??
     replay.summary.recorder_player_id ??
     replay.players[0]?.id;
   // Playback time lives inside the viewer so the 10 Hz clock never re-renders this sidebar.
-  const [seekTime, setSeekTime] = useState(replay.frames[0]?.time ?? 0);
+  const [seekTime, setSeekTime] = useState(initialTime ?? replay.frames[0]?.time ?? 0);
   const [activePlayerId, setActivePlayerId] = useState(defaultPlayer);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [seekVersion, setSeekVersion] = useState(0);
@@ -51,13 +63,13 @@ export default function ReplayStudio({ replay, settings, onNavigateToCoach }: Re
   const activePlayer = replay.players.find((p) => p.id === activePlayerId);
 
   useEffect(() => {
-    setSeekTime(replay.frames[0]?.time ?? 0);
+    setSeekTime(initialTime ?? replay.frames[0]?.time ?? 0);
     setActivePlayerId(defaultPlayer);
     setSelectedEventId(null);
     setPage(0);
     setCategory("all");
     setSeekVersion((v) => v + 1);
-  }, [replay.summary.id, defaultPlayer, replay.frames]);
+  }, [replay.summary.id, defaultPlayer, replay.frames, initialTime]);
   useEffect(() => {
     setPage(0);
     setSelectedEventId(null);
@@ -150,12 +162,21 @@ export default function ReplayStudio({ replay, settings, onNavigateToCoach }: Re
       <div className="studio-layout">
         <ReplayViewer
           replay={replay}
+          accountId={settings.player_id}
+          ghost={ghost}
           playerId={activePlayerId}
           seekTime={seekTime}
           seekVersion={seekVersion}
           onSelectEvent={setSelectedEventId}
         />
         <aside className="studio-sidebar" aria-label="Replay review notes">
+          <ReferenceComparison
+            replay={replay}
+            library={library}
+            currentAnchor={seekTime}
+            onChange={setGhost}
+          />
+          <DetectorPanel replay={replay} />
           <section className="card studio-review-card">
             <div className="studio-section-heading">
               <Target size={16} />

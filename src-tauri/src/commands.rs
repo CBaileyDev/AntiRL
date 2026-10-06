@@ -380,9 +380,56 @@ pub async fn record_training(
     minutes: f64,
     difficulty: String,
     notes: String,
+    completed_at: Option<String>,
 ) -> Result<(), AppError> {
     let s = state.service.clone();
-    blocking(move || s.record_training(&mode, &plan_id, minutes, &difficulty, &notes)).await
+    blocking(move || {
+        s.record_training_at(
+            &mode,
+            &plan_id,
+            minutes,
+            &difficulty,
+            &notes,
+            completed_at.as_deref(),
+        )
+    })
+    .await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn start_transfer(
+    state: State<'_, AppState>,
+    mode: String,
+    plan_id: String,
+    metric_key: Option<String>,
+    reference_replay_id: Option<String>,
+    replay_offset_minutes: Option<i32>,
+) -> Result<(), AppError> {
+    let s = state.service.clone();
+    blocking(move || {
+        s.start_transfer(
+            &mode,
+            &plan_id,
+            metric_key.as_deref(),
+            reference_replay_id.as_deref(),
+            replay_offset_minutes,
+        )
+    })
+    .await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn save_transfer_checkin(
+    state: State<'_, AppState>,
+    mode: String,
+    cycle_id: String,
+    replay_id: String,
+    state_value: String,
+    notes: String,
+) -> Result<(), AppError> {
+    let s = state.service.clone();
+    blocking(move || s.save_transfer_checkin(&mode, &cycle_id, &replay_id, &state_value, &notes))
+        .await
 }
 #[tauri::command]
 #[specta::specta]
@@ -429,4 +476,65 @@ pub async fn export_conversation(
         let selected = app.dialog().file().add_filter("Conversation", &[format.as_str()]).set_file_name(format!("AntiRL-chat.{format}")).blocking_save_file();
         if let Some(path) = selected { std::fs::write(path.into_path().map_err(|e|e.to_string())?, text).map_err(|e|e.to_string())?; Ok(true) } else { Ok(false) }
     }).await
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn camera_profile(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.camera_profile()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn reset_camera_profile(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.reset_camera_profile()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn detector_reports(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.detector_reports()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn save_camera_profile(
+    state: State<'_, AppState>,
+    body: Value,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.save_camera_profile(&body)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn review_situation(
+    state: State<'_, AppState>,
+    mode: String,
+    replay_id: String,
+    event_id: String,
+    verdict: String,
+) -> Result<(), AppError> {
+    let s = state.service.clone();
+    blocking(move || s.review_situation(&mode, &replay_id, &event_id, &verdict)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn drill_from_fingerprint(
+    state: State<'_, AppState>,
+    mode: String,
+    fingerprint: String,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.drill_from_fingerprint(&mode, &fingerprint)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn save_detector_report(
+    state: State<'_, AppState>,
+    replay_id: String,
+    player_id: String,
+    body: Value,
+) -> Result<(), AppError> {
+    let s = state.service.clone();
+    blocking(move || s.save_detector_report(&replay_id, &player_id, &body)).await
 }

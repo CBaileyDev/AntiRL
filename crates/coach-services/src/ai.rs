@@ -786,6 +786,13 @@ impl CoachService {
                         "practice",
                         "training",
                         "benchmark",
+                        "every",
+                        "conced",
+                        "goal",
+                        "overtime",
+                        " ot ",
+                        "recurring",
+                        "opponent",
                     ]
                     .iter()
                     .any(|s| lower.contains(s));
@@ -839,6 +846,20 @@ impl CoachService {
                             }
                         }
                         if calls.is_empty() {
+                            if lower.contains("goal")
+                                || lower.contains("conced")
+                                || lower.contains("overtime")
+                                || lower.contains(" ot ")
+                                || lower.contains("every")
+                            {
+                                calls.push(("search_replay_events".into(),json!({"kind":if lower.contains("conced"){"goal conceded"}else if lower.contains("i scored"){"goal scored"}else if lower.contains("goal"){"goals"}else{"all"},"phase":if lower.contains("overtime") || lower.contains(" ot "){"overtime"}else{"all"},"limit":10})));
+                            }
+                            if lower.contains("recurring") {
+                                calls.push(("get_mistake_fingerprints".into(), json!({})));
+                            }
+                            if lower.contains("opponent") {
+                                calls.push(("get_opponent_history".into(), json!({})));
+                            }
                             if lower.contains("older") || lower.contains("history") {
                                 calls
                                     .push(("list_matches".into(), json!({"cursor":20,"limit":10})));

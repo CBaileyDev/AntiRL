@@ -161,6 +161,20 @@ pub fn decode(path: &Path, bytes: &[u8]) -> Result<ReplayAnalysis, String> {
                 team,
                 platform: Some(platform),
                 is_bot,
+                camera: info
+                    .camera_settings
+                    .as_ref()
+                    .and_then(|c| {
+                        let profile = CameraProfile {
+                            fov: c.fov,
+                            distance: c.distance,
+                            height: c.height,
+                            angle: c.angle,
+                            stiffness: c.stiffness,
+                        };
+                        profile.is_valid().then_some(profile)
+                    })
+                    .or_else(|| info.stats.as_ref().and_then(camera_from_stats)),
             });
             if let Some(stats) = &info.stats {
                 for (key, label) in [
@@ -341,6 +355,17 @@ pub fn decode(path: &Path, bytes: &[u8]) -> Result<ReplayAnalysis, String> {
         });
     }
     events.sort_by(|a, b| a.time.total_cmp(&b.time).then(a.id.cmp(&b.id)));
+    // Read the named replicated flag; never infer overtime from replay duration.
+    let ot = overtime_samples(&replay);
+    let mut oi = 0;
+    let mut current = None;
+    for frame in &mut collector.frames {
+        while oi < ot.len() && ot[oi].0 <= frame.time {
+            current = ot[oi].1;
+            oi += 1;
+        }
+        frame.overtime = current;
+    }
     let positions = collector
         .frames
         .iter()
@@ -428,10 +453,12 @@ pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
     {
         return Err("Analysis duration invalid".into());
     }
-    if a.players
-        .iter()
-        .any(|p| p.id.len() > 512 || p.name.len() > 2048 || p.team > 1)
-    {
+    if a.players.iter().any(|p| {
+        p.id.len() > 512
+            || p.name.len() > 2048
+            || p.team > 1
+            || p.camera.as_ref().is_some_and(|c| !c.is_valid())
+    }) {
         return Err("Analysis player metadata invalid".into());
     }
     let valid_body = |b: &Body| {
@@ -946,6 +973,7 @@ impl Collector for EvidenceCollector {
             ball,
             cars,
             match_clock_seconds: p.get_seconds_remaining().ok(),
+            overtime: None,
             live_play: live,
             discontinuity,
         };
@@ -1157,6 +1185,139 @@ pub fn verify_corpus(folder: &Path) -> Result<serde_json::Value, String> {
     }))
 }
 
+fn camera_from_stats(stats: &HashMap<String, HeaderProp>) -> Option<CameraProfile> {
+    let number = |key: &str| match stats.get(key)? {
+        HeaderProp::Float(v) => Some(*v),
+        HeaderProp::Int(v) => Some(*v as f32),
+        _ => None,
+    };
+    let camera = CameraProfile {
+        fov: number("CameraFOV")?,
+        distance: number("CameraDistance")?,
+        height: number("CameraHeight")?,
+        angle: number("CameraPitch")?,
+        stiffness: number("CameraStiffness")?,
+    };
+    camera.is_valid().then_some(camera)
+}
+fn overtime_samples(replay: &boxcars::Replay) -> Vec<(f64, Option<bool>)> {
+    let mut samples = vec![];
+    let mut owner = None;
+    for frame in replay
+        .network_frames
+        .as_ref()
+        .into_iter()
+        .flat_map(|n| &n.frames)
+    {
+        if owner.is_some_and(|a| frame.deleted_actors.contains(&a)) {
+            samples.push((f64::from(frame.time), None));
+            owner = None;
+        }
+        for update in &frame.updated_actors {
+            if replay
+                .objects
+                .get(update.object_id.0 as usize)
+                .is_some_and(|n| n == "TAGame.GameEvent_Soccar_TA:bOverTime")
+                && let boxcars::Attribute::Boolean(value) = update.attribute
+            {
+                owner = Some(update.actor_id);
+                samples.push((f64::from(frame.time), Some(value)));
+            }
+        }
+    }
+    samples
+}
+fn network_cameras(replay: &boxcars::Replay, match_id: &str) -> serde_json::Value {
+    let mut identities = HashMap::new();
+    let mut links = HashMap::new();
+    let mut profiles = HashMap::new();
+    let mut cameras = serde_json::Map::new();
+    for frame in replay
+        .network_frames
+        .as_ref()
+        .into_iter()
+        .flat_map(|n| &n.frames)
+    {
+        for actor in &frame.deleted_actors {
+            identities.remove(actor);
+            links.remove(actor);
+            profiles.remove(actor);
+            links.retain(|_, v| v != actor);
+        }
+        for update in &frame.updated_actors {
+            let key = replay
+                .objects
+                .get(update.object_id.0 as usize)
+                .map(String::as_str)
+                .unwrap_or("");
+            match (key, &update.attribute) {
+                ("Engine.PlayerReplicationInfo:UniqueId", boxcars::Attribute::UniqueId(id)) => {
+                    identities.insert(update.actor_id, player_id(&id.remote_id, match_id).0);
+                }
+                ("TAGame.CameraSettingsActor_TA:PRI", boxcars::Attribute::ActiveActor(owner)) => {
+                    if owner.actor.0 >= 0 {
+                        links.insert(update.actor_id, owner.actor);
+                    } else {
+                        links.remove(&update.actor_id);
+                    }
+                }
+                (
+                    "TAGame.CameraSettingsActor_TA:ProfileSettings",
+                    boxcars::Attribute::CamSettings(c),
+                ) => {
+                    let p = CameraProfile {
+                        fov: c.fov,
+                        distance: c.distance,
+                        height: c.height,
+                        angle: c.angle,
+                        stiffness: c.stiffness,
+                    };
+                    if p.is_valid() {
+                        profiles.insert(update.actor_id, p);
+                    }
+                }
+                _ => {}
+            }
+        }
+        for (actor, owner) in &links {
+            if let (Some(id), Some(profile)) = (identities.get(owner), profiles.get(actor)) {
+                cameras.insert(
+                    id.clone(),
+                    serde_json::to_value(profile).unwrap_or(serde_json::Value::Null),
+                );
+            }
+        }
+    }
+    serde_json::Value::Object(cameras)
+}
+/// Bounded metadata enrichment for previously imported replays. Does not alter stored analytics.
+pub fn read_profile_metadata(
+    path: &Path,
+    include_network: bool,
+) -> Result<serde_json::Value, String> {
+    let bytes = read_replay(path)?;
+    std::panic::catch_unwind(|| {
+        let builder=ParserBuilder::new(&bytes).always_check_crc();
+        let replay=if include_network {builder.must_parse_network_data()} else {builder.never_parse_network_data()}.parse().map_err(|_| "Unsupported replay metadata")?;
+        if replay.network_frames.as_ref().is_some_and(|n|n.frames.len()>MAX_FRAMES || n.frames.iter().any(|f|!f.time.is_finite() || !(0.0..=7200.0).contains(&f.time))) {return Err("Unsupported metadata timeline".to_string());}
+        let id=string(&replay.properties,"MatchGUID").unwrap_or_default();
+        let mut cameras=serde_json::Map::new();
+        let mut names=std::collections::HashSet::new();
+        if let Some(HeaderProp::Array(entries))=prop(&replay.properties,"PlayerStats") {
+            for entry in entries {
+                let stats:HashMap<_,_>=entry.iter().cloned().collect();
+
+                // Camera source is joined by exact unique player name in the caller,
+                // never by the recorder guess or an arbitrary binary substring.
+                if let (Some(name),Some(camera))=(string(entry,"Name"),camera_from_stats(&stats)) {
+                    if names.insert(name.clone()) {cameras.insert(name,serde_json::to_value(camera).map_err(|_| "Invalid camera metadata")?);} else {cameras.insert(name,serde_json::Value::Null);}
+                }
+            }
+        }
+        Ok(serde_json::json!({"match_id":id,"file_hash":format!("{:x}",Sha256::digest(&bytes)),"cameras_by_name":cameras,"cameras_by_id":network_cameras(&replay,&id),"overtime":overtime_samples(&replay),"overtime_properties":replay.objects.iter().filter(|n|n.to_ascii_lowercase().contains("overtime")).collect::<Vec<_>>()}))
+    }).map_err(|_| "Replay metadata failed safely".to_string())?
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1243,6 +1404,7 @@ mod tests {
             team: 0,
             platform: Some("Steam".into()),
             is_bot: false,
+            camera: None,
         };
         let frame = Frame {
             time: 0.0,
@@ -1262,6 +1424,7 @@ mod tests {
                 discontinuity: false,
             }],
             match_clock_seconds: Some(300),
+            overtime: None,
             live_play: true,
             discontinuity: false,
         };

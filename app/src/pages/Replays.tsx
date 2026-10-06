@@ -1,5 +1,16 @@
-import React, { useMemo, useState } from "react";
-import { FolderOpen, FilePlus, Play, Trash2, Search, Clock, Loader2 } from "lucide-react";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  FolderOpen,
+  FilePlus,
+  Play,
+  Trash2,
+  Search,
+  Clock,
+  Loader2,
+  ShieldQuestion,
+} from "lucide-react";
+import { invoke } from "../ipc";
+import type { DetectorRecord } from "../components/DetectorPanel";
 import type { ReplaySummary, ImportRecord } from "../types";
 import { timeLabel } from "../ReplayViewer";
 
@@ -33,6 +44,18 @@ export default function Replays({
   onImportFiles,
   onDeleteReplay,
 }: ReplaysProps) {
+  const [detectors, setDetectors] = useState<DetectorRecord[]>([]);
+  useEffect(() => {
+    let live = true;
+    invoke<{ records: DetectorRecord[] }>("detector_reports")
+      .then((r) => {
+        if (live) setDetectors(r.records ?? []);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [replays]);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [removeSnapshot, setRemoveSnapshot] = useState(true);
   const [search, setSearch] = useState("");
@@ -306,7 +329,13 @@ export default function Replays({
                   <td>
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
-                        {r.replay_name || r.file_name}
+                        {r.replay_name || r.file_name}{" "}
+                        {detectors.some((d) => d.replay_id === r.id) && (
+                          <ShieldQuestion
+                            size={14}
+                            aria-label="External bot detector report recorded; unverified"
+                          />
+                        )}
                       </strong>
                       <span style={{ fontSize: 11.5, color: "var(--muted)" }}>
                         {r.played_at || "Recent Match"} {r.map_name ? `· ${r.map_name}` : ""}

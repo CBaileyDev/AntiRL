@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Trophy, Zap, Gauge, Flame } from "lucide-react";
 import type { ProgressReport, ReplaySummary, Settings } from "../types";
+import IntelligencePanel from "../components/IntelligencePanel";
 import PracticePanel from "../components/PracticePanel";
 import { formatStat } from "../formatStat";
 
@@ -8,9 +9,18 @@ interface ProgressProps {
   progress: ProgressReport | null;
   settings: Settings;
   replays?: ReplaySummary[];
+  onOpenReplay?: (id: string, time?: number) => void;
+  onAskCoach?: (question: string) => void;
 }
 
-export default function Progress({ progress, settings, replays = [] }: ProgressProps) {
+export default function Progress({
+  progress,
+  settings,
+  replays = [],
+  onOpenReplay,
+  onAskCoach,
+}: ProgressProps) {
+  const [practiceRevision, setPracticeRevision] = useState(0);
   const [selectedMode, setSelectedMode] = useState<string>("2v2");
 
   const modeData = {
@@ -176,7 +186,21 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
         )}
       </div>
 
-      <PracticePanel mode={selectedMode} playerId={settings.player_id} />
+      <IntelligencePanel
+        mode={selectedMode}
+        playerId={settings.player_id}
+        libraryRevision={replays}
+        onOpenReplay={onOpenReplay}
+        onPracticeCreated={() => setPracticeRevision((v) => v + 1)}
+        onAskCoach={onAskCoach}
+      />
+      <PracticePanel
+        libraryRevision={replays}
+        key={`${selectedMode}:${settings.player_id || ""}:${practiceRevision}`}
+        onOpenReplay={onOpenReplay}
+        mode={selectedMode}
+        playerId={settings.player_id}
+      />
       <div className="pg-grid">
         <div className="pg-card">
           <div className="pg-card-head">

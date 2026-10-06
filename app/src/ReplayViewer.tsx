@@ -15,7 +15,10 @@ import {
   Minimize2,
 } from "lucide-react";
 import type { ReplayAnalysis } from "./types";
-import { frameIndex } from "./replayMath";
+import CameraSettings from "./components/CameraSettings";
+import GhostOverlay, { type GhostReference } from "./components/GhostOverlay";
+import type { CameraProfile } from "./bindings";
+import { frameIndex, PRO_CAMERA } from "./replayMath";
 import ViewerHud from "./components/ViewerHud";
 import { mountReplayScene } from "./viewerScene";
 
@@ -24,6 +27,8 @@ import { timeLabel } from "./viewerTime";
 
 interface ReplayViewerProps {
   replay: ReplayAnalysis;
+  accountId?: string | null;
+  ghost?: GhostReference | null;
   playerId?: string | null;
   /** Requested position; applied whenever seekVersion changes. Playback time itself lives in the viewer. */
   seekTime: number;
@@ -75,6 +80,8 @@ const TimelineMarkers = React.memo(function TimelineMarkers({
 
 export default function ReplayViewer({
   replay,
+  accountId,
+  ghost,
   playerId,
   seekTime,
   onSelectEvent,
@@ -83,7 +90,8 @@ export default function ReplayViewer({
   const [time, setTime] = useState(seekTime);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef({ playerId, camera: "player" });
+  const [profile, setProfile] = useState<CameraProfile>({ ...PRO_CAMERA });
+  const stateRef = useRef({ playerId, camera: "player", profile });
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [camera, setCamera] = useState<"player" | "ball" | "broadcast" | "top" | "free">("player");
@@ -102,7 +110,7 @@ export default function ReplayViewer({
   }, [quality]);
   const [expanded, setExpanded] = useState(false);
 
-  stateRef.current = { playerId, camera };
+  stateRef.current = { playerId, camera, profile };
 
   const start = replay.frames[0]?.time ?? 0;
   const end = replay.frames.at(-1)?.time ?? replay.summary.duration_seconds;
@@ -275,6 +283,8 @@ export default function ReplayViewer({
           observed boost decrease.
         </span>
       </div>
+      <CameraSettings accountId={accountId} onChange={setProfile} />
+      {ghost && <GhostOverlay replay={replay} playerId={playerId} time={time} reference={ghost} />}
       {/* Timeline & Broadcast Playback Card */}
       <div className="timeline-card">
         {/* Scrubber with Event Pins */}

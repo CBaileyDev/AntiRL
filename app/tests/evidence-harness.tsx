@@ -22,6 +22,14 @@ mockIPC((command, args) => {
       sessions: sessions.filter((s) =>
         plans.some((p) => p.id === s.plan_id && p.mode === values.mode),
       ),
+      transfer: {
+        cycles: [],
+        metric_options: [],
+        match_options: [],
+        computed_at: "2026-10-05T12:00:00Z",
+        privacy: "Local only",
+        window_policy: "Next ten matches",
+      },
       source: "self_report",
       forecast: "unavailable",
       reassessment: "synthetic",
@@ -47,6 +55,8 @@ mockIPC((command, args) => {
         provenance: "self_report",
       },
       completed_at: "2026-10-05",
+      logged_at: "2026-10-05",
+      completion_source: "actual_completion",
     });
     return null;
   }

@@ -37,6 +37,8 @@ pub fn validated_plan(text: &str) -> ServiceResult<Vec<(String, Value)>> {
             | "compare_windows"
             | "get_training_history"
             | "get_benchmark_summary" => &[],
+            "get_mistake_fingerprints" | "get_opponent_history" => &[],
+            "search_replay_events" => &["kind", "phase", "review", "cursor", "limit"],
             "list_matches" => &["cursor", "limit"],
             "get_match_metrics" => &["replay_id"],
             "get_evidence_events" | "get_timeline_window" => &["replay_id", "start_s", "end_s"],
@@ -55,7 +57,7 @@ pub fn validated_plan(text: &str) -> ServiceResult<Vec<(String, Value)>> {
         {
             return Err("Invalid pagination".into());
         }
-        for key in ["query", "replay_id"] {
+        for key in ["query", "replay_id", "kind", "phase", "review"] {
             if args
                 .get(key)
                 .is_some_and(|s| s.as_str().is_none_or(|s| s.len() > 500))
@@ -84,6 +86,39 @@ impl CoachService {
                 if let Some(modes) = result["modes"].as_object_mut() {
                     for m in modes.values_mut() {
                         m.as_object_mut().map(|m| m.remove("recent"));
+                    }
+                }
+            }
+            if tool == "get_mistake_fingerprints" {
+                if let Some(clusters) = result["clusters"].as_array_mut() {
+                    let total = clusters.len();
+                    clusters.truncate(3);
+                    for cluster in clusters {
+                        if let Some(examples) = cluster["examples"].as_array_mut() {
+                            examples.truncate(2);
+                        }
+                        if let Some(trend) = cluster["trend"].as_array_mut() {
+                            trend.truncate(8);
+                        }
+                    }
+                    result["displayed_cluster_limit"] = json!(3);
+                    result["available_clusters"] = json!(total);
+                }
+            }
+            if tool == "get_opponent_history" {
+                if let Some(records) = result["records"].as_array_mut() {
+                    let total = records.len();
+                    records.truncate(8);
+                    result["total_opponents"] = json!(total);
+                }
+            }
+            if tool == "search_replay_events" {
+                if let Some(rows) = result["rows"].as_array_mut() {
+                    if rows.len() > 10 {
+                        let cursor = args["cursor"].as_u64().unwrap_or(0);
+                        rows.truncate(10);
+                        result["next_cursor"] = json!(cursor + 10);
+                        result["response_limit"] = json!(10);
                     }
                 }
             }

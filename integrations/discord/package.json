@@ -1,0 +1,13 @@
+{
+  "name": "antirl-discord",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env server.mjs",
+    "register": "node --env-file=.env register.mjs",
+    "test": "node --test test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

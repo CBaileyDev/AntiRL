@@ -1,5 +1,13 @@
 use super::*;
 impl CoachService {
+    fn cloud_practice(&self, mode: &str) -> ServiceResult<Value> {
+        let mut data = self.get_practice(mode)?;
+        if let Some(data) = data.as_object_mut() {
+            data.remove("transfer");
+        }
+        Ok(data)
+    }
+
     pub fn search_training_packs(
         &self,
         query: &str,
@@ -47,6 +55,9 @@ impl CoachService {
             return Err("Unsupported mode".into());
         }
         match tool {
+            "search_replay_events" => self.search_replay_events(mode, args),
+            "get_mistake_fingerprints" => self.mistake_fingerprints(mode),
+            "get_opponent_history" => self.opponent_history(mode),
             "get_player_overview" | "compare_windows" => self.analytics_context(Some(player), mode),
             "search_training_packs" => {
                 self.search_training_packs(args["query"].as_str().unwrap_or(""), mode, 3)
@@ -57,10 +68,10 @@ impl CoachService {
             "get_training_history" => {
                 if mode == "All" {
                     Ok(
-                        json!({"1v1":self.get_practice("1v1")?,"2v2":self.get_practice("2v2")?,"3v3":self.get_practice("3v3")?}),
+                        json!({"1v1":self.cloud_practice("1v1")?,"2v2":self.cloud_practice("2v2")?,"3v3":self.cloud_practice("3v3")?}),
                     )
                 } else {
-                    self.get_practice(mode)
+                    self.cloud_practice(mode)
                 }
             }
             "list_matches" => {

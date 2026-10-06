@@ -13,15 +13,18 @@ use uuid::Uuid;
 
 mod ai;
 mod analytics;
+mod camera;
 pub mod chatgpt;
 mod conversations;
 mod evidence_tools;
+mod intelligence;
 mod migrations;
 mod practice;
 mod research;
 mod retrieval;
 mod semantics;
 mod storage;
+mod transfer;
 pub use ai::ChatUpdate;
 
 pub type ServiceResult<T> = Result<T, String>;

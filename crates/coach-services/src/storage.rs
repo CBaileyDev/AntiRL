@@ -106,6 +106,19 @@ fn write_replay_inner(
             .map_err(err)?;
         }
     }
+    // Older migrations call this writer before enrichment tables exist.
+    if db
+        .prepare("SELECT intelligence_revision FROM replays LIMIT 0")
+        .is_ok()
+    {
+        db.execute(
+            "UPDATE replays SET intelligence_revision=intelligence_revision+1 WHERE id=?1",
+            [id],
+        )
+        .map_err(err)?;
+        db.execute("DELETE FROM situation_cache WHERE replay_id=?1", [id])
+            .map_err(err)?;
+    }
     Ok(())
 }
 
