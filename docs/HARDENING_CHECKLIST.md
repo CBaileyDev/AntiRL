@@ -32,7 +32,7 @@ Implemented on `codex/reliability-privacy-hardening`. The pre-existing workspace
 | 26   | First-run detected identity suggestion and explicit confirmation                                                                                                     | Complete                                                                   |
 | 27   | Per-send provider, data categories, character/token estimates and retrieval allowance preview; exact pricing disclosed as unknown                                    | Complete                                                                   |
 | 28   | Offline provider default and visible local coaching mode                                                                                                             | Complete                                                                   |
-| 29   | Original inline SVG rank medals replace scraped images                                                                                                               | Complete                                                                   |
+| 29   | Previous bundled rank images restored at the user's request; local asset hashes verified                                                                             | User preference applied                                                    |
 | 30   | README/architecture updated; old handoffs/reviews archived                                                                                                           | Complete                                                                   |
 
 ## Local checks

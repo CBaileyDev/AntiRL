@@ -1,0 +1,144 @@
+{
+  "source_page": "https://rocketleague.tracker.network/rocket-league/distribution",
+  "copyright": "Rocket League game materials belong to Psyonix/Epic Games. Tracker Network is the source host; this manifest is attribution, not a license grant.",
+  "assets": [
+    {
+      "index": 0,
+      "path": "0.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png",
+      "sha256": "aa1993073895d9ef7644131c439a1e9200fec8df601bc20198d7e9831cfb7d92"
+    },
+    {
+      "index": 1,
+      "path": "1.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-1.png",
+      "sha256": "e2bebc86372bd9acf49025567c713d780ee9dcdf85cbd14443ceb19190c3c76c"
+    },
+    {
+      "index": 2,
+      "path": "2.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-2.png",
+      "sha256": "5db141cffb817d1872c4835f90434dfb66fb52b4f976a7bc69833fcbea75a80a"
+    },
+    {
+      "index": 3,
+      "path": "3.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-3.png",
+      "sha256": "40309c00c1f0fafff54853e846801c08a00c4e3b18d1e9adf6bfb2c84f84b799"
+    },
+    {
+      "index": 4,
+      "path": "4.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-4.png",
+      "sha256": "26963809a6bf7ba3c5ece3ee08c93bc55fe5f8712848ea9a061ca5ca689ce720"
+    },
+    {
+      "index": 5,
+      "path": "5.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-5.png",
+      "sha256": "376c5f214eb2b5efceebe978e041553cbf03437cbf8edfc50d98efe4e7ab2ea0"
+    },
+    {
+      "index": 6,
+      "path": "6.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-6.png",
+      "sha256": "4486c3181ba6ddc4cae857e71875219ef2a5bc02cd089abc0d0075de2ea904cc"
+    },
+    {
+      "index": 7,
+      "path": "7.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-7.png",
+      "sha256": "3e793d790bc4bce524f8eb5c9b83289c2893ab90a8d2554ecf3fe20f25c91cc3"
+    },
+    {
+      "index": 8,
+      "path": "8.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-8.png",
+      "sha256": "1ed6c78a4aff68c8e6a6fe604ab1eb00f44015487e5c01809ff3f7e652bf967c"
+    },
+    {
+      "index": 9,
+      "path": "9.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-9.png",
+      "sha256": "2e39af318ade1b1af48ccf6e6b2e02eed08ef7e2d8e5f3f354c218deafc0c962"
+    },
+    {
+      "index": 10,
+      "path": "10.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-10.png",
+      "sha256": "779a617b5ac9b2b9b3d454ea86203dcb4b8bd5c2e11358c7bea03ee755f88386"
+    },
+    {
+      "index": 11,
+      "path": "11.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-11.png",
+      "sha256": "d00e8092ab543e55f73ca8bf19d9a28ad1b1ab042a6e73377c4f037d257456be"
+    },
+    {
+      "index": 12,
+      "path": "12.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-12.png",
+      "sha256": "a30b936aee02dcc940009d9677b7b99f28776d01bacba8cd9379fa259450a333"
+    },
+    {
+      "index": 13,
+      "path": "13.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
+      "sha256": "9622b2e1bea65b90dd6d0b46c0b50cffc1e9567a0bbb4371afde23aa73b76837"
+    },
+    {
+      "index": 14,
+      "path": "14.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-14.png",
+      "sha256": "7644157059b84812b3447654c1514db09e2bf22f07251912cbd026950f2c35ff"
+    },
+    {
+      "index": 15,
+      "path": "15.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-15.png",
+      "sha256": "44b94456625c3d2e8d429ed9b263d0a60d034276c651f4954c618c94f50bedd0"
+    },
+    {
+      "index": 16,
+      "path": "16.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-16.png",
+      "sha256": "a8581dc39e1ee17b86a516cc740fe528d6386e17216e86585d78f8d1dbbba2a5"
+    },
+    {
+      "index": 17,
+      "path": "17.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-17.png",
+      "sha256": "3e614afcc25c8f08b2d7f48f5c1cc4f2f4655c268922ae0f6810a928573a8217"
+    },
+    {
+      "index": 18,
+      "path": "18.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-18.png",
+      "sha256": "0c2b9b9671c1feab72397128a9f3fe873961eb9aeda9db5187f2bc705f365ecd"
+    },
+    {
+      "index": 19,
+      "path": "19.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank19.png",
+      "sha256": "b72eda292098bc19dbd782fdce33ffd63a74e49a0b2af4a2163eeb1298ec5137"
+    },
+    {
+      "index": 20,
+      "path": "20.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank20.png",
+      "sha256": "eb8cd4423b5306918347977851b9b2cc5943367562ef8cdabe3432c81b43bf6e"
+    },
+    {
+      "index": 21,
+      "path": "21.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank21.png",
+      "sha256": "7446719ce5bf6c5a0dedabc048a94913782c0a661e189652674fe6cbaf5a1534"
+    },
+    {
+      "index": 22,
+      "path": "22.png",
+      "source": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank22.png",
+      "sha256": "88e2a9b438f56ce4b0d4f517b0eba677e555f690089f3ce694ca15c210e95dbe"
+    }
+  ]
+}

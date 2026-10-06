@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import ts from "../app/node_modules/typescript/lib/typescript.js";
 
 async function moduleFrom(path) {
@@ -50,13 +51,22 @@ assert.equal(
   "Bronze 3",
 );
 assert.equal(highestCompetitiveRank([null, "", undefined]), "Unranked");
-// Artwork is now authored inline SVG; the scraped PNG manifest was removed.
-const badge = await readFile(
-  new URL("../app/src/components/RankBadge.tsx", import.meta.url),
-  "utf8",
+const manifest = JSON.parse(
+  await readFile(
+    new URL("../app/public/ranks/sources.json", import.meta.url),
+    "utf8",
+  ),
 );
-assert.ok(badge.includes("<svg") && badge.includes('role="img"'));
-assert.ok(!badge.includes("/ranks/") && !badge.includes(".png"));
+assert.equal(manifest.assets.length, 23);
+for (let i = 0; i < 23; i++) {
+  const asset = manifest.assets.find((a) => a.index === i);
+  assert.ok(asset, `Missing artwork ${i}`);
+  const bytes = await readFile(
+    new URL(`../app/public/ranks/${asset.path}`, import.meta.url),
+  );
+  assert.equal(bytes.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), asset.sha256);
+}
 const { renderScale, playbackFps, measuredRefresh } = await moduleFrom(
   "../app/src/viewerQuality.ts",
 );
@@ -73,5 +83,5 @@ for (const hz of [30, 60, 75, 90, 100, 120, 144, 165, 180, 200, 240, 360]) {
   assert.equal(measuredRefresh(jittered), hz);
 }
 console.log(
-  "PASS: authored SVG artwork, Arabic/Roman rank mapping, highest playlist rank, high-DPI resolution and refresh-rate budgets.",
+  "PASS: all 23 artwork checksums, Arabic/Roman rank mapping, highest playlist rank, high-DPI resolution and refresh-rate budgets.",
 );
