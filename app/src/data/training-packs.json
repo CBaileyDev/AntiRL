@@ -5,15 +5,8 @@
     "title": "Kevpert - 1s Shots F8",
     "creator": "Kevpert",
     "difficulty": "Gold",
-    "skill_tags": [
-      "shooting",
-      "shots"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shooting", "shots"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
     "source_date": "2020-02-27",
     "last_checked": "2026-10-05",
@@ -36,13 +29,8 @@
     "title": "Passing (Infield)",
     "creator": "Mykal",
     "difficulty": "Platinum",
-    "skill_tags": [
-      "passing"
-    ],
-    "modes": [
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["passing"],
+    "modes": ["2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
     "source_date": "2020-02-27",
     "last_checked": "2026-10-05",
@@ -65,15 +53,8 @@
     "title": "Intermediate Aerials",
     "creator": "Mykal",
     "difficulty": "Diamond",
-    "skill_tags": [
-      "aerial",
-      "aerials"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["aerial", "aerials"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
     "source_date": "2020-02-27",
     "last_checked": "2026-10-05",
@@ -96,16 +77,8 @@
     "title": "wall defence",
     "creator": "ReaLize",
     "difficulty": "Champion",
-    "skill_tags": [
-      "wall",
-      "defense",
-      "defence"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["wall", "defense", "defence"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
     "source_date": "2020-02-27",
     "last_checked": "2026-10-05",
@@ -128,16 +101,8 @@
     "title": "Easy Goals :D",
     "creator": "FL0",
     "difficulty": "Silver",
-    "skill_tags": [
-      "shooting",
-      "shots",
-      "goals"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shooting", "shots", "goals"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--hit-your-dream-rank-with-the-latest-training-packs",
     "source_date": "2020-02-27",
     "last_checked": "2026-10-05",
@@ -160,16 +125,8 @@
     "title": "Shadow Defense",
     "creator": "Orangepie",
     "difficulty": "Diamond",
-    "skill_tags": [
-      "defense",
-      "shadow",
-      "saves"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["defense", "shadow", "saves"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight-maps-and-packs",
     "source_date": "2018-05-23",
     "last_checked": "2026-10-05",
@@ -193,16 +150,8 @@
     "title": "Dribble Training",
     "creator": "Virge",
     "difficulty": "Champion",
-    "skill_tags": [
-      "dribble",
-      "dribbling",
-      "control"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["dribble", "dribbling", "control"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-pack-refresh",
     "source_date": "2019-07-30",
     "last_checked": "2026-10-05",
@@ -226,16 +175,8 @@
     "title": "Shadow Saves",
     "creator": "Wayprotein",
     "difficulty": "Platinum",
-    "skill_tags": [
-      "defense",
-      "shadow",
-      "saves"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["defense", "shadow", "saves"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-pack-refresh",
     "source_date": "2019-07-30",
     "last_checked": "2026-10-05",
@@ -259,15 +200,8 @@
     "title": "Self Double Touch: Pro",
     "creator": "Plasmid",
     "difficulty": "Diamond",
-    "skill_tags": [
-      "aerial",
-      "backboard",
-      "double touch"
-    ],
-    "modes": [
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["aerial", "backboard", "double touch"],
+    "modes": ["2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-pack-refresh",
     "source_date": "2019-07-30",
     "last_checked": "2026-10-05",
@@ -291,15 +225,8 @@
     "title": "Clearing for Beans",
     "creator": "Johnnyboi_i",
     "difficulty": "Champion",
-    "skill_tags": [
-      "clear",
-      "clears",
-      "defense"
-    ],
-    "modes": [
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["clear", "clears", "defense"],
+    "modes": ["2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-pack-refresh",
     "source_date": "2019-07-30",
     "last_checked": "2026-10-05",
@@ -323,16 +250,8 @@
     "title": "Powershots",
     "creator": "Yeeza",
     "difficulty": "Diamond",
-    "skill_tags": [
-      "shot",
-      "shooting",
-      "power"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shot", "shooting", "power"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/training-pack-refresh--shoot-your-shot-",
     "source_date": "2020-04-30",
     "last_checked": "2026-10-05",
@@ -356,16 +275,8 @@
     "title": "Powershot Practice",
     "creator": "Skogur",
     "difficulty": "Gold",
-    "skill_tags": [
-      "shot",
-      "shooting",
-      "power"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shot", "shooting", "power"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/training-pack-refresh--shoot-your-shot-",
     "source_date": "2020-04-30",
     "last_checked": "2026-10-05",
@@ -389,16 +300,8 @@
     "title": "The ultimate warm-up",
     "creator": "Hinata",
     "difficulty": "Diamond",
-    "skill_tags": [
-      "warmup",
-      "aerial",
-      "shooting"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["warmup", "aerial", "shooting"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--get-to-pro-level-with-practice",
     "source_date": "2019-03-28",
     "last_checked": "2026-10-05",
@@ -422,16 +325,8 @@
     "title": "Upper 90 Striker Training",
     "creator": "Syntax",
     "difficulty": "Platinum",
-    "skill_tags": [
-      "shot",
-      "shooting",
-      "accuracy"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shot", "shooting", "accuracy"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--get-to-pro-level-with-practice",
     "source_date": "2019-03-28",
     "last_checked": "2026-10-05",
@@ -455,16 +350,8 @@
     "title": "Defensive Situations",
     "creator": "Zen",
     "difficulty": "Unspecified",
-    "skill_tags": [
-      "defense",
-      "save",
-      "recovery"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["defense", "save", "recovery"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-packs-by-the-pros",
     "source_date": "2019-05-30",
     "last_checked": "2026-10-05",
@@ -489,15 +376,8 @@
     "title": "Redirect Mechanics Warmup",
     "creator": "Lethamyr",
     "difficulty": "Unspecified",
-    "skill_tags": [
-      "redirect",
-      "passing",
-      "aerial"
-    ],
-    "modes": [
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["redirect", "passing", "aerial"],
+    "modes": ["2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight--training-packs-by-the-pros",
     "source_date": "2019-05-30",
     "last_checked": "2026-10-05",
@@ -521,16 +401,8 @@
     "title": "Ground Shots",
     "creator": "Poquito",
     "difficulty": "Unspecified",
-    "skill_tags": [
-      "shot",
-      "shooting",
-      "ground"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["shot", "shooting", "ground"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight-april-2017",
     "source_date": "2017-04-13",
     "last_checked": "2026-10-05",
@@ -554,16 +426,8 @@
     "title": "Saves",
     "creator": "Poquito",
     "difficulty": "Unspecified",
-    "skill_tags": [
-      "defense",
-      "save",
-      "saves"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["defense", "save", "saves"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight-april-2017",
     "source_date": "2017-04-13",
     "last_checked": "2026-10-05",
@@ -587,15 +451,8 @@
     "title": "Clears",
     "creator": "Poquito",
     "difficulty": "Unspecified",
-    "skill_tags": [
-      "clear",
-      "clears",
-      "defense"
-    ],
-    "modes": [
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["clear", "clears", "defense"],
+    "modes": ["2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight-april-2017",
     "source_date": "2017-04-13",
     "last_checked": "2026-10-05",
@@ -619,16 +476,8 @@
     "title": "Aerial Car Control",
     "creator": "Kevpert",
     "difficulty": "Gold",
-    "skill_tags": [
-      "aerial",
-      "control",
-      "mechanics"
-    ],
-    "modes": [
-      "1v1",
-      "2v2",
-      "3v3"
-    ],
+    "skill_tags": ["aerial", "control", "mechanics"],
+    "modes": ["1v1", "2v2", "3v3"],
     "source_url": "https://www.rocketleague.com/news/community-spotlight-maps-and-packs",
     "source_date": "2018-05-23",
     "last_checked": "2026-10-05",

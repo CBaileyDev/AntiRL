@@ -1,0 +1,51 @@
+name: AntiRL quality
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+          run_install: false
+      - name: Install frontend
+        run: pnpm --dir app install --frozen-lockfile
+      - name: Frontend production build
+        run: pnpm --dir app build
+      - name: Rust formatting
+        run: cargo fmt --all -- --check
+      - name: Rust tests including optional SIWC adapter
+        run: cargo test --workspace --all-features --locked
+      - name: Generated IPC contracts are current
+        run: git diff --exit-code -- app/src/bindings.ts
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+      - name: Frontend formatting
+        run: pnpm --dir app format:check
+      - name: ESLint and TypeScript
+        run: pnpm --dir app lint
+      - name: Playwright browser
+        run: pnpm --dir app exec playwright install chromium
+      - name: Playwright
+        run: pnpm --dir app test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-failure
+          path: |
+            app/playwright-report
+            app/test-results
+          retention-days: 7

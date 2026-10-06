@@ -4,26 +4,26 @@ This is the next agent's test plan. None of the following tests is claimed to ha
 
 ## P0 regression cases
 
-| ID | Setup/action | Required result |
-|---|---|---|
-| M01 | General chat, no replay attached, `supersonic_boost_seconds=6` | Describes boost-active duration at threshold, never total uptime or target 9+ |
-| M02 | Same values with a replay attached and in offline analysis | Same metric meaning across all paths |
-| M03 | Speed 2250 and active boost | Counts measured condition; cannot assert all boost is useless based solely on threshold |
-| M04 | Missing speed or boost-active flag; measured zero in a separate case | Unknown stays unknown; real zero remains zero; coverage is accurate |
-| M05 | 10 seconds at boost 20 and 90 seconds at boost 80 | Time-weighted mean is 74, explicitly different from equal-match mean 50 |
-| M06 | Duplicate, renamed replay, reanalysis, deletion, rebuild | Lifetime totals reconcile exactly; old metric revision is replaced |
-| M07 | User absent, identity unknown, duplicate display names | No attribution to first participant or another account |
-| M08 | 20 latest library matches include benchmarks/other modes/non-user games | Recent slice contains only eligible personal matches in requested mode |
-| M09 | Import an older game today, unknown played date, overtime/forfeit | Recency and denominators remain honest; exclusions are explained |
-| C01 | Stream a long reply and scroll up by each input method | No forced jump; Jump to latest appears; return resumes follow |
-| C02 | Select/copy old text while generating; markdown table reflows | Selection and reading anchor preserved; valid table rendering |
-| C03 | Cancel, network error, retry, switch chat, late callback | Correct partial/error state; no duplicate turn or cross-chat stream |
-| C04 | New chat, change mode, restart app, rename/archive | Mode/profile/history persist and remain isolated |
-| C05 | Copy response and export each format, including mid-stream | Exact visible content plus scope/citations; safe partial label; no secrets |
-| V01 | Boost 0/25/50/75/100/null, seek/player switch | Arc and number agree; unknown neutral; no smoothing across seeks |
-| V02 | Chase on wall/ceiling, overhead, inside goal/corners | Surfaces are coherent; spectator cutaway does not hide interior geometry |
-| V03 | Boost collection unobserved, seeks, effect emission | No invented pickup/cooldown telemetry; particles reset correctly |
-| O01 | Onboarding per-mode ranks/goals/time, skip, edit later | Personalized plan honors settings; no hardcoded user profile |
+| ID  | Setup/action                                                            | Required result                                                                         |
+| --- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| M01 | General chat, no replay attached, `supersonic_boost_seconds=6`          | Describes boost-active duration at threshold, never total uptime or target 9+           |
+| M02 | Same values with a replay attached and in offline analysis              | Same metric meaning across all paths                                                    |
+| M03 | Speed 2250 and active boost                                             | Counts measured condition; cannot assert all boost is useless based solely on threshold |
+| M04 | Missing speed or boost-active flag; measured zero in a separate case    | Unknown stays unknown; real zero remains zero; coverage is accurate                     |
+| M05 | 10 seconds at boost 20 and 90 seconds at boost 80                       | Time-weighted mean is 74, explicitly different from equal-match mean 50                 |
+| M06 | Duplicate, renamed replay, reanalysis, deletion, rebuild                | Lifetime totals reconcile exactly; old metric revision is replaced                      |
+| M07 | User absent, identity unknown, duplicate display names                  | No attribution to first participant or another account                                  |
+| M08 | 20 latest library matches include benchmarks/other modes/non-user games | Recent slice contains only eligible personal matches in requested mode                  |
+| M09 | Import an older game today, unknown played date, overtime/forfeit       | Recency and denominators remain honest; exclusions are explained                        |
+| C01 | Stream a long reply and scroll up by each input method                  | No forced jump; Jump to latest appears; return resumes follow                           |
+| C02 | Select/copy old text while generating; markdown table reflows           | Selection and reading anchor preserved; valid table rendering                           |
+| C03 | Cancel, network error, retry, switch chat, late callback                | Correct partial/error state; no duplicate turn or cross-chat stream                     |
+| C04 | New chat, change mode, restart app, rename/archive                      | Mode/profile/history persist and remain isolated                                        |
+| C05 | Copy response and export each format, including mid-stream              | Exact visible content plus scope/citations; safe partial label; no secrets              |
+| V01 | Boost 0/25/50/75/100/null, seek/player switch                           | Arc and number agree; unknown neutral; no smoothing across seeks                        |
+| V02 | Chase on wall/ceiling, overhead, inside goal/corners                    | Surfaces are coherent; spectator cutaway does not hide interior geometry                |
+| V03 | Boost collection unobserved, seeks, effect emission                     | No invented pickup/cooldown telemetry; particles reset correctly                        |
+| O01 | Onboarding per-mode ranks/goals/time, skip, edit later                  | Personalized plan honors settings; no hardcoded user profile                            |
 
 ## Harness evaluation corpus
 

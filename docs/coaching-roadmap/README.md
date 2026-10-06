@@ -6,8 +6,8 @@ Prepared 2026-10-05. Planning and source inspection only; no app implementation 
 
 1. Read [product plan](01_PRODUCT_PLAN.md) for priorities, player-facing behavior, and open questions.
 2. Read [current defects and screenshot review](02_CURRENT_AUDIT.md) before changing metrics or prompts.
-3. Give [implementation prompt](SOL_IMPLEMENTATION_PROMPT.md) and this whole folder to the implementation agent selected by the user (6.1 Sol).
-4. Paste [Gemini research prompt](GEMINI_DEEP_RESEARCH_PROMPT.md) into the user's chosen Gemini Deep Research session. It is self-contained; supplying this folder adds implementation context. This handoff does not assume availability or capabilities of a particular Gemini model name.
+3. Give [implementation prompt](../archive/handoffs/SOL_IMPLEMENTATION_PROMPT.md) and this whole folder to the implementation agent selected by the user (6.1 Sol).
+4. Paste [Gemini research prompt](../archive/handoffs/GEMINI_DEEP_RESEARCH_PROMPT.md) into the user's chosen Gemini Deep Research session. It is self-contained; supplying this folder adds implementation context. This handoff does not assume availability or capabilities of a particular Gemini model name.
 5. Use [data and AI contract](03_DATA_AI_CONTRACT.md) and [acceptance plan](04_ACCEPTANCE_PLAN.md) to evaluate implementation and research results.
 
 ## Recommended order
@@ -24,7 +24,7 @@ Retain all imported gameplay data locally and make it queryable. Supply the mode
 
 ## Deliverable boundaries
 
-- This folder is new and does not replace the original `docs/gemini-handoff` build-from-scratch brief.
+- This folder is new and does not replace the original `docs/archive/gemini-handoff` build-from-scratch brief.
 - The checkout already has extensive tracked and untracked changes. The next agent must preserve them and inspect the current source again.
 - Existing progress documents contain earlier PASS claims. Those claims were not rerun here.
 - No benchmark corpus, training-pack catalog, player scores, or rank-up predictions have been collected or validated by this planning pass.

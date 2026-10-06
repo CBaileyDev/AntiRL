@@ -11,10 +11,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "low_boost_pct",
@@ -25,10 +22,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "avg_speed",
@@ -39,10 +33,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "time_at_or_above_supersonic_threshold_s",
@@ -53,10 +44,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "time_at_or_above_supersonic_threshold_pct",
@@ -67,10 +55,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "boost_active_at_supersonic_speed_s",
@@ -81,13 +66,8 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ],
-      "aliases": [
-        "supersonic_boost_seconds"
-      ]
+      "evidence_types": ["metric", "timeline"],
+      "aliases": ["supersonic_boost_seconds"]
     },
     {
       "key": "suspected_unnecessary_boost_s",
@@ -98,10 +78,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "defensive_half_pct",
@@ -112,10 +89,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "ahead_ball_pct",
@@ -126,10 +100,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "avg_ball_distance",
@@ -140,10 +111,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     },
     {
       "key": "tracked_seconds",
@@ -154,10 +122,7 @@
       "eligibility": "continuous live observations",
       "coverage": "per-metric valid denominator",
       "comparison_direction": "contextual",
-      "evidence_types": [
-        "metric",
-        "timeline"
-      ]
+      "evidence_types": ["metric", "timeline"]
     }
   ]
 }

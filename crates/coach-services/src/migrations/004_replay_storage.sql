@@ -1,0 +1,15 @@
+ALTER TABLE replays ADD COLUMN file_hash TEXT;
+ALTER TABLE replays ADD COLUMN summary_body TEXT;
+ALTER TABLE replays ADD COLUMN mode TEXT;
+ALTER TABLE replays ADD COLUMN played_at TEXT;
+ALTER TABLE replays ADD COLUMN played_sort TEXT;
+ALTER TABLE replays ADD COLUMN blue_score INTEGER;
+ALTER TABLE replays ADD COLUMN orange_score INTEGER;
+CREATE INDEX replay_file_hash ON replays(file_hash);
+CREATE INDEX replay_mode_date ON replays(mode,played_sort);
+CREATE TABLE replay_players(replay_id TEXT NOT NULL REFERENCES replays(id) ON DELETE CASCADE,player_id TEXT NOT NULL,name TEXT NOT NULL,team INTEGER,platform TEXT,is_bot INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(replay_id,player_id));
+CREATE INDEX replay_player_identity ON replay_players(player_id,replay_id);
+CREATE TABLE replay_frames(replay_id TEXT PRIMARY KEY REFERENCES replays(id) ON DELETE CASCADE,codec TEXT NOT NULL CHECK(codec='zstd-json-v1'),uncompressed_size INTEGER NOT NULL,body BLOB NOT NULL);
+CREATE TABLE imports(path TEXT PRIMARY KEY,file_name TEXT NOT NULL,size INTEGER NOT NULL,mtime_ns TEXT NOT NULL,file_hash TEXT,status TEXT NOT NULL CHECK(status IN ('new','already_present','failed','deleted')),error TEXT,updated_at TEXT NOT NULL);
+CREATE INDEX imports_status ON imports(status);
+CREATE TABLE replay_tombstones(file_hash TEXT PRIMARY KEY,deleted_at TEXT NOT NULL);

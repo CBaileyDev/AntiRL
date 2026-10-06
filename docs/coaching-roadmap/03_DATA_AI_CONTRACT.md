@@ -8,16 +8,16 @@ Keep `coach.sqlite3` authoritative for existing application/chat/settings state 
 
 Proposed analytical entities:
 
-| Entity | Required data |
-|---|---|
-| `source_matches` | canonical match ID, content hash, replay ID, played/imported time, time provenance, mode/playlist, team size, season/mutators, source revision, parser version, completion state |
-| `participants` | match ID, stable platform-qualified player ID, team, observed display name, identity confidence |
-| `metric_observations` | match/player/key/version, value/unit, numerator, denominator, denominator unit, eligible/observed duration, sample count, coverage, measured/heuristic status |
-| `evidence_events` | stable ID, match/player/team, elapsed start/end, category, detector/version, support fields, uncertainty, source timeline reference |
-| `aggregate_snapshots` | player/mode/window/key/version, sums and weights, count, date range, coverage, source revision/watermark, query definition |
-| `rank_observations` | player/mode, rank/MMR when known, observed time, season, source, self-reported/verified status |
-| `training_sessions` | player/mode/plan/drill, intended and completed duration, result/self-report, difficulty feedback |
-| `benchmark_membership` | cohort/version, replay/player, verified rank-at-match and source, eligibility/exclusion reason |
+| Entity                 | Required data                                                                                                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source_matches`       | canonical match ID, content hash, replay ID, played/imported time, time provenance, mode/playlist, team size, season/mutators, source revision, parser version, completion state |
+| `participants`         | match ID, stable platform-qualified player ID, team, observed display name, identity confidence                                                                                  |
+| `metric_observations`  | match/player/key/version, value/unit, numerator, denominator, denominator unit, eligible/observed duration, sample count, coverage, measured/heuristic status                    |
+| `evidence_events`      | stable ID, match/player/team, elapsed start/end, category, detector/version, support fields, uncertainty, source timeline reference                                              |
+| `aggregate_snapshots`  | player/mode/window/key/version, sums and weights, count, date range, coverage, source revision/watermark, query definition                                                       |
+| `rank_observations`    | player/mode, rank/MMR when known, observed time, season, source, self-reported/verified status                                                                                   |
+| `training_sessions`    | player/mode/plan/drill, intended and completed duration, result/self-report, difficulty feedback                                                                                 |
+| `benchmark_membership` | cohort/version, replay/player, verified rank-at-match and source, eligibility/exclusion reason                                                                                   |
 
 Use canonical deduplication across renamed/copied replay files. Distinguish file duplicate, same match recorded by multiple players, and genuinely separate match. Re-import/reanalysis should replace one match revision transactionally within the analytics DB, not add a second contribution.
 
@@ -29,16 +29,16 @@ Back up existing stores using a SQLite-aware method before migration. Retain sch
 
 One machine-readable versioned dictionary must drive UI labels, SQL projections, prompt glossary, exports, and validation. Each entry includes key, plain-language meaning, units, formula, eligibility, coverage, limitations, comparison direction (`contextual` unless established), and available evidence types.
 
-| Proposed key | Meaning | Interpretation constraint |
-|---|---|---|
-| `time_at_or_above_supersonic_threshold_s` | Eligible duration where measured speed >= defined threshold | Measured speed approximation; not proof of decision quality or exact game flag |
-| `time_at_or_above_supersonic_threshold_pct` | Above duration / valid speed-observation duration *100 | Never divide by all time if velocity is missing for part of it |
-| `boost_active_at_supersonic_speed_s` | Eligible duration with speed >= threshold AND observed boost-active | Compatibility successor to `supersonic_boost_seconds`; not all wasted |
-| `suspected_unnecessary_boost_s` | Only windows matching a separately validated contextual detector | Heuristic; nullable/unavailable until implemented and validated |
-| `avg_boost` | Integral of valid normalized boost / valid boost duration | Higher is not automatically better; avoid hoarding targets |
-| `low_boost_pct` | Valid duration below threshold / valid boost duration *100 | Threshold and denominator explicit; no universal ideal |
-| `avg_speed` | Speed integral / valid velocity duration | Movement, not decision quality; keep mode/context separate |
-| `defensive_half_pct` | Eligible time in own half / valid position duration *100 | Position, not last-man responsibility or quality |
+| Proposed key                                | Meaning                                                             | Interpretation constraint                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `time_at_or_above_supersonic_threshold_s`   | Eligible duration where measured speed >= defined threshold         | Measured speed approximation; not proof of decision quality or exact game flag |
+| `time_at_or_above_supersonic_threshold_pct` | Above duration / valid speed-observation duration *100              | Never divide by all time if velocity is missing for part of it                 |
+| `boost_active_at_supersonic_speed_s`        | Eligible duration with speed >= threshold AND observed boost-active | Compatibility successor to `supersonic_boost_seconds`; not all wasted          |
+| `suspected_unnecessary_boost_s`             | Only windows matching a separately validated contextual detector    | Heuristic; nullable/unavailable until implemented and validated                |
+| `avg_boost`                                 | Integral of valid normalized boost / valid boost duration           | Higher is not automatically better; avoid hoarding targets                     |
+| `low_boost_pct`                             | Valid duration below threshold / valid boost duration *100          | Threshold and denominator explicit; no universal ideal                         |
+| `avg_speed`                                 | Speed integral / valid velocity duration                            | Movement, not decision quality; keep mode/context separate                     |
+| `defensive_half_pct`                        | Eligible time in own half / valid position duration *100            | Position, not last-man responsibility or quality                               |
 
 Retain legacy fields via explicit adapters while migrating consumers; store version and provenance. Do not relabel old values into a newly different formula. Recompute from original data when semantics change. Unknown must remain null, with coverage reason; genuine measured zero must remain distinguishable.
 
@@ -92,12 +92,12 @@ Shared rules:
 
 Mode guidance seed, to be refined by sourced research:
 
-| Mode | Attention areas | Avoid |
-|---|---|---|
-| 1v1 | Possession risk, controlled challenges, shadowing, kickoffs, recovery and boost tradeoffs | Importing teammate rotation/back-post rules |
-| 2v2 | First/second-player relationship, support distance, recoverability, possession, last-player challenge context | Treating every retreat or forward position as an error |
-| 3v3 | Role transitions, coverage, pressure/support, recovery lanes, opportunities for useful passes/demos | Inferring roles solely from defensive-half percentage |
-| All | Mode-separated trends, shared execution habits, realistic practice allocation | One blended ranking/target for different playlists |
+| Mode | Attention areas                                                                                               | Avoid                                                  |
+| ---- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1v1  | Possession risk, controlled challenges, shadowing, kickoffs, recovery and boost tradeoffs                     | Importing teammate rotation/back-post rules            |
+| 2v2  | First/second-player relationship, support distance, recoverability, possession, last-player challenge context | Treating every retreat or forward position as an error |
+| 3v3  | Role transitions, coverage, pressure/support, recovery lanes, opportunities for useful passes/demos           | Inferring roles solely from defensive-half percentage  |
+| All  | Mode-separated trends, shared execution habits, realistic practice allocation                                 | One blended ranking/target for different playlists     |
 
 Use one model with versioned presets initially; a simulated committee of coaches adds latency and disagreement without evidence of benefit. Allow custom tone/instructions, but they cannot override data correctness. Store prompt version, provider/model, mode, tool manifest, and source revision per response.
 
@@ -105,13 +105,28 @@ Structured coaching output proposal:
 
 ```json
 {
-  "scope": {"mode": "2v2", "recent_count": 12, "lifetime_count": 148, "revision": "..."},
-  "findings": [{
-    "observation": "...", "evidence_ids": ["..."],
-    "interpretation": "...", "confidence": "limited",
-    "alternative_explanation": "...", "next_match_cue": "...",
-    "drill": {"pack_id": null, "setup": "...", "minutes": 10, "success_criterion": "..."}
-  }],
+  "scope": {
+    "mode": "2v2",
+    "recent_count": 12,
+    "lifetime_count": 148,
+    "revision": "..."
+  },
+  "findings": [
+    {
+      "observation": "...",
+      "evidence_ids": ["..."],
+      "interpretation": "...",
+      "confidence": "limited",
+      "alternative_explanation": "...",
+      "next_match_cue": "...",
+      "drill": {
+        "pack_id": null,
+        "setup": "...",
+        "minutes": 10,
+        "success_criterion": "..."
+      }
+    }
+  ],
   "limitations": ["..."]
 }
 ```

@@ -1,0 +1,1 @@
+These RSA keys and JWKS are synthetic test fixtures generated only to test JWT signature and claim rejection. They are not OpenAI keys, user credentials, or deployment secrets. No fixture test contacts a cloud provider.

@@ -1,30 +1,168 @@
-import {chromium,expect} from '../app/node_modules/@playwright/test/index.mjs';
-import {mkdir,writeFile} from 'node:fs/promises';
-await mkdir('docs/validation',{recursive:true});
-const browser=await chromium.launch({channel:'msedge',headless:true});
-const page=await browser.newPage({viewport:{width:1440,height:1080}});
-const errors=[];page.on('pageerror',e=>errors.push(e.message));
-console.log('Browser ready'); page.setDefaultTimeout(10000); await page.goto('http://127.0.0.1:1433/tests/fixture.html',{waitUntil:'domcontentloaded',timeout:15000});console.log('Fixture loaded');
-await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow','50');
-for(const boost of [0,25,50,75,100]){await page.getByRole('button',{name:String(boost),exact:true}).click();await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow',String(boost));const arc=page.locator('.boost-ring circle').nth(1);await expect(arc).toHaveAttribute('stroke-dasharray',`${boost} 100`);}
-await page.getByRole('button',{name:'Unknown',exact:true}).click();await expect(page.getByRole('meter')).toHaveAttribute('aria-valuetext','Unknown boost');await expect(page.locator('.boost-ring circle')).toHaveCount(1);
-await expect(page.locator('.coach-markdown table').first()).toBeVisible();await expect(page.locator('a[href^="javascript:"]')).toHaveCount(0);await expect(page.locator('.coach-markdown script')).toHaveCount(0);
-const log=page.locator('.chat-messages');await log.evaluate(el=>el.scrollTop=el.scrollHeight);await page.getByLabel('Message the coach').fill('synthetic stream');await page.getByLabel('Send message').click();await page.waitForTimeout(200);
-await log.hover();await page.mouse.wheel(0,-1200);await page.waitForTimeout(150);const top=await log.evaluate(el=>el.scrollTop);await page.waitForTimeout(600);const after=await log.evaluate(el=>el.scrollTop);expect(Math.abs(after-top)).toBeLessThan(3);await expect(page.getByRole('button',{name:'Jump to latest'})).toBeVisible();
-await log.focus();await page.keyboard.press('PageUp');await page.waitForTimeout(150);const keyTop=await log.evaluate(el=>el.scrollTop);await page.waitForTimeout(250);expect(Math.abs(await log.evaluate(el=>el.scrollTop)-keyTop)).toBeLessThan(3);
-await page.screenshot({path:'docs/validation/chat-paused.png'});
-await page.getByRole('button',{name:'Jump to latest'}).click();await page.waitForTimeout(200);expect(await log.evaluate(el=>el.scrollHeight-el.scrollTop-el.clientHeight)).toBeLessThan(42);
-await page.getByRole('button',{name:'Stop',exact:true}).click();await expect(page.getByText('cancelled · partial response')).toBeVisible();
-await page.getByLabel('Export conversation').selectOption('json');await page.waitForTimeout(100);expect(await page.evaluate(()=>window.exported.snapshot.messages.at(-1).status)).toBe('cancelled');
+import {
+  chromium,
+  expect,
+} from "../app/node_modules/@playwright/test/index.mjs";
+import { mkdir, writeFile } from "node:fs/promises";
+await mkdir("docs/validation", { recursive: true });
+const browser = await chromium.launch({ channel: "msedge", headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1080 } });
+const errors = [];
+page.on("pageerror", (e) => errors.push(e.message));
+console.log("Browser ready");
+page.setDefaultTimeout(10000);
+await page.goto("http://127.0.0.1:1433/tests/fixture.html", {
+  waitUntil: "domcontentloaded",
+  timeout: 15000,
+});
+console.log("Fixture loaded");
+await expect(page.getByRole("meter")).toHaveAttribute("aria-valuenow", "50");
+for (const boost of [0, 25, 50, 75, 100]) {
+  await page.getByRole("button", { name: String(boost), exact: true }).click();
+  await expect(page.getByRole("meter")).toHaveAttribute(
+    "aria-valuenow",
+    String(boost),
+  );
+  const arc = page.locator(".boost-ring circle").nth(1);
+  await expect(arc).toHaveAttribute("stroke-dasharray", `${boost} 100`);
+}
+await page.getByRole("button", { name: "Unknown", exact: true }).click();
+await expect(page.getByRole("meter")).toHaveAttribute(
+  "aria-valuetext",
+  "Unknown boost",
+);
+await expect(page.locator(".boost-ring circle")).toHaveCount(1);
+await expect(page.locator(".coach-markdown table").first()).toBeVisible();
+await expect(page.locator('a[href^="javascript:"]')).toHaveCount(0);
+await expect(page.locator(".coach-markdown script")).toHaveCount(0);
+const log = page.locator(".chat-messages");
+await log.evaluate((el) => (el.scrollTop = el.scrollHeight));
+await page.getByLabel("Message the coach").fill("synthetic stream");
+await page.getByLabel("Send message").click();
+await page.waitForTimeout(200);
+await log.hover();
+await page.mouse.wheel(0, -1200);
+await page.waitForTimeout(150);
+const top = await log.evaluate((el) => el.scrollTop);
+await page.waitForTimeout(600);
+const after = await log.evaluate((el) => el.scrollTop);
+expect(Math.abs(after - top)).toBeLessThan(3);
+await expect(
+  page.getByRole("button", { name: "Jump to latest" }),
+).toBeVisible();
+await log.focus();
+await page.keyboard.press("PageUp");
+await page.waitForTimeout(150);
+const keyTop = await log.evaluate((el) => el.scrollTop);
+await page.waitForTimeout(250);
+expect(
+  Math.abs((await log.evaluate((el) => el.scrollTop)) - keyTop),
+).toBeLessThan(3);
+await page.screenshot({ path: "docs/validation/chat-paused.png" });
+await page.getByRole("button", { name: "Jump to latest" }).click();
+await page.waitForTimeout(200);
+expect(
+  await log.evaluate((el) => el.scrollHeight - el.scrollTop - el.clientHeight),
+).toBeLessThan(42);
+await page.getByRole("button", { name: "Stop", exact: true }).click();
+await expect(page.getByText("cancelled · partial response")).toBeVisible();
+await page.getByLabel("Export conversation").selectOption("json");
+await page.waitForTimeout(100);
+expect(
+  await page.evaluate(() => window.exported.snapshot.messages.at(-1).status),
+).toBe("cancelled");
 // Reading and selection survive stream growth and a viewport reflow.
-await page.getByLabel('Message the coach').fill('selection fixture');await page.getByLabel('Send message').click();await page.waitForTimeout(150);await log.hover();await page.mouse.wheel(0,-1100);await page.waitForTimeout(100);
-const anchor=await log.evaluate(el=>{const top=el.getBoundingClientRect().top;const b=[...el.querySelectorAll('[data-message-id]')].find(b=>b.getBoundingClientRect().bottom>top);const walker=document.createTreeWalker(b.querySelector('.coach-markdown'),NodeFilter.SHOW_TEXT);const text=walker.nextNode();const r=document.createRange();r.setStart(text,0);r.setEnd(text,Math.min(12,text.length));const s=window.getSelection();s.removeAllRanges();s.addRange(r);return {id:b.dataset.messageId,offset:b.getBoundingClientRect().top-top,text:s.toString()};});
-await page.waitForTimeout(150);await page.setViewportSize({width:1200,height:900});await page.waitForTimeout(200);
-expect(await page.evaluate(()=>window.getSelection().toString())).toBe(anchor.text);
-const offset=await log.evaluate((el,id)=>[...el.querySelectorAll('[data-message-id]')].find(b=>b.dataset.messageId===id).getBoundingClientRect().top-el.getBoundingClientRect().top,anchor.id);expect(Math.abs(offset-anchor.offset)).toBeLessThan(3);
+await page.getByLabel("Message the coach").fill("selection fixture");
+await page.getByLabel("Send message").click();
+await page.waitForTimeout(150);
+await log.hover();
+await page.mouse.wheel(0, -1100);
+await page.waitForTimeout(100);
+const anchor = await log.evaluate((el) => {
+  const top = el.getBoundingClientRect().top;
+  const b = [...el.querySelectorAll("[data-message-id]")].find(
+    (b) => b.getBoundingClientRect().bottom > top,
+  );
+  const walker = document.createTreeWalker(
+    b.querySelector(".coach-markdown"),
+    NodeFilter.SHOW_TEXT,
+  );
+  const text = walker.nextNode();
+  const r = document.createRange();
+  r.setStart(text, 0);
+  r.setEnd(text, Math.min(12, text.length));
+  const s = window.getSelection();
+  s.removeAllRanges();
+  s.addRange(r);
+  return {
+    id: b.dataset.messageId,
+    offset: b.getBoundingClientRect().top - top,
+    text: s.toString(),
+  };
+});
+await page.waitForTimeout(150);
+await page.setViewportSize({ width: 1200, height: 900 });
+await page.waitForTimeout(200);
+expect(await page.evaluate(() => window.getSelection().toString())).toBe(
+  anchor.text,
+);
+const offset = await log.evaluate(
+  (el, id) =>
+    [...el.querySelectorAll("[data-message-id]")]
+      .find((b) => b.dataset.messageId === id)
+      .getBoundingClientRect().top - el.getBoundingClientRect().top,
+  anchor.id,
+);
+expect(Math.abs(offset - anchor.offset)).toBeLessThan(3);
 // Switching scope invalidates late callbacks from the cancelled old request.
-await page.evaluate(()=>window.getSelection().removeAllRanges());await page.getByRole('button',{name:'New chat',exact:true}).click();await page.waitForTimeout(250);await expect(log.getByText('Streamed synthetic line',{exact:false})).toHaveCount(0);await page.setViewportSize({width:1440,height:1080});
-await page.getByRole('button',{name:'Onboarding',exact:true}).click();await page.getByRole('button',{name:'Next Step'}).click();await expect(page.getByLabel('1v1 current rank')).toHaveValue('');await expect(page.getByLabel('2v2 target rank')).toHaveValue('');
-await page.getByLabel('1v1 current rank').selectOption('Platinum 1');await page.getByLabel('2v2 target rank').selectOption('Champion 1');await page.getByLabel('Practice hours/week (optional)').nth(1).fill('2.5');await page.screenshot({path:'docs/validation/onboarding.png'});await page.getByRole('button',{name:'Next Step'}).click();await page.getByRole('button',{name:'Next Step'}).click();await page.getByRole('button',{name:'Complete Setup & Launch Coach'}).click();await page.waitForTimeout(100);const profile=await page.evaluate(()=>window.savedProfile);expect(profile.rank_1v1).toBe('Platinum 1');expect(profile.mode_profiles['2v2'].target_rank).toBe('Champion 1');expect(profile.mode_profiles['2v2'].practice_hours).toBe(2.5);expect(profile.mode_profiles['1v1'].practice_hours).toBeUndefined();
-expect(errors).toEqual([]);await writeFile('docs/validation/ui-results.json',JSON.stringify({status:'PASS',fixture:'synthetic',checks:['ring percentages and unknown','safe Markdown tables and links','wheel and PageUp streaming pause','selection and resize anchor','late callback rejected after new chat','explicit bottom follow','cancelled partial retention','export visible snapshot','onboarding unknown and optional goals/hours'],errors},null,2));
-await browser.close();console.log('PASS: focused browser UI regressions (synthetic)');
+await page.evaluate(() => window.getSelection().removeAllRanges());
+await page.getByRole("button", { name: "New chat", exact: true }).click();
+await page.waitForTimeout(250);
+await expect(
+  log.getByText("Streamed synthetic line", { exact: false }),
+).toHaveCount(0);
+await page.setViewportSize({ width: 1440, height: 1080 });
+await page.getByRole("button", { name: "Onboarding", exact: true }).click();
+await page.getByRole("button", { name: "Next Step" }).click();
+await expect(page.getByLabel("1v1 current rank")).toHaveValue("");
+await expect(page.getByLabel("2v2 target rank")).toHaveValue("");
+await page.getByLabel("1v1 current rank").selectOption("Platinum 1");
+await page.getByLabel("2v2 target rank").selectOption("Champion 1");
+await page.getByLabel("Practice hours/week (optional)").nth(1).fill("2.5");
+await page.screenshot({ path: "docs/validation/onboarding.png" });
+await page.getByRole("button", { name: "Next Step" }).click();
+await page.getByRole("button", { name: "Next Step" }).click();
+await page
+  .getByRole("button", { name: "Complete Setup & Launch Coach" })
+  .click();
+await page.waitForTimeout(100);
+const profile = await page.evaluate(() => window.savedProfile);
+expect(profile.rank_1v1).toBe("Platinum 1");
+expect(profile.mode_profiles["2v2"].target_rank).toBe("Champion 1");
+expect(profile.mode_profiles["2v2"].practice_hours).toBe(2.5);
+expect(profile.mode_profiles["1v1"].practice_hours).toBeUndefined();
+expect(errors).toEqual([]);
+await writeFile(
+  "docs/validation/ui-results.json",
+  JSON.stringify(
+    {
+      status: "PASS",
+      fixture: "synthetic",
+      checks: [
+        "ring percentages and unknown",
+        "safe Markdown tables and links",
+        "wheel and PageUp streaming pause",
+        "selection and resize anchor",
+        "late callback rejected after new chat",
+        "explicit bottom follow",
+        "cancelled partial retention",
+        "export visible snapshot",
+        "onboarding unknown and optional goals/hours",
+      ],
+      errors,
+    },
+    null,
+    2,
+  ),
+);
+await browser.close();
+console.log("PASS: focused browser UI regressions (synthetic)");

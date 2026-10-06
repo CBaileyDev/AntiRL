@@ -19,14 +19,14 @@ These are product targets, not measured results:
 
 ## Main player journeys
 
-| Player need | Proposed behavior | Why it helps |
-|---|---|---|
-| Review recent play | Open Coach, choose 1v1/2v2/3v3/All, ask for review | Avoids mixing incompatible tactical contexts |
-| Understand an issue | Expand evidence and jump to an exact replay window | Lets the player challenge the coach's interpretation |
-| Practice effectively | Save one short drill with a success condition and verified pack | Reduces decision load and vague practice |
-| Track improvement | Compare recent valid same-mode play to a previous window and lifetime baseline | Makes progress visible without chasing raw averages |
-| Read or reuse advice | Scroll freely, select text, copy a reply, export a conversation | Fixes friction in the existing workflow |
-| Inspect play clearly | Accurate boost ring, believable walls/ceiling, readable ball/car lighting | Supports spatial understanding rather than decoration alone |
+| Player need          | Proposed behavior                                                              | Why it helps                                                |
+| -------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| Review recent play   | Open Coach, choose 1v1/2v2/3v3/All, ask for review                             | Avoids mixing incompatible tactical contexts                |
+| Understand an issue  | Expand evidence and jump to an exact replay window                             | Lets the player challenge the coach's interpretation        |
+| Practice effectively | Save one short drill with a success condition and verified pack                | Reduces decision load and vague practice                    |
+| Track improvement    | Compare recent valid same-mode play to a previous window and lifetime baseline | Makes progress visible without chasing raw averages         |
+| Read or reuse advice | Scroll freely, select text, copy a reply, export a conversation                | Fixes friction in the existing workflow                     |
+| Inspect play clearly | Accurate boost ring, believable walls/ceiling, readable ball/car lighting      | Supports spatial understanding rather than decoration alone |
 
 ## P0: immediate correctness and usability
 
@@ -106,15 +106,15 @@ A later forecast needs current rank/MMR with provenance, mode, past progression,
 
 ## Ideas challenged before inclusion
 
-| Idea | Helpful version | Failure to prevent |
-|---|---|---|
-| Feed ALL data to AI | Store everything; retrieve exact relevant evidence | Huge truncated prompts that imply complete review |
-| Increase average boost/speed | Study whether resources/movement served the play | Hoarding boost, chasing, or rushing useful possession |
-| Copy pro habits | Find principles and exceptions in comparable situations | Treating coordinated pro play as solo-queue prescriptions |
-| Score every player | Contextual dimensions, calibrated score, abstention | Blame leaderboard and goal/points dominance |
-| Many AI roles | A few presets sharing one evidence contract | Conflicting coaches and excessive configuration |
-| Rank-up deadline | Calibrated interval after longitudinal validation | Motivational fiction presented as a solid estimate |
-| Better graphics | Clear contact surfaces and believable lighting | Glare, ceiling obstruction, or slow playback |
+| Idea                         | Helpful version                                         | Failure to prevent                                        |
+| ---------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
+| Feed ALL data to AI          | Store everything; retrieve exact relevant evidence      | Huge truncated prompts that imply complete review         |
+| Increase average boost/speed | Study whether resources/movement served the play        | Hoarding boost, chasing, or rushing useful possession     |
+| Copy pro habits              | Find principles and exceptions in comparable situations | Treating coordinated pro play as solo-queue prescriptions |
+| Score every player           | Contextual dimensions, calibrated score, abstention     | Blame leaderboard and goal/points dominance               |
+| Many AI roles                | A few presets sharing one evidence contract             | Conflicting coaches and excessive configuration           |
+| Rank-up deadline             | Calibrated interval after longitudinal validation       | Motivational fiction presented as a solid estimate        |
+| Better graphics              | Clear contact surfaces and believable lighting          | Glare, ceiling obstruction, or slow playback              |
 
 ## Questions for the user
 

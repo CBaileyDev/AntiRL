@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "data": "isolated copied replay + malformed file",
+  "checks": [
+    "native parser containment",
+    "original filename",
+    "typed IPC contracts",
+    "compressed playback round trip",
+    "unchanged and failed skip without snapshot rewrites",
+    "durable deletion and renamed hash tombstone",
+    "explicit failed retry",
+    "external opener protocol denial",
+    "production CSP mounts UI"
+  ],
+  "first": {
+    "already_present": 0,
+    "cancelled": false,
+    "failed": 1,
+    "imported": 1,
+    "new": 1,
+    "replay_id": "DA20E19A11F1BF8031AF60919357E8F3",
+    "skipped": 0
+  },
+  "unchanged": {
+    "already_present": 0,
+    "cancelled": false,
+    "failed": 0,
+    "imported": 0,
+    "new": 0,
+    "replay_id": null,
+    "skipped": 2
+  },
+  "afterDelete": {
+    "already_present": 0,
+    "cancelled": false,
+    "failed": 0,
+    "imported": 0,
+    "new": 0,
+    "replay_id": null,
+    "skipped": 2
+  },
+  "retry": {
+    "already_present": 0,
+    "cancelled": false,
+    "failed": 1,
+    "imported": 0,
+    "new": 0,
+    "replay_id": null,
+    "skipped": 2
+  },
+  "unchangedMs": 5.142399999999725,
+  "errors": []
+}

@@ -6,20 +6,22 @@ use std::{
     collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    sync::{Mutex},
+    sync::Mutex,
     time::Duration,
 };
 use uuid::Uuid;
 
-pub mod chatgpt;
 mod ai;
 mod analytics;
+pub mod chatgpt;
 mod conversations;
 mod evidence_tools;
+mod migrations;
 mod practice;
+mod research;
 mod retrieval;
 mod semantics;
-mod research;
+mod storage;
 pub use ai::ChatUpdate;
 
 pub type ServiceResult<T> = Result<T, String>;
@@ -29,8 +31,9 @@ pub struct CoachService {
     analytics: Mutex<Connection>,
     ai_gate: tokio::sync::Mutex<()>,
     dir: PathBuf,
+    #[cfg(feature = "chatgpt-siwc")]
     oauth_gate: tokio::sync::Mutex<()>,
-    ai_cancel: tokio::sync::Notify,
+    ai_cancel: Mutex<tokio_util::sync::CancellationToken>,
 }
 
 fn now() -> String {
@@ -57,11 +60,12 @@ fn default_settings() -> Value {
         "player_name": null,
         "modes": ["1v1", "2v2", "3v3"],
         "focus": ["boost", "rotations", "defense"],
-        "provider": "neotoken",
+        "provider": "none",
         "chat_model": "gpt-6-astra",
         "analysis_model": "gpt-6-astra",
         "auto_import": true,
         "cloud_consent": false,
+        "cloud_consent_provider": null,
         "rank_1v1": null,
         "rank_2v2": null,
         "rank_3v3": null
@@ -77,9 +81,19 @@ fn endpoint(provider: &str) -> ServiceResult<&'static str> {
     }
 }
 
+fn normalize_cloud_consent(settings: &mut Value) {
+    let provider = settings["provider"].as_str().unwrap_or("none");
+    let scoped = settings["cloud_consent_provider"].as_str();
+    if !["openai", "neotoken", "chatgpt"].contains(&provider) || scoped != Some(provider) {
+        settings["cloud_consent"] = json!(false);
+        settings["cloud_consent_provider"] = Value::Null;
+    }
+}
+
 fn vault_entry(provider: &str) -> ServiceResult<keyring::Entry> {
     endpoint(provider)?;
-    keyring::Entry::new("AntiRL", provider).map_err(|_| "Windows credential vault unavailable".into())
+    keyring::Entry::new("AntiRL", provider)
+        .map_err(|_| "Windows credential vault unavailable".into())
 }
 
 fn get_provider_key(provider: &str) -> Option<String> {
@@ -93,35 +107,6 @@ fn get_provider_key(provider: &str) -> Option<String> {
         }
     }
 
-    // 2. For NeoToken, fallback to ~/.config/opencode/opencode.json if available
-    if provider == "neotoken" {
-        if let Some(home) = std::env::var_os("USERPROFILE").or_else(|| std::env::var_os("HOME")) {
-            let path = PathBuf::from(home).join(".config/opencode/opencode.json");
-            if let Ok(text) = fs::read_to_string(path) {
-                if let Ok(cfg) = serde_json::from_str::<Value>(&text) {
-                    if let Some(providers) = cfg["provider"].as_object() {
-                        for name in ["openai", "neokens", "neotoken", "anthropic"] {
-                            let options = &providers.get(name).unwrap_or(&Value::Null)["options"];
-                            let base = options["baseURL"].as_str().unwrap_or("").trim_end_matches('/');
-                            if base == "https://api.v2.neokens.com/v1" {
-                                let raw = options["apiKey"].as_str().unwrap_or("");
-                                let key = if let Some(env_name) =
-                                    raw.strip_prefix("{env:").and_then(|s| s.strip_suffix('}'))
-                                {
-                                    std::env::var(env_name).unwrap_or_default()
-                                } else {
-                                    raw.to_owned()
-                                };
-                                if !key.trim().is_empty() {
-                                    return Some(key.trim().to_string());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
     None
 }
 
@@ -138,8 +123,19 @@ fn text_chat_model(id: &str) -> bool {
     }
     let lower = id.to_ascii_lowercase();
     let excludes = [
-        "embedding", "embed-", "moderation", "realtime", "audio", "transcrib", "whisper", "tts",
-        "dall-e", "image", "sora", "video", "speech",
+        "embedding",
+        "embed-",
+        "moderation",
+        "realtime",
+        "audio",
+        "transcrib",
+        "whisper",
+        "tts",
+        "dall-e",
+        "image",
+        "sora",
+        "video",
+        "speech",
     ];
     !excludes.iter().any(|t| lower.contains(t))
 }
@@ -180,71 +176,19 @@ impl CoachService {
         let dir = data_dir.as_ref().to_path_buf();
         fs::create_dir_all(dir.join("coach-memory")).map_err(err)?;
         fs::create_dir_all(dir.join("replay-cache")).map_err(err)?;
-        let db = Connection::open(dir.join("coach.sqlite3")).map_err(err)?;
-        db.execute_batch(
-            "PRAGMA journal_mode=WAL;
-             PRAGMA foreign_keys=ON;
-             CREATE TABLE IF NOT EXISTS settings (
-                 id INTEGER PRIMARY KEY CHECK(id=1),
-                 body TEXT NOT NULL
-             );
-             CREATE TABLE IF NOT EXISTS replays (
-                 id TEXT PRIMARY KEY,
-                 body TEXT NOT NULL
-             );
-             CREATE TABLE IF NOT EXISTS conversations (
-                 id TEXT PRIMARY KEY,
-                 title TEXT NOT NULL,
-                 updated_at TEXT NOT NULL
-             );
-             CREATE TABLE IF NOT EXISTS messages (
-                 id TEXT PRIMARY KEY,
-                 conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
-                 body TEXT NOT NULL
-             );
-             CREATE TABLE IF NOT EXISTS profiles (
-                 id TEXT PRIMARY KEY,
-                 name TEXT NOT NULL,
-                 platform TEXT,
-                 active BOOLEAN DEFAULT 0,
-                 body TEXT NOT NULL
-             );
-             CREATE TABLE IF NOT EXISTS goals (
-                 id TEXT PRIMARY KEY,
-                 title TEXT NOT NULL,
-                 target TEXT NOT NULL,
-                 current TEXT NOT NULL,
-                 status TEXT NOT NULL,
-                 updated_at TEXT NOT NULL
-             );",
-        )
-        .map_err(err)?;
-
-        conversations::migrate(&db, &dir)?;
-        practice::migrate(&db)?;
+        let mut db = Connection::open(dir.join("coach.sqlite3")).map_err(err)?;
+        migrations::migrate(&mut db, &dir)?;
         let analytics = Connection::open(dir.join("analytics.sqlite3")).map_err(err)?;
-        analytics::migrate(&analytics,&dir)?;
-
-        // Compact coaching projection avoids repeatedly parsing every render frame.
-        // Keep full replay bodies intact for Studio; migrate existing stores once.
-        let has_projection = {
-            let mut columns = db.prepare("PRAGMA table_info(replays)").map_err(err)?;
-            let names = columns.query_map([], |r| r.get::<_, String>(1)).map_err(err)?;
-            let found = names.flatten().any(|name| name == "coach_body");
-            found
-        };
-        if !has_projection {
-            db.execute("ALTER TABLE replays ADD COLUMN coach_body TEXT", []).map_err(err)?;
-        }
-        db.execute("UPDATE replays SET coach_body=json_remove(body, '$.frames') WHERE coach_body IS NULL", []).map_err(err)?;
+        analytics::migrate(&analytics, &dir)?;
 
         let service = Self {
             db: Mutex::new(db),
             analytics: Mutex::new(analytics),
             ai_gate: tokio::sync::Mutex::new(()),
             dir,
+            #[cfg(feature = "chatgpt-siwc")]
             oauth_gate: tokio::sync::Mutex::new(()),
-            ai_cancel: tokio::sync::Notify::new(),
+            ai_cancel: Mutex::new(tokio_util::sync::CancellationToken::new()),
         };
         service.reconcile_analytics()?;
         Ok(service)
@@ -252,7 +196,9 @@ impl CoachService {
 
     pub fn get_settings(&self) -> ServiceResult<Value> {
         let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT body FROM settings WHERE id=1").map_err(err)?;
+        let mut s = db
+            .prepare("SELECT body FROM settings WHERE id=1")
+            .map_err(err)?;
         let mut rows = s.query([]).map_err(err)?;
         let mut value = default_settings();
         if let Some(row) = rows.next().map_err(err)? {
@@ -265,6 +211,7 @@ impl CoachService {
                 }
             }
         }
+        normalize_cloud_consent(&mut value);
         Ok(value)
     }
 
@@ -277,18 +224,31 @@ impl CoachService {
         for (k, v) in settings.as_object().unwrap() {
             merged[k] = v.clone();
         }
+        normalize_cloud_consent(&mut merged);
         let text = serde_json::to_string(&merged).map_err(err)?;
         let mut db = self.db.lock().map_err(err)?;
-        let tx=db.transaction().map_err(err)?;
+        let tx = db.transaction().map_err(err)?;
         tx.execute(
             "INSERT INTO settings (id, body) VALUES (1, ?1) ON CONFLICT(id) DO UPDATE SET body=?1",
             params![text],
         )
         .map_err(err)?;
-        if let Some(player)=merged["player_id"].as_str().filter(|s|!s.is_empty()) {
-            for (mode,key) in [("1v1","rank_1v1"),("2v2","rank_2v2"),("3v3","rank_3v3")] {
-                if (previous[key]!=merged[key]||previous["player_id"]!=merged["player_id"]) && merged[key].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=100){
-                    tx.execute("INSERT INTO rank_observations VALUES(?1,?2,?3,?4,?5,'self_report')",params![ident(),player,mode,merged[key].as_str(),now()]).map_err(err)?;
+        if let Some(player) = merged["player_id"].as_str().filter(|s| !s.is_empty()) {
+            for (mode, key) in [
+                ("1v1", "rank_1v1"),
+                ("2v2", "rank_2v2"),
+                ("3v3", "rank_3v3"),
+            ] {
+                if (previous[key] != merged[key] || previous["player_id"] != merged["player_id"])
+                    && merged[key]
+                        .as_str()
+                        .is_some_and(|s| !s.is_empty() && s.len() <= 100)
+                {
+                    tx.execute(
+                        "INSERT INTO rank_observations VALUES(?1,?2,?3,?4,?5,'self_report')",
+                        params![ident(), player, mode, merged[key].as_str(), now()],
+                    )
+                    .map_err(err)?;
                 }
             }
         }
@@ -311,7 +271,7 @@ impl CoachService {
 
     pub fn get_ai_status(&self) -> ServiceResult<Value> {
         let settings = self.get_settings()?;
-        let current_provider = settings["provider"].as_str().unwrap_or("neotoken");
+        let current_provider = settings["provider"].as_str().unwrap_or("none");
         let neotoken_has_key = get_provider_key("neotoken").is_some();
         let openai_has_key = get_provider_key("openai").is_some();
         let chatgpt = self.chatgpt_status();
@@ -363,7 +323,10 @@ impl CoachService {
             return Err(format!("{provider} returned status {}", res.status()));
         }
 
-        let body: Value = res.json().await.map_err(|_| "Invalid response JSON".to_string())?;
+        let body: Value = res
+            .json()
+            .await
+            .map_err(|_| "Invalid response JSON".to_string())?;
         let data = body["data"]
             .as_array()
             .ok_or_else(|| "Provider returned invalid model catalog".to_string())?;
@@ -386,90 +349,14 @@ impl CoachService {
         }))
     }
 
-    pub fn save_replay(&self, analysis: &Value) -> ServiceResult<()> {
-        let id = analysis["summary"]["id"]
-            .as_str()
-            .ok_or("Analysis has no ID")?;
-        let text = serde_json::to_string(analysis).map_err(err)?;
-        let db = self.db.lock().map_err(err)?;
-        db.execute(
-            "INSERT INTO replays (id, body, coach_body) VALUES (?1, ?2, json_remove(?2, '$.frames')) ON CONFLICT(id) DO UPDATE SET body=?2, coach_body=json_remove(?2, '$.frames')",
-            params![id, text],
-        )
-        .map_err(err)?;
-        Ok(())
-    }
-
-    pub fn get_replay(&self, id: &str) -> ServiceResult<Value> {
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db
-            .prepare("SELECT body FROM replays WHERE id=?1")
-            .map_err(err)?;
-        let mut rows = s.query(params![id]).map_err(err)?;
-        if let Some(row) = rows.next().map_err(err)? {
-            let text: String = row.get(0).map_err(err)?;
-            serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
-        } else {
-            Err(format!("Replay {id} not found"))
-        }
-    }
-
-    pub fn get_coach_replay(&self, id: &str) -> ServiceResult<Value> {
-        let db = self.db.lock().map_err(err)?;
-        let text: String = db.query_row("SELECT coach_body FROM replays WHERE id=?1", params![id], |r| r.get(0)).map_err(err)?;
-        serde_json::from_str(&text).map(semantics::normalize_analysis).map_err(err)
-    }
-
-    pub fn has_replay_by_hash(&self, hash: &str) -> ServiceResult<bool> {
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db
-            .prepare("SELECT 1 FROM replays WHERE json_extract(body, '$.summary.file_hash')=?1 LIMIT 1")
-            .map_err(err)?;
-        let exists = s.exists(params![hash]).unwrap_or(false);
-        Ok(exists)
-    }
-
-    pub fn delete_replay(&self, id: &str) -> ServiceResult<()> {
-        let db = self.db.lock().map_err(err)?;
-        db.execute("DELETE FROM replays WHERE id=?1", params![id]).map_err(err)?;
-        Ok(())
-    }
-
-    /// Non-bot players ranked by how many replays they appear in (most first).
-    pub fn get_player_candidates(&self) -> ServiceResult<Vec<Value>> {
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
-        let mut rows = s.query([]).map_err(err)?;
-        let mut appearances: HashMap<String, (String, usize)> = HashMap::new();
-        while let Some(row) = rows.next().map_err(err)? {
-            let text: String = row.get(0).map_err(err)?;
-            let Ok(analysis) = serde_json::from_str::<Value>(&text) else { continue };
-            for p in analysis["players"].as_array().into_iter().flatten() {
-                if p["is_bot"].as_bool() == Some(true) {
-                    continue;
-                }
-                if let (Some(pid), Some(pname)) = (p["id"].as_str(), p["name"].as_str()) {
-                    if pid.starts_with("local:") {
-                        continue;
-                    }
-                    appearances.entry(pid.to_string()).or_insert((pname.to_string(), 0)).1 += 1;
-                }
-            }
-        }
-        let mut out: Vec<(String, String, usize)> =
-            appearances.into_iter().map(|(id, (n, c))| (id, n, c)).collect();
-        out.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.1.cmp(&b.1)));
-        Ok(out
-            .into_iter()
-            .map(|(id, name, c)| json!({"player_id": id, "name": name, "matches": c}))
-            .collect())
-    }
-
     /// Auto-detected user: the non-bot player present in the most replays.
     pub fn detect_player(&self) -> Option<(String, String)> {
         let c = self.get_player_candidates().ok()?;
         let first = c.first()?;
-        Some((first["player_id"].as_str()?.to_string(), first["name"].as_str()?.to_string()))
+        Some((
+            first["player_id"].as_str()?.to_string(),
+            first["name"].as_str()?.to_string(),
+        ))
     }
 
     /// Explicit id > saved settings id > auto-detected id.
@@ -477,7 +364,12 @@ impl CoachService {
         if let Some(p) = explicit.filter(|p| !p.is_empty()) {
             return Some(p.to_string());
         }
-        if let Some(p) = self.get_settings().ok().and_then(|s| s["player_id"].as_str().filter(|p| !p.is_empty()).map(str::to_string)) {
+        if let Some(p) = self.get_settings().ok().and_then(|s| {
+            s["player_id"]
+                .as_str()
+                .filter(|p| !p.is_empty())
+                .map(str::to_string)
+        }) {
             return Some(p);
         }
         None
@@ -495,51 +387,56 @@ impl CoachService {
                     .map(str::to_string)
                     .or_else(|| d.filter(|(did, _)| did == id).map(|(_, n)| n))
                     .or_else(|| {
-                        self.get_player_candidates().ok()?.iter().find(|c| c["player_id"] == id)?["name"].as_str().map(str::to_string)
+                        self.get_player_candidates()
+                            .ok()?
+                            .iter()
+                            .find(|c| c["player_id"] == id)?["name"]
+                            .as_str()
+                            .map(str::to_string)
                     });
                 json!({"player_id": id, "player_name": name, "auto": false})
             }
-            (None, Some((id, name))) => json!({"player_id": null, "player_name": sname, "suggested_player_id":id,"suggested_player_name":name,"auto": false}),
+            (None, Some((id, name))) => {
+                json!({"player_id": null, "player_name": sname, "suggested_player_id":id,"suggested_player_name":name,"auto": false})
+            }
             (None, None) => json!({"player_id": null, "player_name": sname, "auto": false}),
         }
-    }
-
-    pub fn get_library(&self) -> ServiceResult<Value> {
-        let identity_candidates = self.get_player_candidates()?;
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
-        let mut rows = s.query([]).map_err(err)?;
-        let mut summaries = vec![];
-
-        while let Some(row) = rows.next().map_err(err)? {
-            let text: String = row.get(0).map_err(err)?;
-            if let Ok(analysis) = serde_json::from_str::<Value>(&text) {
-                summaries.push(analysis["summary"].clone());
-            }
-        }
-
-        Ok(json!({
-            "replays": summaries,
-            "count": summaries.len(),
-            "identity_candidates": identity_candidates
-        }))
     }
 
     pub fn get_progress(&self, player_id: Option<&str>) -> ServiceResult<Value> {
         let resolved = self.resolve_player_id(player_id);
         let player_id = resolved.as_deref();
-        let projection=self.analytics_context(player_id,"All")?;
-        let mut modes_map=json!({});let mut total_matches=0usize;
-        if let Some(modes)=projection["modes"].as_object(){for (mode,stats) in modes {
-            let matches=stats["lifetime_count"].as_u64().unwrap_or(0);total_matches+=matches as usize;
-            let mut row=json!({"matches":matches,"wins":stats["wins"],"win_rate":stats["win_rate"],"aggregation":"per-metric method in analytics manifest"});
-            for key in ["avg_boost","avg_speed","defensive_half_pct","low_boost_pct","boost_active_at_supersonic_speed_s"] {row[key]=stats["lifetime"][key]["value"].clone();}
-            modes_map[mode]=row;
-        }}
-        let player_name=self.get_player_candidates()?.iter().find(|p|p["player_id"].as_str()==player_id).and_then(|p|p["name"].as_str()).map(str::to_string);
-        let db=self.db.lock().map_err(err)?;
+        let projection = self.analytics_context(player_id, "All")?;
+        let mut modes_map = json!({});
+        let mut total_matches = 0usize;
+        if let Some(modes) = projection["modes"].as_object() {
+            for (mode, stats) in modes {
+                let matches = stats["lifetime_count"].as_u64().unwrap_or(0);
+                total_matches += matches as usize;
+                let mut row = json!({"matches":matches,"wins":stats["wins"],"win_rate":stats["win_rate"],"aggregation":"per-metric method in analytics manifest"});
+                for key in [
+                    "avg_boost",
+                    "avg_speed",
+                    "defensive_half_pct",
+                    "low_boost_pct",
+                    "boost_active_at_supersonic_speed_s",
+                ] {
+                    row[key] = stats["lifetime"][key]["value"].clone();
+                }
+                modes_map[mode] = row;
+            }
+        }
+        let player_name = self
+            .get_player_candidates()?
+            .iter()
+            .find(|p| p["player_id"].as_str() == player_id)
+            .and_then(|p| p["name"].as_str())
+            .map(str::to_string);
+        let db = self.db.lock().map_err(err)?;
         let mut goals = vec![];
-        let mut s_goals = db.prepare("SELECT id, title, target, current, status FROM goals").map_err(err)?;
+        let mut s_goals = db
+            .prepare("SELECT id, title, target, current, status FROM goals")
+            .map_err(err)?;
         let mut goal_rows = s_goals.query([]).map_err(err)?;
         while let Some(gr) = goal_rows.next().map_err(err)? {
             goals.push(json!({
@@ -562,93 +459,6 @@ impl CoachService {
             "recurring_priorities": [],
             "goals": goals
         }))
-    }
-
-    pub fn get_teammates(&self, player_id: &str) -> ServiceResult<Value> {
-        let db = self.db.lock().map_err(err)?;
-        let mut s = db.prepare("SELECT coach_body FROM replays").map_err(err)?;
-        let mut rows = s.query([]).map_err(err)?;
-
-        struct MateAcc {
-            name: String,
-            platform: Option<String>,
-            matches: usize,
-            wins: usize,
-            last_played: Option<String>,
-        }
-        let mut map: HashMap<String, MateAcc> = HashMap::new();
-
-        while let Some(row) = rows.next().map_err(err)? {
-            let text: String = row.get(0).map_err(err)?;
-            let Ok(analysis) = serde_json::from_str::<Value>(&text) else {
-                continue;
-            };
-            let Some(players) = analysis["players"].as_array() else {
-                continue;
-            };
-            let target = players.iter().find(|p| p["id"] == player_id);
-            let Some(target) = target else { continue; };
-            let target_team = target["team"].as_u64();
-            let blue_score = analysis["summary"]["blue_score"].as_i64().unwrap_or(0);
-            let orange_score = analysis["summary"]["orange_score"].as_i64().unwrap_or(0);
-            let date = analysis["summary"]["played_at"].as_str().map(str::to_string);
-
-            let won = (target_team == Some(0) && blue_score > orange_score)
-                || (target_team == Some(1) && orange_score > blue_score);
-
-            for mate in players {
-                let mate_id = mate["id"].as_str().unwrap_or("");
-                if mate_id == player_id {
-                    continue;
-                }
-                if mate["team"].as_u64() == target_team {
-                    let entry = map.entry(mate_id.to_string()).or_insert_with(|| MateAcc {
-                        name: mate["name"].as_str().unwrap_or("Unknown").to_string(),
-                        platform: mate["platform"].as_str().map(str::to_string),
-                        matches: 0,
-                        wins: 0,
-                        last_played: date.clone(),
-                    });
-                    entry.matches += 1;
-                    if won {
-                        entry.wins += 1;
-                    }
-                    if date.is_some() {
-                        entry.last_played = date.clone();
-                    }
-                }
-            }
-        }
-
-        let mut list: Vec<Value> = map
-            .into_iter()
-            .map(|(id, mate)| {
-                let losses = mate.matches.saturating_sub(mate.wins);
-                let win_rate = if mate.matches > 0 {
-                    (mate.wins as f64 / mate.matches as f64) * 100.0
-                } else {
-                    0.0
-                };
-                json!({
-                    "player_id": id,
-                    "name": mate.name,
-                    "platform": mate.platform,
-                    "shared_matches": mate.matches,
-                    "wins": mate.wins,
-                    "losses": losses,
-                    "win_rate": (win_rate * 10.0).round() / 10.0,
-                    "last_played": mate.last_played
-                })
-            })
-            .collect();
-        list.sort_by(|a, b| {
-            b["shared_matches"]
-                .as_u64()
-                .unwrap_or(0)
-                .cmp(&a["shared_matches"].as_u64().unwrap_or(0))
-        });
-
-        Ok(json!(list))
     }
 
     pub fn get_memory(&self) -> ServiceResult<Value> {
@@ -735,7 +545,9 @@ impl CoachService {
             let conversation_id: String = row.get(1).map_err(err)?;
             let text: String = row.get(2).map_err(err)?;
             let mut body: Value = serde_json::from_str(&text).unwrap_or(json!({}));
-            if body["role"] == "assistant" && body["prompt_version"].is_null() { body["legacy_warning"] = json!("Legacy advice predates corrected metric definitions. Reassess numeric goals and boost conclusions."); }
+            if body["role"] == "assistant" && body["prompt_version"].is_null() {
+                body["legacy_warning"] = json!("Legacy advice predates corrected metric definitions. Reassess numeric goals and boost conclusions.");
+            }
             list.push(json!({
                 "id": id,
                 "conversation_id": conversation_id,
@@ -746,11 +558,18 @@ impl CoachService {
     }
 
     pub fn cancel_ai(&self) {
-        self.ai_cancel.notify_waiters();
+        self.ai_cancel
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .cancel();
     }
 
-    pub(crate) fn templated_analysis(&self, replay_id: &str, player_id: &str) -> ServiceResult<Value> {
-        let replay = self.get_replay(replay_id)?;
+    pub(crate) fn templated_analysis(
+        &self,
+        replay_id: &str,
+        player_id: &str,
+    ) -> ServiceResult<Value> {
+        let replay = self.get_coach_replay(replay_id)?;
         let summary = &replay["summary"];
         let events = replay["events"].as_array();
         let metrics = replay["metrics"].as_array();
@@ -819,11 +638,13 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let service = CoachService::open(dir.path()).unwrap();
         let settings = service.get_settings().unwrap();
-        assert_eq!(settings["provider"], "neotoken");
+        assert_eq!(settings["provider"], "none");
 
         let updated = service
             .save_settings(json!({
                 "rank_2v2": "Champion 1",
+                "provider": "openai",
+                "cloud_consent_provider": "openai",
                 "cloud_consent": true
             }))
             .unwrap();
@@ -831,14 +652,45 @@ mod tests {
         assert_eq!(updated["cloud_consent"], true);
 
         // Memory note operations
-        service.save_memory("test.md", "# Test Notes\nPractice dribbling.").unwrap();
+        service
+            .save_memory("test.md", "# Test Notes\nPractice dribbling.")
+            .unwrap();
         let mem = service.get_memory().unwrap();
         let notes = mem.as_array().unwrap();
         assert!(notes.iter().any(|n| n["name"] == "test.md"));
 
         service.delete_memory("test.md").unwrap();
         let mem_after = service.get_memory().unwrap();
-        assert!(!mem_after.as_array().unwrap().iter().any(|n| n["name"] == "test.md"));
+        assert!(!mem_after
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|n| n["name"] == "test.md"));
+    }
+
+    #[test]
+    fn legacy_or_switched_provider_requires_explicit_scoped_consent() {
+        let dir = tempfile::tempdir().unwrap();
+        let service = CoachService::open(dir.path()).unwrap();
+        service
+            .db
+            .lock()
+            .unwrap()
+            .execute(
+                "INSERT INTO settings VALUES(1,?1)",
+                [json!({"provider":"neotoken","cloud_consent":true}).to_string()],
+            )
+            .unwrap();
+        assert_eq!(service.get_settings().unwrap()["cloud_consent"], false);
+        let scoped=service.save_settings(json!({"provider":"neotoken","cloud_consent":true,"cloud_consent_provider":"neotoken"})).unwrap();
+        assert_eq!(scoped["cloud_consent"], true);
+        let switched = service.save_settings(json!({"provider":"openai"})).unwrap();
+        assert_eq!(switched["cloud_consent"], false);
+        assert!(switched["cloud_consent_provider"].is_null());
+        let reused = service
+            .save_settings(json!({"provider":"neotoken","cloud_consent":true}))
+            .unwrap();
+        assert_eq!(reused["cloud_consent"], false);
     }
 
     #[test]
@@ -904,4 +756,3 @@ mod tests {
         assert_eq!(mates[0]["wins"], 1);
     }
 }
-

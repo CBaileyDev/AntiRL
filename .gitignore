@@ -29,3 +29,5 @@ replay-cache/
 *credentials*.json
 *oauth*token*.json
 docs/validation/qa-process-id.txt
+app/test-results/
+app/playwright-report/

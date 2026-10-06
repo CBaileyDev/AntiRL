@@ -11,9 +11,14 @@ export function playbackFps(refreshHz: number): number {
 
 export function measuredRefresh(intervals: readonly number[]): number {
   if (intervals.length < 24) return 60;
-  const sorted = [...intervals].sort((a,b)=>a-b);
-  const measured = 1000 / sorted[Math.floor(sorted.length/2)];
+  const sorted = [...intervals].sort((a, b) => a - b);
+  const measured = 1000 / sorted[Math.floor(sorted.length / 2)];
   const standards = [30, 60, 75, 90, 100, 120, 144, 165, 180, 200, 240, 360];
-  const nearest = standards.reduce((best,value)=>Math.abs(value-measured)<Math.abs(best-measured) ? value : best,60);
-  return Math.abs(nearest-measured)/nearest < 0.06 ? nearest : Math.max(30,Math.min(360,measured));
+  const nearest = standards.reduce(
+    (best, value) => (Math.abs(value - measured) < Math.abs(best - measured) ? value : best),
+    60,
+  );
+  return Math.abs(nearest - measured) / nearest < 0.06
+    ? nearest
+    : Math.max(30, Math.min(360, measured));
 }

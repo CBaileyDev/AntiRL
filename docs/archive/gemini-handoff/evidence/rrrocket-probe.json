@@ -1,0 +1,219 @@
+{
+  "tool": "rrrocket v0.11.6 official Windows MSVC release",
+  "binary_sha256": "d13eca11dd5b37268ce7586501c160683b16f97714463119f1d36ea07f108b4e",
+  "files": 29,
+  "passed": 29,
+  "checks": ["CRC", "network parse", "no JSON writes in batch"],
+  "batch": [
+    {
+      "sha256": "aed6d6753e308aea3db368bec8dce242c66380cf1450852def0a8b5cc0dec0ed",
+      "milliseconds": 20.44,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "0c920581632c52ed8d12f4d1efeff034f5e40632ab65e87dbceecd64972254b5",
+      "milliseconds": 16.12,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "a6123a3b550c2f34a324aaf827ea5ebade6a79f49a44be54dfc17a39b876789c",
+      "milliseconds": 12.51,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "7b905f11eddff23f36d204af0767b7708e537eb9561a32ff686fdfc7070d5985",
+      "milliseconds": 20.83,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "7036a0d0011286d0a49d1670249abaa8ba7e572482d9347daa86dd729a5e166c",
+      "milliseconds": 17.16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "af1b7971e3d0523ad2d00d5a0a3b1885a71f303c5c1a5ac2e1ad427173be57c3",
+      "milliseconds": 20.18,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "e9f21a9eef88b77e7ad64223b3ba55d0fe0d2f216190a8d63a4adf9cf1ed85d1",
+      "milliseconds": 22.63,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "a47761c697cf2e85151d635f411e087fff153039599fea15116041e576106892",
+      "milliseconds": 17.47,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "93bbd359671d4a79926a6048f01e6fd5b06bf8970a6715d055e5c8ff6d356021",
+      "milliseconds": 17.85,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "40bd2aa787732258c8584a8a90887d30b92fc130bd9fc55886968c1f6c4341c8",
+      "milliseconds": 15.35,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "5f4d665d5da027ceee019a4001e8e163c04377f0c9e86e1dc4b5340549c95f15",
+      "milliseconds": 21.56,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "7f201a7ed008dc06df542b9ffc5eaa58594447191171813e89616e24cb35a854",
+      "milliseconds": 18.16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "b8f0146734e9f558d203ee0c7f082472aa74c8111313a28decc6ded66721d80b",
+      "milliseconds": 19.79,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "f447dfe76a8b34e06fe41e3dbdc17aa950b5366f6a3cb1544550dee9696a5c0f",
+      "milliseconds": 20.86,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "747ec9c442fd9ba2a99ba43a2bba4df74535b8ce5e07026cdcf635e12c44057e",
+      "milliseconds": 17.24,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "0fa21548d1d395e72cde1baaf84da680cc078e4a41a6fffa9f2ada8cdd4779f0",
+      "milliseconds": 15.62,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "737eb1921247f80cce44e6fcf022456bc0153fc332dd5c6db5c15089c8b12a20",
+      "milliseconds": 12.92,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "b1c1cd9837d20d1737e12d12449f078fc0e6c44983ced5f56f08fbce865b9d82",
+      "milliseconds": 16.96,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "054a2ec9033bb691ab39dbbe2c0d433665129cf2946e47eaf0a7a9185efef5f4",
+      "milliseconds": 16.8,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "5d81c187afd3f66f3ef663c86eab64d24cd2c56e4e32933cf3260025881608d8",
+      "milliseconds": 21.97,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "0e53418566d8b009a68f284c90c0fe1a2aba146bbeab91fdc054482aeb344553",
+      "milliseconds": 22.08,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "1ab3397326b561589b1914febb6342dbe2e7224167e0272863f08409414b05a4",
+      "milliseconds": 20.29,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "b368624cda8394de71cd214721fa1e0d5c99da5a1ac8f796b3367a60591946de",
+      "milliseconds": 21.8,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "8d988ac80a04fe9406194e7154bb5960eaece835cad4abd454f3f1097756afca",
+      "milliseconds": 18.45,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "2cc7713da49054247876a6c8c149bb4273c6f68bed6ac93bba6a8d953cf1ac6d",
+      "milliseconds": 15.83,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "bdf0223544b0e60cca854c9a6b8b0fa4104f37d7a0bad40369f184090cc67920",
+      "milliseconds": 17.56,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "1028e890ec89c9b3d9b317564f4e137ca71e28cd67283b1549974ee57691c80f",
+      "milliseconds": 21.72,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "1c909bbd89ac34a37babc620735ff67168e375ff2f1defff03ad82cd2feee9da",
+      "milliseconds": 18.48,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "sha256": "b7cceb2dc41a62084655accfa6747abf03920dc5a16a59030fa9d05188773f0f",
+      "milliseconds": 18.02,
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  ],
+  "decoded_samples": [
+    {
+      "sha256": "aed6d6753e308aea3db368bec8dce242c66380cf1450852def0a8b5cc0dec0ed",
+      "milliseconds": 71.77,
+      "exit_code": 0,
+      "status": "PASS",
+      "team_size": 2,
+      "decoded_frames": 9118,
+      "rigid_body_updates": 38010,
+      "match_date": "2026-10-03 23-28-21",
+      "engine_version": null,
+      "licensee_version": null,
+      "network_version": 12,
+      "structural_check": "PASS"
+    },
+    {
+      "sha256": "0c920581632c52ed8d12f4d1efeff034f5e40632ab65e87dbceecd64972254b5",
+      "milliseconds": 58.74,
+      "exit_code": 0,
+      "status": "PASS",
+      "team_size": 3,
+      "decoded_frames": 4718,
+      "rigid_body_updates": 29374,
+      "match_date": "2026-10-04 21-11-55",
+      "engine_version": null,
+      "licensee_version": null,
+      "network_version": 12,
+      "structural_check": "PASS"
+    }
+  ],
+  "limits": [
+    "No manual native-game comparison",
+    "No reconstructed scene accuracy check",
+    "No validated coaching or identity semantics",
+    "No 1v1 file selected"
+  ]
+}

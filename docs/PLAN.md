@@ -1,11 +1,13 @@
 # AntiRL Execution Plan
 
 ## 1. Project Overview & Target
+
 - **Target**: `C:\Users\barke\Documents\AntiRL`
 - **Goal**: Windows Rocket League replay analysis & AI coaching desktop application built from scratch.
 - **Tech Stack**: Tauri 2 (Rust 1.98+) + React 19 / TypeScript / Vite + Babylon.js 8 (WebGL2) + SQLite (WAL mode) + boxcars 0.12.0 & subtr-actor 1.4.0.
 
 ## 2. Architecture & Modules
+
 - `crates/replay-core`:
   - boxcars + subtr-actor parser pipeline.
   - Full network frame extraction, actor delta resolution, 3D rigid body extraction (Unreal units Z-up).
@@ -32,6 +34,7 @@
   - Views: Overview, Replays library, Match Analysis / Replay Studio, Coach Chat, Progress, Teammates, Settings, Onboarding wizard.
 
 ## 3. Milestones & Gates
+
 1. **Stabilize Target & Contracts**: Document architecture, initialize workspace, pin dependencies, write contracts.
 2. **Real-data Decoder Spike**: Build and test `replay-core` against real replays in `C:\Users\barke\Documents\My Games\Rocket League\TAGame\DemosEpic`. Benchmark parsing and verify actor transforms, boost, and discontinuity detection.
 3. **Core Services & AI Integration**: Build `coach-services`, SQLite database, NeoToken V2 streaming client, Markdown memory manager, progress calculator, and teammate aggregator.

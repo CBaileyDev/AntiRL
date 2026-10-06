@@ -1,6 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 import "./styles.css";
 
 interface ErrorBoundaryProps {
@@ -56,7 +60,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               Application Render Exception
             </h2>
             <p style={{ color: "#94A3B8", fontSize: 13, marginBottom: 16 }}>
-              {this.state.error?.message || "An unexpected error occurred while mounting the user interface."}
+              {this.state.error?.message ||
+                "An unexpected error occurred while mounting the user interface."}
             </p>
             <pre
               style={{
@@ -99,5 +104,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ErrorBoundary>
       <App />
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

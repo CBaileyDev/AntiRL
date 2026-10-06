@@ -64,7 +64,15 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
           <b>{progress?.matches_analyzed ?? 0}</b> total matches analyzed
         </span>
 
-        <div style={{ display: "flex", background: "var(--surface)", borderRadius: "var(--radius-sm)", padding: 3, border: "1px solid var(--line)" }}>
+        <div
+          style={{
+            display: "flex",
+            background: "var(--surface)",
+            borderRadius: "var(--radius-sm)",
+            padding: 3,
+            border: "1px solid var(--line)",
+          }}
+        >
           {["1v1", "2v2", "3v3"].map((mode) => (
             <button
               key={mode}
@@ -93,8 +101,12 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <Trophy size={16} color="var(--sage)" aria-hidden="true" />
             <span className="pg-label">Win Rate ({selectedMode})</span>
           </div>
-          <span className="pg-value" style={{ color: "var(--sage)" }}>{modeData.matches ? `${modeData.win_rate}%` : "N/A"}</span>
-          <span className="pg-sub">{modeData.wins} wins in {modeData.matches} matches</span>
+          <span className="pg-value" style={{ color: "var(--sage)" }}>
+            {modeData.matches ? `${modeData.win_rate}%` : "N/A"}
+          </span>
+          <span className="pg-sub">
+            {modeData.wins} wins in {modeData.matches} matches
+          </span>
         </div>
         <div className="pg-stat">
           <div className="pg-stat-head">
@@ -104,7 +116,10 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
           <span className="pg-value" style={{ color: "var(--accent)" }}>
             {modeData.avg_boost != null ? `${modeData.avg_boost}%` : "N/A"}
           </span>
-          <span className="pg-sub">Aggregation uses valid observation duration where available; legacy means are labelled in Coach</span>
+          <span className="pg-sub">
+            Aggregation uses valid observation duration where available; legacy means are labelled
+            in Coach
+          </span>
         </div>
         <div className="pg-stat">
           <div className="pg-stat-head">
@@ -122,7 +137,9 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
             <span className="pg-label">Boosting at Speed</span>
           </div>
           <span className="pg-value" style={{ color: "var(--danger)" }}>
-            {modeData.boost_active_at_supersonic_speed_s != null ? `${modeData.boost_active_at_supersonic_speed_s}s` : "N/A"}
+            {modeData.boost_active_at_supersonic_speed_s != null
+              ? `${modeData.boost_active_at_supersonic_speed_s}s`
+              : "N/A"}
           </span>
           <span className="pg-sub">Equal-match mean at &gt;=2200 uu/s; not proven waste</span>
         </div>
@@ -139,21 +156,24 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
         </div>
         {form.length === 0 ? (
           <span className="pg-empty">
-            Import {selectedMode} matches that include your player profile to see your recent results here.
+            Import {selectedMode} matches that include your player profile to see your recent
+            results here.
           </span>
         ) : (
           <div className="pg-form">
             {form.map((f) => (
               <div key={f.id} className={`pg-form-item ${f.res}`} title={f.at}>
                 <b>{f.res === "win" ? "W" : f.res === "loss" ? "L" : "D"}</b>
-                <span>{f.mine}-{f.theirs}</span>
+                <span>
+                  {f.mine}-{f.theirs}
+                </span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <PracticePanel mode={selectedMode} playerId={settings.player_id}/>
+      <PracticePanel mode={selectedMode} playerId={settings.player_id} />
       <div className="pg-grid">
         <div className="pg-card">
           <div className="pg-card-head">
@@ -163,23 +183,45 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
           <div className="pg-list" style={{ gap: 20 }}>
             <div className="pg-bar-row">
               <div className="pg-bar-top">
-                <span style={{ color: "var(--text)", fontWeight: 600 }}>Defensive Half Presence</span>
-                <span style={{ color: "var(--accent)", fontWeight: 700 }}>{modeData.defensive_half_pct}%</span>
+                <span style={{ color: "var(--text)", fontWeight: 600 }}>
+                  Defensive Half Presence
+                </span>
+                <span style={{ color: "var(--accent)", fontWeight: 700 }}>
+                  {modeData.defensive_half_pct}%
+                </span>
               </div>
               <div className="pg-bar">
-                <div style={{ width: `${clampPct(modeData.defensive_half_pct)}%`, background: "var(--accent)" }} />
+                <div
+                  style={{
+                    width: `${clampPct(modeData.defensive_half_pct)}%`,
+                    background: "var(--accent)",
+                  }}
+                />
               </div>
-              <span className="pg-sub">Time-weighted Y position behind the halfway line relative to your defending goal.</span>
+              <span className="pg-sub">
+                Time-weighted Y position behind the halfway line relative to your defending goal.
+              </span>
             </div>
             <div className="pg-bar-row">
               <div className="pg-bar-top">
-                <span style={{ color: "var(--text)", fontWeight: 600 }}>Low Boost Exposure (&lt;10 Boost)</span>
-                <span style={{ color: "var(--orange-team)", fontWeight: 700 }}>{modeData.low_boost_pct}%</span>
+                <span style={{ color: "var(--text)", fontWeight: 600 }}>
+                  Low Boost Exposure (&lt;10 Boost)
+                </span>
+                <span style={{ color: "var(--orange-team)", fontWeight: 700 }}>
+                  {modeData.low_boost_pct}%
+                </span>
               </div>
               <div className="pg-bar">
-                <div style={{ width: `${clampPct(modeData.low_boost_pct)}%`, background: "var(--orange-team)" }} />
+                <div
+                  style={{
+                    width: `${clampPct(modeData.low_boost_pct)}%`,
+                    background: "var(--orange-team)",
+                  }}
+                />
               </div>
-              <span className="pg-sub">Portion of active match time spent in a resource-compromised state.</span>
+              <span className="pg-sub">
+                Portion of active match time spent in a resource-compromised state.
+              </span>
             </div>
           </div>
         </div>
@@ -191,16 +233,30 @@ export default function Progress({ progress, settings, replays = [] }: ProgressP
           </div>
           <div className="pg-list">
             {[
-              {title:"Review a resource decision",sub:"No universal boost target. Inspect pressure, space and recovery.",ok:false},
-              {title:"Practice one useful recovery",sub:"Choose a short drill and check transfer in later same-mode matches.",ok:false},
-              {title:"Reassess with new matches",sub:"Grades and promotion forecasts await validated evidence.",ok:false},
+              {
+                title: "Review a resource decision",
+                sub: "No universal boost target. Inspect pressure, space and recovery.",
+                ok: false,
+              },
+              {
+                title: "Practice one useful recovery",
+                sub: "Choose a short drill and check transfer in later same-mode matches.",
+                ok: false,
+              },
+              {
+                title: "Reassess with new matches",
+                sub: "Grades and promotion forecasts await validated evidence.",
+                ok: false,
+              },
             ].map((g) => (
               <div className="pg-row" key={g.title}>
                 <div>
                   <span className="pg-row-title">{g.title}</span>
                   <span className="pg-sub">{g.sub}</span>
                 </div>
-                <span className={`pg-chip ${modeData.matches && g.ok ? "good" : "progress"}`}>{!modeData.matches ? "No data" : g.ok ? "On Track" : "In Progress"}</span>
+                <span className={`pg-chip ${modeData.matches && g.ok ? "good" : "progress"}`}>
+                  {!modeData.matches ? "No data" : g.ok ? "On Track" : "In Progress"}
+                </span>
               </div>
             ))}
           </div>

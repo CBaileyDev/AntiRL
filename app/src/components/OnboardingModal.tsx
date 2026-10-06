@@ -7,8 +7,6 @@ import {
   Shield,
   Target,
   User,
-  Zap,
-  HelpCircle,
   X,
 } from "lucide-react";
 
@@ -17,12 +15,14 @@ import type { Settings } from "../types";
 
 interface OnboardingModalProps {
   initialSettings: Settings;
+  identityCandidates: { player_id: string; name: string; matches: number }[];
   onSave: (settings: Partial<Settings>) => Promise<void>;
-  onClose: (completed?:boolean) => void;
+  onClose: (completed?: boolean) => void;
 }
 
 export default function OnboardingModal({
   initialSettings,
+  identityCandidates,
   onSave,
   onClose,
 }: OnboardingModalProps) {
@@ -30,20 +30,36 @@ export default function OnboardingModal({
   const [saving, setSaving] = useState(false);
 
   // Form State
+  const [playerId, setPlayerId] = useState(initialSettings.player_id || "");
   const [playerName, setPlayerName] = useState(initialSettings.player_name || "");
   const [playstyle, setPlaystyle] = useState(initialSettings.playstyle || "");
-  const [primaryMode,setPrimaryMode]=useState(initialSettings.primary_mode || "");
-  const [teamPreference,setTeamPreference]=useState(initialSettings.team_preference || "unknown");
+  const [primaryMode, setPrimaryMode] = useState(initialSettings.primary_mode || "");
+  const [teamPreference, setTeamPreference] = useState(
+    initialSettings.team_preference || "unknown",
+  );
   const [rank1v1, setRank1v1] = useState(initialSettings.rank_1v1 || "");
   const [rank2v2, setRank2v2] = useState(initialSettings.rank_2v2 || "");
   const [rank3v3, setRank3v3] = useState(initialSettings.rank_3v3 || "");
 
-  const [profiles,setProfiles]=useState(initialSettings.mode_profiles || {});
-  const updateProfile=(mode:string,key:string,value:string)=>setProfiles(prev=>({...prev,[mode]:{...prev[mode],[key]:key.endsWith("hours") ? value==="" ? null : Math.min(168,Math.max(0,Number(value))) : value || null}}));
+  const [profiles, setProfiles] = useState(initialSettings.mode_profiles || {});
+  const updateProfile = (mode: string, key: string, value: string) =>
+    setProfiles((prev) => ({
+      ...prev,
+      [mode]: {
+        ...prev[mode],
+        [key]: key.endsWith("hours")
+          ? value === ""
+            ? null
+            : Math.min(168, Math.max(0, Number(value)))
+          : value || null,
+      },
+    }));
   const [selectedFocus, setSelectedFocus] = useState<string[]>(
-    initialSettings.focus || ["boost", "rotations", "defense"]
+    initialSettings.focus || ["boost", "rotations", "defense"],
   );
-  const [coachPersona, setCoachPersona] = useState(initialSettings.coach_persona || "Constructive Mentor");
+  const [coachPersona, setCoachPersona] = useState(
+    initialSettings.coach_persona || "Constructive Mentor",
+  );
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -55,7 +71,7 @@ export default function OnboardingModal({
 
   const toggleFocus = (item: string) => {
     setSelectedFocus((prev) =>
-      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]
+      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item],
     );
   };
 
@@ -64,14 +80,21 @@ export default function OnboardingModal({
     try {
       await onSave({
         player_name: playerName || null,
+        player_id: playerId || null,
         rank_1v1: rank1v1 || null,
         rank_2v2: rank2v2 || null,
         rank_3v3: rank3v3 || null,
-        mode_profiles: {...profiles,"1v1":{...profiles["1v1"],current_rank:rank1v1||null},"2v2":{...profiles["2v2"],current_rank:rank2v2||null},"3v3":{...profiles["3v3"],current_rank:rank3v3||null}},
+        mode_profiles: {
+          ...profiles,
+          "1v1": { ...profiles["1v1"], current_rank: rank1v1 || null },
+          "2v2": { ...profiles["2v2"], current_rank: rank2v2 || null },
+          "3v3": { ...profiles["3v3"], current_rank: rank3v3 || null },
+        },
         focus: selectedFocus,
         playstyle,
         coach_persona: coachPersona,
-        primary_mode:primaryMode || undefined,team_preference:teamPreference,
+        primary_mode: primaryMode || undefined,
+        team_preference: teamPreference,
       });
       onClose(true);
     } catch (e) {
@@ -96,7 +119,12 @@ export default function OnboardingModal({
               </div>
             ))}
           </div>
-          <button className="icon-btn" onClick={()=>onClose()} title="Skip / Close" aria-label="Close">
+          <button
+            className="icon-btn"
+            onClick={() => onClose()}
+            title="Skip / Close"
+            aria-label="Close"
+          >
             <X size={18} />
           </button>
         </div>
@@ -111,9 +139,58 @@ export default function OnboardingModal({
                   <User size={24} color="#38BDF8" />
                 </div>
                 <h2>Player Identity & Profile</h2>
-                <p>Tell AntiRL who you are so the AI coach can calibrate to your role and identity.</p>
+                <p>
+                  Confirm your replay identity. Offline coaching and match evidence stay on your
+                  device.
+                </p>
               </div>
 
+              <div className="form-group">
+                {!playerId && identityCandidates[0] && (
+                  <p>
+                    Detected player: <strong>{identityCandidates[0].name}</strong> in{" "}
+                    {identityCandidates[0].matches} replays.{" "}
+                    <button
+                      className="btn secondary"
+                      onClick={() => {
+                        setPlayerId(identityCandidates[0].player_id);
+                        setPlayerName(identityCandidates[0].name);
+                      }}
+                    >
+                      Use detected player
+                    </button>
+                  </p>
+                )}
+                <label className="form-label">
+                  Detected replay player
+                  <select
+                    aria-label="Confirm detected player"
+                    value={playerId}
+                    onChange={(e) => {
+                      setPlayerId(e.target.value);
+                      const candidate = identityCandidates.find(
+                        (c) => c.player_id === e.target.value,
+                      );
+                      if (candidate) setPlayerName(candidate.name);
+                    }}
+                  >
+                    <option value="">Not confirmed · select after importing replays</option>
+                    {playerId && !identityCandidates.some((c) => c.player_id === playerId) && (
+                      <option value={playerId}>{playerName || playerId}</option>
+                    )}
+                    {identityCandidates.map((candidate, i) => (
+                      <option key={candidate.player_id} value={candidate.player_id}>
+                        {candidate.name} · {candidate.matches} replays{i === 0 ? " · detected" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <p>
+                  {playerId
+                    ? `Selected: ${playerName || playerId}. Save profile to confirm.`
+                    : "Import replays to detect your player, then confirm the correct account here."}
+                </p>
+              </div>
               <div className="form-group">
                 <label className="form-label">In-Game Name / Gamertag</label>
                 <input
@@ -126,9 +203,36 @@ export default function OnboardingModal({
               </div>
 
               <div className="form-group">
-                <label className="form-label">Primary mode (optional)<select aria-label="Primary mode" value={primaryMode} onChange={e=>setPrimaryMode(e.target.value)}><option value="">Not sure yet</option>{["1v1","2v2","3v3"].map(m=><option key={m}>{m}</option>)}</select></label>
-                <label className="form-label">Queue preference<select aria-label="Queue preference" value={teamPreference} onChange={e=>setTeamPreference(e.target.value as "unknown"|"solo"|"fixed")}><option value="unknown">Not specified</option><option value="solo">Solo queue</option><option value="fixed">Fixed teammates</option></select></label>
-                <label className="form-label">Playstyle preference (optional; roles change during play)</label>
+                <label className="form-label">
+                  Primary mode (optional)
+                  <select
+                    aria-label="Primary mode"
+                    value={primaryMode}
+                    onChange={(e) => setPrimaryMode(e.target.value)}
+                  >
+                    <option value="">Not sure yet</option>
+                    {["1v1", "2v2", "3v3"].map((m) => (
+                      <option key={m}>{m}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="form-label">
+                  Queue preference
+                  <select
+                    aria-label="Queue preference"
+                    value={teamPreference}
+                    onChange={(e) =>
+                      setTeamPreference(e.target.value as "unknown" | "solo" | "fixed")
+                    }
+                  >
+                    <option value="unknown">Not specified</option>
+                    <option value="solo">Solo queue</option>
+                    <option value="fixed">Fixed teammates</option>
+                  </select>
+                </label>
+                <label className="form-label">
+                  Playstyle preference (optional; roles change during play)
+                </label>
                 <div className="role-grid">
                   {[
                     {
@@ -148,11 +252,18 @@ export default function OnboardingModal({
                       desc: "Air dribbles, flip resets, 1v1 outplays, ceiling plays",
                     },
                   ].map((r) => (
-                    <div role="button" tabIndex={0}
+                    <div
+                      role="button"
+                      tabIndex={0}
                       key={r.id}
                       className={`role-card ${playstyle === r.id ? "selected" : ""}`}
                       onClick={() => setPlaystyle(r.id)}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); (e.currentTarget as HTMLElement).click(); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          (e.currentTarget as HTMLElement).click();
+                        }
+                      }}
                     >
                       <div className="role-title">{r.id}</div>
                       <div className="role-desc">{r.desc}</div>
@@ -174,15 +285,68 @@ export default function OnboardingModal({
                 <p>Set current and target ranks per mode; you can skip and edit these later.</p>
               </div>
 
-              <p>Optional, self-reported. Leave unknown fields blank. Time helps make a feasible practice plan; it does not predict promotion.</p>
-              {["1v1","2v2","3v3"].map(mode=><div className="playlist-rank-section" key={mode}>
-                <h3>{mode}</h3>
-                <label>Current rank<RankSelect allowUnranked value={mode==="1v1"?rank1v1:mode==="2v2"?rank2v2:rank3v3} onChange={mode==="1v1"?setRank1v1:mode==="2v2"?setRank2v2:setRank3v3} ariaLabel={`${mode} current rank`}/></label>
-                <label>Target rank<RankSelect allowUnranked value={profiles[mode]?.target_rank || ""} onChange={value=>updateProfile(mode,"target_rank",value)} ariaLabel={`${mode} target rank`}/></label>
-                <label>Longer-term target<RankSelect allowUnranked value={profiles[mode]?.long_term_rank || ""} onChange={value=>updateProfile(mode,"long_term_rank",value)} ariaLabel={`${mode} longer-term target`}/></label>
-                <label>Practice hours/week (optional)<input className="number-input" type="number" min="0" max="168" step="0.5" value={profiles[mode]?.practice_hours ?? ""} onChange={e=>updateProfile(mode,"practice_hours",e.target.value)}/></label>
-                <label>Match hours/week (optional)<input className="number-input" type="number" min="0" max="168" step="0.5" value={profiles[mode]?.match_hours ?? ""} onChange={e=>updateProfile(mode,"match_hours",e.target.value)}/></label>
-              </div>)}
+              <p>
+                Optional, self-reported. Leave unknown fields blank. Time helps make a feasible
+                practice plan; it does not predict promotion.
+              </p>
+              {["1v1", "2v2", "3v3"].map((mode) => (
+                <div className="playlist-rank-section" key={mode}>
+                  <h3>{mode}</h3>
+                  <label>
+                    Current rank
+                    <RankSelect
+                      allowUnranked
+                      value={mode === "1v1" ? rank1v1 : mode === "2v2" ? rank2v2 : rank3v3}
+                      onChange={
+                        mode === "1v1" ? setRank1v1 : mode === "2v2" ? setRank2v2 : setRank3v3
+                      }
+                      ariaLabel={`${mode} current rank`}
+                    />
+                  </label>
+                  <label>
+                    Target rank
+                    <RankSelect
+                      allowUnranked
+                      value={profiles[mode]?.target_rank || ""}
+                      onChange={(value) => updateProfile(mode, "target_rank", value)}
+                      ariaLabel={`${mode} target rank`}
+                    />
+                  </label>
+                  <label>
+                    Longer-term target
+                    <RankSelect
+                      allowUnranked
+                      value={profiles[mode]?.long_term_rank || ""}
+                      onChange={(value) => updateProfile(mode, "long_term_rank", value)}
+                      ariaLabel={`${mode} longer-term target`}
+                    />
+                  </label>
+                  <label>
+                    Practice hours/week (optional)
+                    <input
+                      className="number-input"
+                      type="number"
+                      min="0"
+                      max="168"
+                      step="0.5"
+                      value={profiles[mode]?.practice_hours ?? ""}
+                      onChange={(e) => updateProfile(mode, "practice_hours", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Match hours/week (optional)
+                    <input
+                      className="number-input"
+                      type="number"
+                      min="0"
+                      max="168"
+                      step="0.5"
+                      value={profiles[mode]?.match_hours ?? ""}
+                      onChange={(e) => updateProfile(mode, "match_hours", e.target.value)}
+                    />
+                  </label>
+                </div>
+              ))}
             </div>
           )}
 
@@ -232,11 +396,18 @@ export default function OnboardingModal({
                 ].map((f) => {
                   const active = selectedFocus.includes(f.id);
                   return (
-                    <div role="button" tabIndex={0}
+                    <div
+                      role="button"
+                      tabIndex={0}
                       key={f.id}
                       className={`focus-card ${active ? "active" : ""}`}
                       onClick={() => toggleFocus(f.id)}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); (e.currentTarget as HTMLElement).click(); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          (e.currentTarget as HTMLElement).click();
+                        }
+                      }}
                     >
                       <div className="focus-checkbox">
                         {active && <CheckCircle2 size={16} color="#10B981" />}
@@ -281,11 +452,18 @@ export default function OnboardingModal({
                     desc: "Demanding and blunt. Points out every wasted boost point, slow recovery, and open net mistake.",
                   },
                 ].map((p) => (
-                  <div role="button" tabIndex={0}
+                  <div
+                    role="button"
+                    tabIndex={0}
                     key={p.title}
                     className={`persona-card ${coachPersona === p.title ? "selected" : ""}`}
                     onClick={() => setCoachPersona(p.title)}
-                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); (e.currentTarget as HTMLElement).click(); } }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        (e.currentTarget as HTMLElement).click();
+                      }
+                    }}
                   >
                     <div className="persona-top">
                       <span className="persona-title">{p.title}</span>

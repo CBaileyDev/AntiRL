@@ -8,6 +8,7 @@ default-run = "antirl"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
+chatgpt-siwc = ["coach-services/chatgpt-siwc"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
@@ -15,6 +16,12 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "typescript"] }
+specta = { version = "=2.0.0-rc.22", features = ["derive", "serde_json"] }
+specta-typescript = "0.0.9"
+thiserror = "2"
+notify = "8"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["process", "io-util", "time", "sync", "rt-multi-thread", "macros"] }
@@ -24,7 +31,7 @@ replay-core = { path = "../crates/replay-core" }
 coach-services = { path = "../crates/coach-services" }
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_Security"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp", "Win32_Security"] }
 
 [dev-dependencies]
 tempfile = "3"

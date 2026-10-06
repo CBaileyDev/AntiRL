@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checks": [
+    "typed practice creation",
+    "camelCase training args",
+    "practice session response",
+    "mode isolation",
+    "typed training catalog"
+  ]
+}

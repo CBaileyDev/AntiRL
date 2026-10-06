@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checks": [
+    "filesystem notification auto-import",
+    "new event refreshes library once",
+    "duplicate event skips parser and library reload"
+  ],
+  "beforeCount": 2,
+  "afterCount": 3
+}

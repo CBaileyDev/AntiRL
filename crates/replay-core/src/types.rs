@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Player {
     pub id: String,
     pub name: String,
@@ -9,7 +9,7 @@ pub struct Player {
     pub is_bot: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct ReplaySummary {
     pub id: String,
     pub file_hash: String,
@@ -32,14 +32,14 @@ pub struct ReplaySummary {
     pub map_name: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Body {
     pub position: [f32; 3],
     pub rotation: [f32; 4],
     pub velocity: Option<[f32; 3]>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Car {
     pub player_id: String,
     #[serde(flatten)]
@@ -48,7 +48,7 @@ pub struct Car {
     pub discontinuity: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct Frame {
     pub time: f64,
     pub ball: Option<Body>,
@@ -59,7 +59,7 @@ pub struct Frame {
     pub discontinuity: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct Metric {
     #[serde(default)]
     pub numerator: Option<f64>,
@@ -77,7 +77,7 @@ pub struct Metric {
     pub description: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct Event {
     pub id: String,
     pub player_id: Option<String>,
@@ -93,7 +93,7 @@ pub struct Event {
     pub metric_keys: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct Coverage {
     pub metadata: bool,
     pub positions: bool,
@@ -106,7 +106,7 @@ pub struct Coverage {
     pub notes: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
 pub struct ReplayAnalysis {
     pub summary: ReplaySummary,
     pub players: Vec<Player>,

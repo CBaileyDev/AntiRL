@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, Award, Clock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Users } from "lucide-react";
 import type { TeammateStats } from "../types";
 
 interface TeammatesProps {
@@ -7,7 +7,7 @@ interface TeammatesProps {
   onSelectTeammateMatches?: (playerId: string) => void;
 }
 
-export default function Teammates({ teammates, onSelectTeammateMatches }: TeammatesProps) {
+export default function Teammates({ teammates }: TeammatesProps) {
   return (
     <div className="content-pane">
       {/* Header and Explanation */}
@@ -36,7 +36,8 @@ export default function Teammates({ teammates, onSelectTeammateMatches }: Teamma
               No Teammates Recorded Yet
             </h4>
             <p style={{ fontSize: 13 }}>
-              Import 2v2 or 3v3 matches where you played alongside other players to track shared records.
+              Import 2v2 or 3v3 matches where you played alongside other players to track shared
+              records.
             </p>
           </div>
         ) : (
@@ -58,7 +59,6 @@ export default function Teammates({ teammates, onSelectTeammateMatches }: Teamma
                     <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
                       {mate.name || "Unknown"}
                     </strong>
-                  
                   </td>
 
                   <td>

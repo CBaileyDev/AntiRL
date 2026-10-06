@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "checks": [
+    "native production CSP permits local viewer",
+    "all five camera controls",
+    "play/pause/seek"
+  ],
+  "errors": []
+}

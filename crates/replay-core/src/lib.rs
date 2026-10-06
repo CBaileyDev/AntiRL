@@ -287,7 +287,10 @@ pub fn decode(path: &Path, bytes: &[u8]) -> Result<ReplayAnalysis, String> {
     }
     for (idx, demo) in processor.demolishes().iter().enumerate() {
         let attacker_pid = player_id(&demo.attacker, &id).0;
-        let attacker_team = players.iter().find(|p| p.id == attacker_pid).map(|p| p.team);
+        let attacker_team = players
+            .iter()
+            .find(|p| p.id == attacker_pid)
+            .map(|p| p.team);
         events.push(Event {
             id: format!("{id}:demo:{idx}"),
             player_id: Some(attacker_pid),
@@ -535,13 +538,40 @@ struct Accumulator {
     low_duration: f64,
 }
 impl Accumulator {
-    fn observe_resources(&mut self,dt:f64,boost:Option<f32>,velocity:Option<f64>,active:Option<bool>)->bool {
-        if !(0.0..=0.25).contains(&dt)||dt==0.0{return false;}
-        if let Some(boost)=boost {self.boost_integral+=f64::from(boost)*dt;self.boost_seconds+=dt;self.boost_samples+=1;if boost<10.0{self.low_seconds+=dt;}}
-        if let Some(v)=velocity {self.speed_integral+=v*dt;self.speed_seconds+=dt;if v>=2200.0{self.threshold_seconds+=dt;}}
-        if velocity.is_some()&&active.is_some(){self.waste_samples+=1;self.joint_seconds+=dt;}
-        let observed=velocity.is_some_and(|v|v>=2200.0)&&active==Some(true);
-        if observed {self.supersonic_boost_seconds+=dt;}observed
+    fn observe_resources(
+        &mut self,
+        dt: f64,
+        boost: Option<f32>,
+        velocity: Option<f64>,
+        active: Option<bool>,
+    ) -> bool {
+        if !(0.0..=0.25).contains(&dt) || dt == 0.0 {
+            return false;
+        }
+        if let Some(boost) = boost {
+            self.boost_integral += f64::from(boost) * dt;
+            self.boost_seconds += dt;
+            self.boost_samples += 1;
+            if boost < 10.0 {
+                self.low_seconds += dt;
+            }
+        }
+        if let Some(v) = velocity {
+            self.speed_integral += v * dt;
+            self.speed_seconds += dt;
+            if v >= 2200.0 {
+                self.threshold_seconds += dt;
+            }
+        }
+        if velocity.is_some() && active.is_some() {
+            self.waste_samples += 1;
+            self.joint_seconds += dt;
+        }
+        let observed = velocity.is_some_and(|v| v >= 2200.0) && active == Some(true);
+        if observed {
+            self.supersonic_boost_seconds += dt;
+        }
+        observed
     }
 }
 
@@ -815,7 +845,12 @@ impl Collector for EvidenceCollector {
             a.seconds += dt;
             a.samples += 1;
             let velocity = speed(car.body.velocity);
-            let wasting=a.observe_resources(dt,car.boost,velocity,flags.get(&car.player_id).copied().flatten());
+            let wasting = a.observe_resources(
+                dt,
+                car.boost,
+                velocity,
+                flags.get(&car.player_id).copied().flatten(),
+            );
             if wasting {
                 a.waste_duration += dt;
                 a.waste_start.get_or_insert(time - dt);
@@ -826,8 +861,7 @@ impl Collector for EvidenceCollector {
                         &car.player_id,
                         "boost",
                         "Review supersonic boost",
-                        a.waste_start.unwrap_or(time),
-                        time,
+                        (a.waste_start.unwrap_or(time), time),
                         "Boost remained active while the car was already supersonic for at least one second. Check whether aerial control or speed maintenance justified it; otherwise release boost and conserve it.",
                         "boost_active_at_supersonic_speed_s",
                     ));
@@ -845,8 +879,7 @@ impl Collector for EvidenceCollector {
                         &car.player_id,
                         "boost",
                         "Extended low-boost window",
-                        a.low_start.unwrap_or(time),
-                        time,
+                        (a.low_start.unwrap_or(time), time),
                         "Observed boost stayed below 10 for at least five seconds. Review available small-pad routes and team pressure; low boost by itself is not a mistake.",
                         "low_boost_pct",
                     ));
@@ -976,8 +1009,7 @@ fn segment_event(
     player_id: &str,
     category: &str,
     title: &str,
-    start: f64,
-    end: f64,
+    (start, end): (f64, f64),
     description: &str,
     metric_key: &str,
 ) -> Event {
@@ -1009,8 +1041,7 @@ fn flush_segments(
             pid,
             "boost",
             "Review supersonic boost",
-            a.waste_start.unwrap_or(time),
-            time,
+            (a.waste_start.unwrap_or(time), time),
             "Boost remained active while the car was already supersonic for at least one second. Check whether aerial control or speed maintenance justified it; otherwise release boost and conserve it.",
             "boost_active_at_supersonic_speed_s",
         ));
@@ -1021,8 +1052,7 @@ fn flush_segments(
             pid,
             "boost",
             "Extended low-boost window",
-            a.low_start.unwrap_or(time),
-            time,
+            (a.low_start.unwrap_or(time), time),
             "Observed boost stayed below 10 for at least five seconds. Review available small-pad routes and team pressure; low boost by itself is not a mistake.",
             "low_boost_pct",
         ));
@@ -1130,17 +1160,36 @@ pub fn verify_corpus(folder: &Path) -> Result<serde_json::Value, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test] fn threshold_and_active_boost_are_independent_and_missing_is_not_zero(){
-        let mut a=Accumulator::default();
-        assert!(!a.observe_resources(0.1,Some(50.0),Some(2250.0),Some(false)));
-        assert!(a.observe_resources(0.1,None,Some(2250.0),Some(true)));
-        assert_eq!(a.threshold_seconds,0.2);assert_eq!(a.supersonic_boost_seconds,0.1);assert_eq!(a.joint_seconds,0.2);
-        let mut b=Accumulator::default();b.observe_resources(0.1,None,Some(2250.0),None);assert_eq!(b.joint_seconds,0.0);assert_eq!(b.waste_samples,0);
-        assert!(!b.observe_resources(0.3,Some(0.0),Some(2300.0),Some(true)));assert_eq!(b.boost_seconds,0.0);
+    #[test]
+    fn threshold_and_active_boost_are_independent_and_missing_is_not_zero() {
+        let mut a = Accumulator::default();
+        assert!(!a.observe_resources(0.1, Some(50.0), Some(2250.0), Some(false)));
+        assert!(a.observe_resources(0.1, None, Some(2250.0), Some(true)));
+        assert_eq!(a.threshold_seconds, 0.2);
+        assert_eq!(a.supersonic_boost_seconds, 0.1);
+        assert_eq!(a.joint_seconds, 0.2);
+        let mut b = Accumulator::default();
+        b.observe_resources(0.1, None, Some(2250.0), None);
+        assert_eq!(b.joint_seconds, 0.0);
+        assert_eq!(b.waste_samples, 0);
+        assert!(!b.observe_resources(0.3, Some(0.0), Some(2300.0), Some(true)));
+        assert_eq!(b.boost_seconds, 0.0);
     }
-    #[test] fn resource_integrals_preserve_real_zero_and_observation_weights(){
-        let mut a=Accumulator::default();for _ in 0..40{a.observe_resources(0.25,Some(20.0),None,None);}for _ in 0..360{a.observe_resources(0.25,Some(80.0),None,None);}assert!((a.boost_integral/a.boost_seconds-74.0).abs()<1e-9);
-        let mut b=Accumulator::default();b.observe_resources(0.25,Some(0.0),Some(0.0),Some(false));assert_eq!(b.boost_seconds,0.25);assert_eq!(b.boost_integral,0.0);assert_eq!(b.joint_seconds,0.25);
+    #[test]
+    fn resource_integrals_preserve_real_zero_and_observation_weights() {
+        let mut a = Accumulator::default();
+        for _ in 0..40 {
+            a.observe_resources(0.25, Some(20.0), None, None);
+        }
+        for _ in 0..360 {
+            a.observe_resources(0.25, Some(80.0), None, None);
+        }
+        assert!((a.boost_integral / a.boost_seconds - 74.0).abs() < 1e-9);
+        let mut b = Accumulator::default();
+        b.observe_resources(0.25, Some(0.0), Some(0.0), Some(false));
+        assert_eq!(b.boost_seconds, 0.25);
+        assert_eq!(b.boost_integral, 0.0);
+        assert_eq!(b.joint_seconds, 0.25);
     }
 
     #[test]
@@ -1241,7 +1290,9 @@ mod tests {
             players: vec![player],
             frames: vec![frame],
             metrics: vec![Metric {
-                numerator: None, denominator: None, metric_version: Some("metrics-2".into()),
+                numerator: None,
+                denominator: None,
+                metric_version: Some("metrics-2".into()),
                 player_id: "steam:123".into(),
                 key: "avg_boost".into(),
                 label: "Average boost".into(),

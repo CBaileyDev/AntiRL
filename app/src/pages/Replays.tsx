@@ -1,27 +1,18 @@
 import React, { useMemo, useState } from "react";
-import {
-  FolderOpen,
-  FilePlus,
-  Play,
-  Trash2,
-  Search,
-  Filter,
-  Users,
-  Clock,
-  Sparkles,
-  Loader2,
-} from "lucide-react";
-import type { ReplaySummary } from "../types";
+import { FolderOpen, FilePlus, Play, Trash2, Search, Clock, Loader2 } from "lucide-react";
+import type { ReplaySummary, ImportRecord } from "../types";
 import { timeLabel } from "../ReplayViewer";
 
 interface ReplaysProps {
   replays: ReplaySummary[];
+  importRecords: ImportRecord[];
+  onRetryFailed: () => void;
   importing: boolean;
   importProgress: { current: number; total: number; file: string; status: string } | null;
   onSelectReplay: (id: string) => void;
   onImportFolder: () => void;
   onImportFiles: () => void;
-  onDeleteReplay: (id: string) => void;
+  onDeleteReplay: (id: string, removeSnapshot?: boolean) => void;
 }
 
 function teamScores(r: ReplaySummary): [string, string] {
@@ -33,6 +24,8 @@ function teamScores(r: ReplaySummary): [string, string] {
 
 export default function Replays({
   replays,
+  importRecords,
+  onRetryFailed,
   importing,
   importProgress,
   onSelectReplay,
@@ -40,6 +33,8 @@ export default function Replays({
   onImportFiles,
   onDeleteReplay,
 }: ReplaysProps) {
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [removeSnapshot, setRemoveSnapshot] = useState(true);
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState<string>("all");
 
@@ -59,6 +54,45 @@ export default function Replays({
 
   return (
     <div className="content-pane">
+      {pendingDelete && (
+        <div className="modal-overlay">
+          <section
+            className="card"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Delete replay"
+            style={{ maxWidth: 480 }}
+          >
+            <h3>Delete this replay?</h3>
+            <p>
+              It will stay excluded from future automatic imports. Your original replay file remains
+              in its source folder.
+            </p>
+            <label>
+              <input
+                type="checkbox"
+                checked={removeSnapshot}
+                onChange={(e) => setRemoveSnapshot(e.target.checked)}
+              />{" "}
+              Also remove the imported snapshot copy
+            </label>
+            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+              <button
+                className="btn primary"
+                onClick={() => {
+                  onDeleteReplay(pendingDelete, removeSnapshot);
+                  setPendingDelete(null);
+                }}
+              >
+                Delete replay
+              </button>
+              <button className="btn secondary" onClick={() => setPendingDelete(null)}>
+                Cancel
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
       {/* Import Activity Bar */}
       {importing && (
         <div
@@ -69,15 +103,26 @@ export default function Replays({
             padding: 16,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 8,
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <Loader2 size={18} className="spin" color="var(--accent)" />
               <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
                 Decoding Replay Network Frames...
               </strong>
             </div>
-            <span style={{ fontSize: 12, color: "var(--muted)", fontVariantNumeric: "tabular-nums" }}>
-              {importProgress ? `${importProgress.current} / ${importProgress.total}` : "Starting..."}
+            <span
+              style={{ fontSize: 12, color: "var(--muted)", fontVariantNumeric: "tabular-nums" }}
+            >
+              {importProgress
+                ? `${importProgress.current} / ${importProgress.total}`
+                : "Starting..."}
             </span>
           </div>
 
@@ -111,6 +156,35 @@ export default function Replays({
         </div>
       )}
 
+      {importRecords.length > 0 && (
+        <details className="card">
+          <summary>
+            Import results · {importRecords.filter((r) => r.status === "failed").length} failed
+          </summary>
+          {importRecords.some((r) => r.status === "failed") && (
+            <button className="btn secondary" disabled={importing} onClick={onRetryFailed}>
+              Retry failed files
+            </button>
+          )}
+          <ul className="import-history">
+            {importRecords.map((record) => (
+              <li key={record.path}>
+                <strong>{record.file_name}</strong>
+                <span>
+                  {record.status === "already_present" || record.status === "unchanged"
+                    ? "Skipped · already present"
+                    : record.status === "new"
+                      ? "New · imported"
+                      : record.status === "deleted"
+                        ? "Deleted · excluded from automatic imports"
+                        : "Failed"}
+                </span>
+                {record.error && <span>{record.error}</span>}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {/* Toolbar: Search, Filters & Import Actions */}
       <div
         style={{
@@ -130,10 +204,7 @@ export default function Replays({
               alignItems: "center",
             }}
           >
-            <Search
-              size={16}
-              style={{ position: "absolute", left: 12, color: "var(--faint)" }}
-            />
+            <Search size={16} style={{ position: "absolute", left: 12, color: "var(--faint)" }} />
             <input
               type="text"
               aria-label="Search replays"
@@ -152,7 +223,15 @@ export default function Replays({
             />
           </div>
 
-          <div style={{ display: "flex", background: "var(--surface)", borderRadius: "var(--radius-sm)", padding: 2, border: "1px solid var(--line)" }}>
+          <div
+            style={{
+              display: "flex",
+              background: "var(--surface)",
+              borderRadius: "var(--radius-sm)",
+              padding: 2,
+              border: "1px solid var(--line)",
+            }}
+          >
             {["all", "1v1", "2v2", "3v3"].map((mode) => (
               <button
                 key={mode}
@@ -189,7 +268,9 @@ export default function Replays({
         {filtered.length === 0 ? (
           <div style={{ padding: "48px 16px", textAlign: "center", color: "var(--muted)" }}>
             <FolderOpen size={40} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
-            <h4 style={{ fontSize: 16, color: "var(--text)", marginBottom: 4 }}>No Replays Found</h4>
+            <h4 style={{ fontSize: 16, color: "var(--text)", marginBottom: 4 }}>
+              No Replays Found
+            </h4>
             <p style={{ fontSize: 13 }}>
               {replays.length === 0
                 ? "Import your Rocket League Demos folder to begin analysis."
@@ -245,8 +326,8 @@ export default function Replays({
                           r.mode === "1v1"
                             ? "var(--sage)"
                             : r.mode === "2v2"
-                            ? "var(--accent)"
-                            : "var(--blue-team)",
+                              ? "var(--accent)"
+                              : "var(--blue-team)",
                         border: "1px solid var(--line-strong)",
                       }}
                     >
@@ -255,7 +336,15 @@ export default function Replays({
                   </td>
 
                   <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, color: "var(--muted)" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontSize: 12.5,
+                        color: "var(--muted)",
+                      }}
+                    >
                       <Clock size={13} />
                       <span style={{ fontVariantNumeric: "tabular-nums" }}>
                         {timeLabel(r.duration_seconds)}
@@ -264,7 +353,13 @@ export default function Replays({
                   </td>
 
                   <td>
-                    <span style={{ fontWeight: 700, fontSize: 13.5, fontVariantNumeric: "tabular-nums" }}>
+                    <span
+                      style={{
+                        fontWeight: 700,
+                        fontSize: 13.5,
+                        fontVariantNumeric: "tabular-nums",
+                      }}
+                    >
                       <span style={{ color: "var(--blue-team)" }}>{teamScores(r)[0]}</span>
                       {" - "}
                       <span style={{ color: "var(--orange-team)" }}>{teamScores(r)[1]}</span>
@@ -272,7 +367,15 @@ export default function Replays({
                   </td>
 
                   <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", maxWidth: 280 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        flexWrap: "wrap",
+                        maxWidth: 280,
+                      }}
+                    >
                       {r.players?.slice(0, 4).map((p) => (
                         <span
                           key={p.id}
@@ -280,7 +383,8 @@ export default function Replays({
                             fontSize: 11,
                             padding: "1px 6px",
                             borderRadius: 4,
-                            background: p.team === 0 ? "var(--blue-team-soft)" : "var(--orange-team-soft)",
+                            background:
+                              p.team === 0 ? "var(--blue-team-soft)" : "var(--orange-team-soft)",
                             color: p.team === 0 ? "var(--blue-team)" : "var(--orange-team)",
                             whiteSpace: "nowrap",
                           }}
@@ -316,9 +420,8 @@ export default function Replays({
                         aria-label="Delete replay from cache"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm("Delete this replay from local database cache?")) {
-                            onDeleteReplay(r.id);
-                          }
+                          setRemoveSnapshot(true);
+                          setPendingDelete(r.id);
                         }}
                       >
                         <Trash2 size={13} color="var(--danger)" />

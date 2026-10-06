@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Minus, Square, Copy, X, ShieldAlert } from "lucide-react";
+import { Minus, Square, Copy, X } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 interface TitleBarProps {
@@ -13,14 +13,23 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     try {
-      if (typeof window !== "undefined" && Boolean((window as any).__TAURI_INTERNALS__)) {
+      if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
         const appWindow = getCurrentWindow();
-        appWindow.isMaximized().then(setIsMaximized).catch(() => {});
-        appWindow.onResized(() => {
-          appWindow.isMaximized().then(setIsMaximized).catch(() => {});
-        }).then((fn) => {
-          unlisten = fn;
-        }).catch(() => {});
+        appWindow
+          .isMaximized()
+          .then(setIsMaximized)
+          .catch(() => {});
+        appWindow
+          .onResized(() => {
+            appWindow
+              .isMaximized()
+              .then(setIsMaximized)
+              .catch(() => {});
+          })
+          .then((fn) => {
+            unlisten = fn;
+          })
+          .catch(() => {});
       }
     } catch (e) {
       console.warn("TitleBar window integration unavailable:", e);
@@ -30,7 +39,9 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
 
   const handleMinimize = () => {
     try {
-      getCurrentWindow().minimize().catch(() => {});
+      getCurrentWindow()
+        .minimize()
+        .catch(() => {});
     } catch (e) {
       console.warn("Minimize failed:", e);
     }
@@ -38,7 +49,9 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
 
   const handleMaximize = () => {
     try {
-      getCurrentWindow().toggleMaximize().catch(() => {});
+      getCurrentWindow()
+        .toggleMaximize()
+        .catch(() => {});
     } catch (e) {
       console.warn("Maximize failed:", e);
     }
@@ -46,7 +59,9 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
 
   const handleClose = () => {
     try {
-      getCurrentWindow().close().catch(() => {});
+      getCurrentWindow()
+        .close()
+        .catch(() => {});
     } catch (e) {
       console.warn("Close failed:", e);
     }
@@ -59,7 +74,14 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
         <div className="titlebar-logo-badge">
           <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
             <defs>
-              <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <linearGradient
+                id="logoGrad"
+                x1="0"
+                y1="0"
+                x2="32"
+                y2="32"
+                gradientUnits="userSpaceOnUse"
+              >
                 <stop stopColor="#38BDF8" />
                 <stop offset="0.5" stopColor="#6366F1" />
                 <stop offset="1" stopColor="#A855F7" />
@@ -74,7 +96,11 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
 
         <div
           className={`titlebar-match-pill ${aiConnected ? "ai-on" : "ai-off"}`}
-          title={aiConnected ? "Cloud AI consent is on and a provider key is detected" : "Enable cloud consent and add a provider key in Settings"}
+          title={
+            aiConnected
+              ? "Cloud AI consent is on and a provider key is detected"
+              : "Enable cloud consent and add a provider key in Settings"
+          }
         >
           <span className="pill-dot" />
           <span>{aiConnected ? "Cloud configured" : "Local mode"}</span>
@@ -98,7 +124,11 @@ export default function TitleBar({ title = "AntiRL", aiConnected = false }: Titl
           onClick={handleMaximize}
           aria-label="Toggle Maximize"
         >
-          {isMaximized ? <Copy size={12} style={{ transform: "rotate(90deg)" }} /> : <Square size={12} />}
+          {isMaximized ? (
+            <Copy size={12} style={{ transform: "rotate(90deg)" }} />
+          ) : (
+            <Square size={12} />
+          )}
         </button>
         <button
           className="titlebar-btn titlebar-close"

@@ -1,17 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  Play,
-  TrendingUp,
-  Shield,
-  Zap,
-  Target,
-  ArrowRight,
-  Flame,
-  Award,
-  Sparkles,
-  SlidersHorizontal,
-  ChevronRight,
-} from "lucide-react";
+import { Play, Shield, Zap, Flame, Award, SlidersHorizontal, ChevronRight } from "lucide-react";
 import type { ReplaySummary, Settings, ProgressReport } from "../types";
 import { timeLabel } from "../ReplayViewer";
 import RankBadge from "../components/RankBadge";
@@ -33,17 +21,18 @@ export default function Overview({
   onSelectReplay,
   onNavigate,
   onOpenOnboarding,
-  onAskCoach,
 }: OverviewProps) {
   const playerName = settings.player_name || "Unconfirmed Player";
   const primaryRank = settings.rank_2v2 || "Unranked";
   const lastReplay = replays[0];
 
   const totalMatches = replays.length;
-  const isWin = (r: typeof replays[0]) => {
+  const isWin = (r: (typeof replays)[0]) => {
     const p = r.players?.find((p) => p.id === settings.player_id) || r.players?.[0];
     const myTeam = p?.team ?? 0;
-    return myTeam === 0 ? (r.blue_score ?? 0) > (r.orange_score ?? 0) : (r.orange_score ?? 0) > (r.blue_score ?? 0);
+    return myTeam === 0
+      ? (r.blue_score ?? 0) > (r.orange_score ?? 0)
+      : (r.orange_score ?? 0) > (r.blue_score ?? 0);
   };
   const { winRate } = useMemo(() => {
     const w = replays.filter(isWin).length;
@@ -77,7 +66,8 @@ export default function Overview({
               )}
             </div>
             <p className="hero-tagline">
-              {totalMatches} local {totalMatches === 1 ? "match" : "matches"} parsed from full replay telemetry. Zero guessed statistics.
+              {totalMatches} local {totalMatches === 1 ? "match" : "matches"} parsed from full
+              replay telemetry. Zero guessed statistics.
             </p>
           </div>
         </div>
@@ -165,7 +155,9 @@ export default function Overview({
         <div className="recent-header">
           <div>
             <h3 className="section-title">Recent Matches</h3>
-            <p className="section-subtitle">Click any match to launch the broadcast 3D Replay Studio</p>
+            <p className="section-subtitle">
+              Click any match to launch the broadcast 3D Replay Studio
+            </p>
           </div>
           <button className="btn secondary sm" onClick={() => onNavigate("replays")}>
             View All ({replays.length}) <ChevronRight size={14} />
@@ -218,7 +210,12 @@ export default function Overview({
                 </div>
 
                 <div className="match-action-col">
-                  <button className="icon-btn primary" title="Launch 3D Replay Studio" aria-label="Launch 3D Replay Studio" tabIndex={-1}>
+                  <button
+                    className="icon-btn primary"
+                    title="Launch 3D Replay Studio"
+                    aria-label="Launch 3D Replay Studio"
+                    tabIndex={-1}
+                  >
                     <Play size={14} />
                   </button>
                 </div>

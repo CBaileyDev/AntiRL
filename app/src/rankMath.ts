@@ -50,10 +50,17 @@ export const parseRankDivision = (rankStr?: string | null): number => {
 export function rankAssetIndex(rank: string | null | undefined): number {
   const tier = parseRankTier(rank);
   const index = RANK_TIERS.indexOf(tier);
-  return index < 0 ? 0 : tier === "Supersonic Legend" ? 22 : index * 3 + (parseRankDivision(rank) || 1);
+  return index < 0
+    ? 0
+    : tier === "Supersonic Legend"
+      ? 22
+      : index * 3 + (parseRankDivision(rank) || 1);
 }
 
 /** Highest competitive rank across the supplied playlists. */
 export function highestCompetitiveRank(ranks: readonly (string | null | undefined)[]): string {
-  return ranks.reduce<string>((best, rank) => rankAssetIndex(rank) > rankAssetIndex(best) ? rank! : best, "Unranked");
+  return ranks.reduce<string>(
+    (best, rank) => (rankAssetIndex(rank) > rankAssetIndex(best) ? rank! : best),
+    "Unranked",
+  );
 }

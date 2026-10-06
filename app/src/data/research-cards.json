@@ -1,5 +1,46 @@
 [
- {"id":"physics-threshold-cap-v1","review_status":"approved_limited_fact","modes":["All","1v1","2v2","3v3"],"tags":["boost","supersonic","speed"],"claim":"The documented supersonic entry threshold is 2200 uu/s while the maximum car speed is 2300 uu/s. Boost-active duration above the threshold is a different observation from threshold uptime, and neither proves waste or decision quality.","source_url":"https://www.rocketleague.com/news/patch-notes-v1-78","source_date":"2020-06-16","source_locator":"Supersonic Check [UNCHANGED]","review_date":"2026-10-05","evidence_type":"historical official mechanic documentation","limitations":"The article records a June 30 rollback of its changed collision checks. Use only the explicitly unchanged threshold facts; do not assert exact current collision behavior or reconstruct the game state from speed alone.","counterexamples":"Boost may accelerate above entry threshold; steering or aerial redirection needs contextual review.","practical_cue":"Inspect the purpose of the boost interval before considering a different action."},
- {"id":"small-pad-quantity-v1","review_status":"approved_limited_fact","modes":["All","1v1","2v2","3v3"],"tags":["pad","boost","resource"],"claim":"The RLBot community values reference reports that a small pad gives 12 boost. This does not establish a universal boost target or the availability of a pad in a replay.","source_url":"https://wiki.rlbot.org/v5/botmaking/useful-game-values/","source_locator":"Boost Pads","review_date":"2026-10-05","evidence_type":"community technical reference","limitations":"AntiRL does not currently observe pad pickup/cooldown state. Decorative pad glow is not evidence of availability or collection. Map locations can vary.","counterexamples":"A convenient route can be unsafe under pressure or the pad can be empty.","practical_cue":"Practise a recovery route in freeplay, then review whether that route preserved your position in a same-mode match."},
- {"id":"progression-evidence-limit-v1","review_status":"approved_limit_only","modes":["All","1v1","2v2","3v3"],"tags":["rank","forecast","weeks","grade","practice"],"claim":"Miao et al. studied cognitive differences between esports experts and amateurs. The study does not supply Rocket League promotion timelines, calibrated player grades, or proof that a particular drill causes rank gains.","source_url":"https://pubmed.ncbi.nlm.nih.gov/39131624/","source_date":"2024-08-07","source_locator":"Abstract and methods","review_date":"2026-10-05","evidence_type":"meta-analysis; not a Rocket League longitudinal cohort","limitations":"No comparable longitudinal Rocket League dataset or forecast calibration was supplied. Abstain from grades and timelines.","counterexamples":"Players with similar ranks and weekly hours can have different learning histories and match conditions.","practical_cue":"Offer an optional practice block and a same-mode replay review checkpoint, not a promotion date."}
+  {
+    "id": "physics-threshold-cap-v1",
+    "review_status": "approved_limited_fact",
+    "modes": ["All", "1v1", "2v2", "3v3"],
+    "tags": ["boost", "supersonic", "speed"],
+    "claim": "The documented supersonic entry threshold is 2200 uu/s while the maximum car speed is 2300 uu/s. Boost-active duration above the threshold is a different observation from threshold uptime, and neither proves waste or decision quality.",
+    "source_url": "https://www.rocketleague.com/news/patch-notes-v1-78",
+    "source_date": "2020-06-16",
+    "source_locator": "Supersonic Check [UNCHANGED]",
+    "review_date": "2026-10-05",
+    "evidence_type": "historical official mechanic documentation",
+    "limitations": "The article records a June 30 rollback of its changed collision checks. Use only the explicitly unchanged threshold facts; do not assert exact current collision behavior or reconstruct the game state from speed alone.",
+    "counterexamples": "Boost may accelerate above entry threshold; steering or aerial redirection needs contextual review.",
+    "practical_cue": "Inspect the purpose of the boost interval before considering a different action."
+  },
+  {
+    "id": "small-pad-quantity-v1",
+    "review_status": "approved_limited_fact",
+    "modes": ["All", "1v1", "2v2", "3v3"],
+    "tags": ["pad", "boost", "resource"],
+    "claim": "The RLBot community values reference reports that a small pad gives 12 boost. This does not establish a universal boost target or the availability of a pad in a replay.",
+    "source_url": "https://wiki.rlbot.org/v5/botmaking/useful-game-values/",
+    "source_locator": "Boost Pads",
+    "review_date": "2026-10-05",
+    "evidence_type": "community technical reference",
+    "limitations": "AntiRL does not currently observe pad pickup/cooldown state. Decorative pad glow is not evidence of availability or collection. Map locations can vary.",
+    "counterexamples": "A convenient route can be unsafe under pressure or the pad can be empty.",
+    "practical_cue": "Practise a recovery route in freeplay, then review whether that route preserved your position in a same-mode match."
+  },
+  {
+    "id": "progression-evidence-limit-v1",
+    "review_status": "approved_limit_only",
+    "modes": ["All", "1v1", "2v2", "3v3"],
+    "tags": ["rank", "forecast", "weeks", "grade", "practice"],
+    "claim": "Miao et al. studied cognitive differences between esports experts and amateurs. The study does not supply Rocket League promotion timelines, calibrated player grades, or proof that a particular drill causes rank gains.",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/39131624/",
+    "source_date": "2024-08-07",
+    "source_locator": "Abstract and methods",
+    "review_date": "2026-10-05",
+    "evidence_type": "meta-analysis; not a Rocket League longitudinal cohort",
+    "limitations": "No comparable longitudinal Rocket League dataset or forecast calibration was supplied. Abstain from grades and timelines.",
+    "counterexamples": "Players with similar ranks and weekly hours can have different learning histories and match conditions.",
+    "practical_cue": "Offer an optional practice block and a same-mode replay review checkpoint, not a promotion date."
+  }
 ]
