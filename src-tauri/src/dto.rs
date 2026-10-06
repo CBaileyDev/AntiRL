@@ -10,6 +10,29 @@ pub fn decode<T: serde::de::DeserializeOwned>(value: Value) -> Result<T, crate::
     })
 }
 
+/// Bounded what-if options. Anything else (paths, checkpoints, identities) stays backend-controlled.
+#[derive(Debug, Serialize, Deserialize, Type)]
+pub struct SimOptionsInput {
+    pub steps: Option<u32>,
+    pub deterministic: Option<bool>,
+    pub run: Option<String>,
+}
+impl SimOptionsInput {
+    pub fn into_value(self) -> Value {
+        let mut v = serde_json::Map::new();
+        if let Some(s) = self.steps {
+            v.insert("steps".into(), s.into());
+        }
+        if let Some(d) = self.deterministic {
+            v.insert("deterministic".into(), d.into());
+        }
+        if let Some(r) = self.run.filter(|r| !r.is_empty()) {
+            v.insert("run".into(), r.into());
+        }
+        Value::Object(v)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Type)]
 pub struct ModeProfile {
     pub current_rank: Option<String>,

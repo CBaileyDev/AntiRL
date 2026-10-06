@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import RankSelect from "../components/RankSelect";
+import SimSettings from "../components/SimSettings";
 
 import type { AiStatusDto } from "../bindings";
 import type { Settings, MemoryNote } from "../types";
@@ -511,6 +512,8 @@ export default function SettingsPage({
           </div>
         </div>
       </div>
+
+      <SimSettings />
 
       {/* AI Provider & Models */}
 

@@ -34,20 +34,44 @@ pub struct ReplaySummary {
     pub map_name: Option<String>,
 }
 
-#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(specta::Type, Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct Body {
     pub position: [f32; 3],
     pub rotation: [f32; 4],
     pub velocity: Option<[f32; 3]>,
+    /// rad/s, quantized to 0.01. Absent in frames stored before analysis-3.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub angular_velocity: Option<[f32; 3]>,
 }
 
-#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(specta::Type, Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct Car {
     pub player_id: String,
     #[serde(flatten)]
     pub body: Body,
     pub boost: Option<f32>,
     pub discontinuity: bool,
+    /// Raw replicated controller bytes, 128 neutral. None means not replicated/unavailable
+    /// (including every frame stored before analysis-3), never "neutral".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub throttle: Option<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub steer: Option<u8>,
+    /// Replicated component parity bits (odd = active). None = unavailable.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub boost_active: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub jump_active: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub double_jump_active: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dodge_active: Option<bool>,
+    /// Replicated handbrake/powerslide boolean.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub handbrake: Option<bool>,
+    /// Only recorded while dodge_active is true; quantized to 0.01.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dodge_torque: Option<[f32; 3]>,
 }
 
 #[derive(specta::Type, Debug, Clone, Serialize, Deserialize)]
@@ -118,6 +142,54 @@ pub struct ReplayAnalysis {
     pub metrics: Vec<Metric>,
     pub events: Vec<Event>,
     pub coverage: Coverage,
+    /// Version of the frame/event capture schema. None = captured before analysis-3.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub analysis_version: Option<String>,
+    /// Boost pad pickups at native frame rate (not render-sampled).
+    #[serde(default)]
+    pub pad_events: Vec<PadEvent>,
+    /// Replay-reported shot/save/assist events with the player and ball state at the event.
+    #[serde(default)]
+    pub shots: Vec<StatSample>,
+}
+
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PadEvent {
+    pub time: f64,
+    pub frame: usize,
+    pub pad_id: String,
+    pub player_id: Option<String>,
+    pub player_position: Option<[f32; 3]>,
+    pub sequence: u8,
+}
+
+/// Replay-reported statistic event. `kind` is shot | save | assist. Shot geometry is the
+/// decoder's measurement at the touch; it is not a probability or an expected-goals value.
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct StatSample {
+    pub time: f64,
+    pub frame: usize,
+    pub kind: String,
+    pub player_id: String,
+    pub team: u8,
+    pub player_position: Option<[f32; 3]>,
+    #[serde(default)]
+    pub shot: Option<ShotSample>,
+}
+
+#[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ShotSample {
+    pub touch_position: [f32; 3],
+    pub ball_position: [f32; 3],
+    pub ball_velocity: Option<[f32; 3]>,
+    pub ball_speed: Option<f32>,
+    pub player_velocity: Option<[f32; 3]>,
+    pub player_speed: Option<f32>,
+    pub player_distance_to_ball: Option<f32>,
+    pub distance_to_goal_center: f32,
+    pub distance_to_goal_line: f32,
+    pub ball_goal_alignment: Option<f32>,
+    pub ball_speed_toward_goal: Option<f32>,
 }
 
 #[derive(specta::Type, Debug, Clone, Serialize, Deserialize, PartialEq)]

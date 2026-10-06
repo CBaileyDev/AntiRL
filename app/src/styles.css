@@ -3934,3 +3934,109 @@ select.chat-input {
   outline: 2px solid var(--accent-hover);
   outline-offset: 2px;
 }
+
+/* Bot-likeness, xG and counterfactual panels */
+.bot-list {
+  list-style: none;
+  padding: 0;
+}
+.bot-list > li {
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+.bot-index {
+  font-weight: 700;
+}
+.bot-signals {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  display: block;
+  overflow-x: auto;
+}
+.bot-signals th,
+.bot-signals td {
+  text-align: left;
+  padding: 3px 8px 3px 0;
+  vertical-align: top;
+}
+.bot-calibration,
+.sim-refusal {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+.xg-unavailable {
+  border-left: 3px solid var(--muted);
+  padding-left: 8px;
+}
+.xg-limits {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.sim-check {
+  flex-direction: row !important;
+  align-items: center;
+}
+.sim-path {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  margin: 8px 0;
+}
+.sim-path input {
+  width: 100%;
+  min-width: 0;
+}
+.sim-plot {
+  margin: 8px 0;
+  max-width: 100%;
+}
+.sim-plot svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+}
+.sim-plot figcaption {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.sim-field {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 40;
+}
+.sim-lines {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 30;
+}
+.sim-plot polyline {
+  fill: none;
+  stroke-width: 70;
+  stroke-linejoin: round;
+}
+.sim-actual-ball {
+  stroke: var(--text);
+}
+.sim-sim-ball {
+  stroke: var(--text);
+  stroke-dasharray: 220 160;
+  opacity: 0.6;
+}
+.sim-actual-car {
+  stroke: var(--accent);
+}
+.sim-sim-car {
+  stroke: var(--accent);
+  stroke-dasharray: 220 160;
+  opacity: 0.6;
+}
+.sim-start {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 50;
+}

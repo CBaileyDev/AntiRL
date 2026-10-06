@@ -409,7 +409,12 @@ pub fn decode(path: &Path, bytes: &[u8]) -> Result<ReplayAnalysis, String> {
         map_name: string(&replay.properties, "MapName"),
     };
     let render_frames = collector.frames.len();
+    let pad_events = std::mem::take(&mut collector.pad_events);
+    let shots = std::mem::take(&mut collector.shots);
     let analysis = ReplayAnalysis {
+        analysis_version: Some(ANALYSIS_VERSION.into()),
+        pad_events,
+        shots,
         summary,
         players,
         frames: collector.frames,
@@ -470,7 +475,10 @@ pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
             && b.rotation.iter().map(|v| v * v).sum::<f32>() < 1.2
             && b.velocity
                 .is_none_or(|v| v.iter().all(|n| n.is_finite() && n.abs() < 200_000.0))
+            && b.angular_velocity
+                .is_none_or(|v| v.iter().all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY))
     };
+    let valid_pos = |p: &[f32; 3]| p.iter().all(|v| v.is_finite() && v.abs() < 200_000.0);
     let mut previous = -1.0;
     for f in &a.frames {
         if !f.time.is_finite()
@@ -492,6 +500,12 @@ pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
             {
                 return Err("Analysis car state invalid".into());
             }
+            if c.dodge_torque
+                .is_some_and(|t| t.iter().any(|n| !n.is_finite() || n.abs() > 10.0))
+                || (c.dodge_torque.is_some() && c.dodge_active != Some(true))
+            {
+                return Err("Analysis car controller state invalid".into());
+            }
         }
         previous = f.time;
     }
@@ -512,12 +526,72 @@ pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
             return Err("Analysis event references or time invalid".into());
         }
     }
+    if a.pad_events.len() > 100_000 || a.shots.len() > 10_000 {
+        return Err("Analysis pad/shot collection limits invalid".into());
+    }
+    let time_ok = |t: f64| t.is_finite() && (0.0..=a.summary.duration_seconds + 0.1).contains(&t);
+    for e in &a.pad_events {
+        if !time_ok(e.time)
+            || e.pad_id.is_empty()
+            || e.pad_id.len() > 64
+            || e.player_id
+                .as_ref()
+                .is_some_and(|p| !ids.contains(p.as_str()))
+            || e.player_position.as_ref().is_some_and(|p| !valid_pos(p))
+        {
+            return Err("Analysis pad event invalid".into());
+        }
+    }
+    for e in &a.shots {
+        let finite_opt = |v: Option<f32>| v.is_none_or(|n| n.is_finite());
+        if !time_ok(e.time)
+            || !["shot", "save", "assist"].contains(&e.kind.as_str())
+            || e.team > 1
+            || !ids.contains(e.player_id.as_str())
+            || e.player_position.as_ref().is_some_and(|p| !valid_pos(p))
+            || e.shot.as_ref().is_some_and(|s| {
+                !valid_pos(&s.touch_position)
+                    || !valid_pos(&s.ball_position)
+                    || s.ball_velocity.as_ref().is_some_and(|p| !valid_pos(p))
+                    || s.player_velocity.as_ref().is_some_and(|p| !valid_pos(p))
+                    || !s.distance_to_goal_center.is_finite()
+                    || !s.distance_to_goal_line.is_finite()
+                    || ![
+                        s.ball_speed,
+                        s.player_speed,
+                        s.player_distance_to_ball,
+                        s.ball_goal_alignment,
+                        s.ball_speed_toward_goal,
+                    ]
+                    .into_iter()
+                    .all(finite_opt)
+            })
+        {
+            return Err("Analysis shot sample invalid".into());
+        }
+    }
     for m in &a.metrics {
         if !ids.contains(m.player_id.as_str()) || m.value.is_some_and(|v| !v.is_finite()) {
             return Err("Analysis metric invalid".into());
         }
     }
     Ok(())
+}
+
+/// Capture-schema version stored in `ReplayAnalysis.analysis_version`. analysis-3 adds
+/// angular velocity, controller/component state, pad pickups and shot samples. Metric
+/// formulas are unchanged, so `metrics-2` is intentionally retained.
+pub const ANALYSIS_VERSION: &str = "analysis-3";
+
+/// Rocket League caps car angular speed at 5.5 rad/s; allow margin for ball/rounding.
+const MAX_ANGULAR_VELOCITY: f32 = 10.0;
+
+fn quantize(v: f32) -> f32 {
+    (v * 100.0).round() / 100.0
+}
+
+fn vec3(v: &boxcars::Vector3f) -> [f32; 3] {
+    [v.x, v.y, v.z]
 }
 
 fn body(r: boxcars::RigidBody) -> Option<Body> {
@@ -534,10 +608,18 @@ fn body(r: boxcars::RigidBody) -> Option<Body> {
         .linear_velocity
         .map(|v| [v.x, v.y, v.z])
         .filter(|v| v.iter().all(|n| n.is_finite()));
+    let angular_velocity = r
+        .angular_velocity
+        // subtr-actor reports the replicated angular velocity in 1/100 rad/s (observed
+        // maximum 549.97, matching Rocket League's 5.5 rad/s cap). Convert to rad/s. A value
+        // beyond the physical cap means an unrecognised scale: treat as unavailable.
+        .map(|v| [quantize(v.x / 100.0), quantize(v.y / 100.0), quantize(v.z / 100.0)])
+        .filter(|v| v.iter().all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY));
     Some(Body {
         position,
         rotation,
         velocity,
+        angular_velocity,
     })
 }
 
@@ -606,6 +688,8 @@ struct EvidenceCollector {
     match_id: String,
     frames: Vec<Frame>,
     events: Vec<Event>,
+    pad_events: Vec<PadEvent>,
+    shots: Vec<StatSample>,
     acc: HashMap<String, Accumulator>,
     previous: Option<Frame>,
     last_render_time: f64,
@@ -624,6 +708,8 @@ impl EvidenceCollector {
             match_id: match_id.into(),
             frames: vec![],
             events: vec![],
+            pad_events: vec![],
+            shots: vec![],
             acc: HashMap::new(),
             previous: None,
             last_render_time: -1.0,
@@ -818,13 +904,70 @@ impl Collector for EvidenceCollector {
                 .ok()
                 .filter(|b| b.is_finite() && *b >= 0.0 && *b <= 255.1)
                 .map(|b| (b / 2.55).clamp(0.0, 100.0));
-            flags.insert(pid.clone(), p.get_boost_active(id).ok().map(|b| b % 2 == 1));
+            let boost_active = p.get_boost_active(id).ok().map(|b| b % 2 == 1);
+            flags.insert(pid.clone(), boost_active);
             teams.insert(pid.clone(), p.get_player_is_team_0(id).ok());
+            let dodge_active = p.get_dodge_active(id).ok().map(|b| b % 2 == 1);
             cars.push(Car {
                 player_id: pid,
                 body: b,
                 boost,
                 discontinuity: false,
+                throttle: p.get_throttle(id).ok(),
+                steer: p.get_steer(id).ok(),
+                boost_active,
+                jump_active: p.get_jump_active(id).ok().map(|b| b % 2 == 1),
+                double_jump_active: p.get_double_jump_active(id).ok().map(|b| b % 2 == 1),
+                dodge_active,
+                handbrake: p.get_powerslide_active(id).ok(),
+                dodge_torque: if dodge_active == Some(true) {
+                    p.get_dodge_torque(id)
+                        .ok()
+                        .map(|t| [quantize(t.0), quantize(t.1), quantize(t.2)])
+                        .filter(|t| t.iter().all(|n| n.is_finite()))
+                } else {
+                    None
+                },
+            });
+        }
+        for e in p.current_frame_boost_pad_events() {
+            if let subtr_actor::BoostPadEventKind::PickedUp { sequence } = e.kind {
+                self.pad_events.push(PadEvent {
+                    time: f64::from(e.time),
+                    frame: e.frame,
+                    pad_id: e.pad_id.clone(),
+                    player_id: e.player.as_ref().map(|r| player_id(r, &self.match_id).0),
+                    player_position: e.player_position.as_ref().map(vec3),
+                    sequence,
+                });
+            }
+        }
+        for e in p.current_frame_player_stat_events() {
+            self.shots.push(StatSample {
+                time: f64::from(e.time),
+                frame: e.frame,
+                kind: match e.kind {
+                    subtr_actor::PlayerStatEventKind::Shot => "shot",
+                    subtr_actor::PlayerStatEventKind::Save => "save",
+                    subtr_actor::PlayerStatEventKind::Assist => "assist",
+                }
+                .into(),
+                player_id: player_id(&e.player, &self.match_id).0,
+                team: if e.is_team_0 { 0 } else { 1 },
+                player_position: e.player_position.as_ref().map(vec3),
+                shot: e.shot.as_ref().map(|m| ShotSample {
+                    touch_position: vec3(&m.shot_touch_position),
+                    ball_position: vec3(&m.ball_position),
+                    ball_velocity: m.ball_velocity.as_ref().map(vec3),
+                    ball_speed: m.ball_speed,
+                    player_velocity: m.player_velocity.as_ref().map(vec3),
+                    player_speed: m.player_speed,
+                    player_distance_to_ball: m.player_distance_to_ball,
+                    distance_to_goal_center: m.distance_to_goal_center,
+                    distance_to_goal_line: m.distance_to_goal_line,
+                    ball_goal_alignment: m.ball_goal_alignment,
+                    ball_speed_toward_goal: m.ball_speed_toward_goal,
+                }),
             });
         }
         let dt = self.previous.as_ref().map(|f| time - f.time).unwrap_or(0.0);
@@ -1392,6 +1535,9 @@ mod tests {
                 live_play_seconds: 50.0,
                 notes: vec![],
             },
+            analysis_version: None,
+            pad_events: vec![],
+            shots: vec![],
         };
         assert!(validate_analysis(&analysis).is_err());
     }
@@ -1412,6 +1558,7 @@ mod tests {
                 position: [0.0, 0.0, 100.0],
                 rotation: [0.0, 0.0, 0.0, 1.0],
                 velocity: Some([0.0, 0.0, 0.0]),
+                angular_velocity: None,
             }),
             cars: vec![Car {
                 player_id: "steam:123".into(),
@@ -1419,9 +1566,11 @@ mod tests {
                     position: [100.0, 200.0, 17.0],
                     rotation: [0.0, 0.0, 0.0, 1.0],
                     velocity: Some([0.0, 0.0, 0.0]),
+                    angular_velocity: None,
                 },
                 boost: Some(33.0),
                 discontinuity: false,
+                ..Default::default()
             }],
             match_clock_seconds: Some(300),
             overtime: None,
@@ -1489,7 +1638,95 @@ mod tests {
                 live_play_seconds: 1.0,
                 notes: vec![],
             },
+            analysis_version: Some(ANALYSIS_VERSION.into()),
+            pad_events: vec![],
+            shots: vec![],
         };
         assert!(validate_analysis(&analysis).is_ok());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].body.angular_velocity = Some([0.0, f32::NAN, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].body.angular_velocity = Some([0.0, 50.0, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
+        assert!(validate_analysis(&bad).is_err(), "torque without dodge_active");
+        let mut ok = analysis.clone();
+        ok.frames[0].cars[0].dodge_active = Some(true);
+        ok.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
+        assert!(validate_analysis(&ok).is_ok());
+        let shot = StatSample {
+            time: 5.0,
+            frame: 10,
+            kind: "shot".into(),
+            player_id: "steam:123".into(),
+            team: 0,
+            player_position: Some([0.0, 3000.0, 17.0]),
+            shot: None,
+        };
+        let mut ok = analysis.clone();
+        ok.shots = vec![shot.clone()];
+        ok.pad_events = vec![PadEvent {
+            time: 2.0,
+            frame: 4,
+            pad_id: "pad-1".into(),
+            player_id: None,
+            player_position: None,
+            sequence: 1,
+        }];
+        assert!(validate_analysis(&ok).is_ok());
+        let mut bad = ok.clone();
+        bad.shots[0].player_id = "steam:unknown".into();
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok.clone();
+        bad.shots[0].kind = "xg".into();
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok.clone();
+        bad.shots[0].player_position = Some([f32::INFINITY, 0.0, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok;
+        bad.pad_events[0].time = f64::NAN;
+        assert!(validate_analysis(&bad).is_err());
+    }
+
+    #[test]
+    fn old_stored_frames_without_analysis_3_fields_still_deserialize() {
+        let old = r#"{"time":1.5,"ball":{"position":[0,0,93],"rotation":[0,0,0,1],"velocity":[1,2,3]},
+            "cars":[{"player_id":"steam:1","position":[1,2,3],"rotation":[0,0,0,1],"velocity":null,"boost":50.0,"discontinuity":false}],
+            "match_clock_seconds":120,"live_play":true,"discontinuity":false}"#;
+        let f: Frame = serde_json::from_str(old).unwrap();
+        assert_eq!(f.cars[0].throttle, None);
+        assert_eq!(f.cars[0].handbrake, None);
+        assert_eq!(f.cars[0].dodge_torque, None);
+        assert_eq!(f.ball.as_ref().unwrap().angular_velocity, None);
+        // Unavailable fields are omitted again on re-serialization (no fabricated neutral values).
+        let out = serde_json::to_string(&f).unwrap();
+        assert!(!out.contains("throttle") && !out.contains("angular_velocity"));
+        // Old whole-analysis JSON lacking the new lists.
+        let a: ReplayAnalysis = serde_json::from_str(
+            r#"{"summary":{"id":"x","file_hash":"","file_name":"","replay_name":"","played_at":null,"mode":"2v2","duration_seconds":1.0,"blue_score":null,"orange_score":null,"players":[],"status":"ready","error":null,"source_path":"","match_type":null,"playlist_id":null,"recorder_name":null,"recorder_player_id":null,"content_hash":"","map_name":null},
+            "players":[],"frames":[],"metrics":[],"events":[],"coverage":{"metadata":true,"positions":true,"boost":true,"goals":true,"touches":true,"decoded_frames":0,"render_frames":0,"live_play_seconds":0.0,"notes":[]}}"#,
+        )
+        .unwrap();
+        assert!(a.analysis_version.is_none() && a.pad_events.is_empty() && a.shots.is_empty());
+    }
+
+    #[test]
+    fn angular_velocity_is_quantized_and_nonfinite_dropped() {
+        let rb = |w: boxcars::Vector3f| boxcars::RigidBody {
+            sleeping: false,
+            location: boxcars::Vector3f { x: 0.0, y: 0.0, z: 17.0 },
+            rotation: boxcars::Quaternion { x: 0.0, y: 0.0, z: 0.0, w: 1.0 },
+            linear_velocity: None,
+            angular_velocity: Some(w),
+        };
+        let b = body(rb(boxcars::Vector3f { x: 123.456, y: -0.4, z: 550.0 })).unwrap();
+        assert_eq!(b.angular_velocity, Some([1.23, 0.0, 5.5]));
+        // Unrecognised scale (beyond physical cap) is unavailable, not stored.
+        let b = body(rb(boxcars::Vector3f { x: 5000.0, y: 0.0, z: 0.0 })).unwrap();
+        assert_eq!(b.angular_velocity, None);
+        let b = body(rb(boxcars::Vector3f { x: f32::NAN, y: 0.0, z: 0.0 })).unwrap();
+        assert_eq!(b.angular_velocity, None);
     }
 }

@@ -793,6 +793,12 @@ impl CoachService {
                         " ot ",
                         "recurring",
                         "opponent",
+                        "bot",
+                        "xg",
+                        "expected goal",
+                        "what if",
+                        "what-if",
+                        "counterfactual",
                     ]
                     .iter()
                     .any(|s| lower.contains(s));

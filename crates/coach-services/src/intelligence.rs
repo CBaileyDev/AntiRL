@@ -3,7 +3,7 @@ use super::*;
 use rusqlite::OptionalExtension;
 use std::collections::{BTreeMap, BTreeSet};
 
-const VERSION: &str = "situations-2";
+const VERSION: &str = "situations-3";
 fn number(v: &Value) -> Option<f64> {
     v.as_f64().filter(|n| n.is_finite())
 }

@@ -601,7 +601,7 @@ mod tests {
             .unwrap();
         drop(s);
         let db = Connection::open(d.path().join("coach.sqlite3")).unwrap();
-        db.execute_batch("DROP TABLE situation_cache; DROP TABLE situation_reviews; DROP TABLE camera_profiles; DROP TABLE detector_reports; ALTER TABLE replays DROP COLUMN intelligence_revision; DROP TABLE transfer_checkins; DROP TABLE transfer_cycles; ALTER TABLE training_sessions DROP COLUMN logged_at; ALTER TABLE training_sessions DROP COLUMN completion_source; DELETE FROM schema_migrations WHERE version>=6; PRAGMA user_version=5;").unwrap();
+        db.execute_batch("DROP TABLE situation_cache; DROP TABLE situation_reviews; DROP TABLE camera_profiles; DROP TABLE detector_reports; DROP TABLE IF EXISTS bot_labels; ALTER TABLE replays DROP COLUMN intelligence_revision; DROP TABLE transfer_checkins; DROP TABLE transfer_cycles; ALTER TABLE training_sessions DROP COLUMN logged_at; ALTER TABLE training_sessions DROP COLUMN completion_source; DELETE FROM schema_migrations WHERE version>=6; PRAGMA user_version=5;").unwrap();
         drop(db);
         let s = CoachService::open(d.path()).unwrap();
         s.start_transfer("2v2", &p, None, None, None).unwrap();

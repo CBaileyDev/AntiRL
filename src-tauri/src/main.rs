@@ -128,7 +128,19 @@ fn ipc_builder() -> tauri_specta::Builder<tauri::Wry> {
             commands::resolve_identity,
             commands::get_import_status,
             commands::get_cloud_preview,
-            commands::retry_failed_imports
+            commands::retry_failed_imports,
+            commands::bot_likeness,
+            commands::set_bot_label,
+            commands::bot_labels,
+            commands::bot_calibration_report,
+            commands::xg_model_status,
+            commands::xg_replay_shots,
+            commands::xg_player_summary,
+            commands::sim_status,
+            commands::set_sim_path,
+            commands::sim_reconstruct_state,
+            commands::sim_validate_ball,
+            commands::sim_what_if
         ])
 }
 

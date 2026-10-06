@@ -62,6 +62,9 @@ impl CoachService {
             "search_training_packs" => {
                 self.search_training_packs(args["query"].as_str().unwrap_or(""), mode, 3)
             }
+            "get_bot_likeness" => self.tool_bot_likeness(mode, player, args),
+            "get_xg_summary" => self.tool_xg_summary(mode, player, args),
+            "run_counterfactual" => self.tool_counterfactual(mode, player, args),
             "get_benchmark_summary" => Ok(
                 json!({"status":"unavailable","reason":"No validated comparable benchmark cohort"}),
             ),
@@ -158,5 +161,109 @@ impl CoachService {
             }
             _ => Err("Unsupported read-only evidence tool".into()),
         }
+    }
+}
+
+/// Detector, xG and simulation tools for the Coach. Identity and mode are backend-controlled; the
+/// replay must belong to the confirmed player's mode scope. Results keep their status, limitation
+/// and provenance fields so the model cannot present gated output as a measurement.
+impl CoachService {
+    fn scoped_replay_for_tool(&self, mode: &str, player: &str, id: &str) -> ServiceResult<Value> {
+        let a = self.get_coach_replay(id)?;
+        if (mode != "All" && a["summary"]["mode"] != mode)
+            || !a["players"]
+                .as_array()
+                .is_some_and(|ps| ps.iter().any(|p| p["id"] == player))
+        {
+            return Err("Replay outside personal mode scope".into());
+        }
+        Ok(a)
+    }
+
+    fn tool_bot_likeness(&self, mode: &str, player: &str, args: &Value) -> ServiceResult<Value> {
+        let id = args["replay_id"].as_str().ok_or("Missing replay ID")?;
+        let a = self.scoped_replay_for_tool(mode, player, id)?;
+        let mut out = self.bot_likeness(id)?;
+        let team_of = |pid: &str| {
+            a["players"]
+                .as_array()
+                .and_then(|ps| ps.iter().find(|p| p["id"] == pid))
+                .map(|p| p["team"].clone())
+        };
+        let my_team = team_of(player);
+        // Names and platform ids are not sent: the index describes input style, not a person.
+        if let Some(rows) = out["players"].as_array_mut() {
+            for r in rows.iter_mut() {
+                let pid = r["player_id"].as_str().unwrap_or("").to_string();
+                let role = if pid == player {
+                    "you"
+                } else if team_of(&pid) == my_team {
+                    "teammate"
+                } else {
+                    "opponent"
+                };
+                if let Some(o) = r.as_object_mut() {
+                    o.remove("name");
+                    o.remove("player_id");
+                }
+                r["role"] = json!(role);
+            }
+        }
+        out["usage_note"] = json!("Local heuristic index. Not a probability of cheating and not evidence a person botted. Keyboard and d-pad play are confounders. Report coverage and unavailable states.");
+        Ok(out)
+    }
+
+    fn tool_xg_summary(&self, mode: &str, player: &str, args: &Value) -> ServiceResult<Value> {
+        const XG_NOTE: &str = "Library-trained xG model on a small sample of shots. Not a finishing-skill measure; goals minus xG is noise at this sample size. Per-shot values for a replay are out-of-fold when available, otherwise labelled in-library. Report coverage and unavailable states.";
+        match args["replay_id"].as_str() {
+            None => {
+                let mut out = self.xg_player_summary()?;
+                out["usage_note"] = json!(XG_NOTE);
+                Ok(out)
+            }
+            Some(id) => {
+                self.scoped_replay_for_tool(mode, player, id)?;
+                let mut out = self.xg_replay_shots(id)?;
+                if let Some(shots) = out["shots"].as_array_mut() {
+                    shots.retain(|s| s["player_id"] == player);
+                    let total = shots.len();
+                    shots.truncate(20);
+                    out["your_shots"] = json!(total);
+                }
+                if let Some(o) = out.as_object_mut() {
+                    o.remove("library");
+                }
+                out["usage_note"] = json!(XG_NOTE);
+                Ok(out)
+            }
+        }
+    }
+
+    fn tool_counterfactual(&self, mode: &str, player: &str, args: &Value) -> ServiceResult<Value> {
+        let id = args["replay_id"].as_str().ok_or("Missing replay ID")?;
+        let time = args["time_s"]
+            .as_f64()
+            .filter(|t| t.is_finite() && (0.0..=3600.0).contains(t))
+            .ok_or("time_s must be between 0 and 3600")?;
+        self.scoped_replay_for_tool(mode, player, id)?;
+        // Fixed options: default steps, deterministic policy, newest compatible checkpoint.
+        let mut out = self.sim_what_if(id, time, &json!({}))?;
+        // Compact for the model: status, reasons, labels and a coarse ball track.
+        if let Some(d) = out["decisions"].as_array() {
+            let total = d.len();
+            let track: Vec<Value> = d
+                .iter()
+                .step_by(10)
+                .map(|x| json!({"time":x["time"],"ball":x["ball"]["pos"]}))
+                .collect();
+            out["decisions"] = json!(track);
+            out["decisions_total"] = json!(total);
+            out["decisions_note"] = json!("Every 10th policy step, ball position only");
+        }
+        if let Some(p) = out["policy"].as_object_mut() {
+            p.remove("checkpoint");
+        }
+        out["usage_note"] = json!("One simulated rollout of an RLTRAIN_2 policy of unknown skill from a reconstructed state. It is not a recommendation, not what would have happened, and not a model of any player. Pads, input history and opponent intent are not reconstructed. Report status and refusal reasons.");
+        Ok(out)
     }
 }

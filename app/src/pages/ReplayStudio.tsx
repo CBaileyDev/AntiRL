@@ -11,6 +11,9 @@ import {
   Activity,
 } from "lucide-react";
 import DetectorPanel from "../components/DetectorPanel";
+import BotLikenessPanel from "../components/BotLikenessPanel";
+import CounterfactualPanel from "../components/CounterfactualPanel";
+import { ShotXgPanel } from "../components/XgPanels";
 import ReferenceComparison from "../components/ReferenceComparison";
 import type { GhostReference } from "../components/GhostOverlay";
 import ReplayViewer, { timeLabel } from "../ReplayViewer";
@@ -176,7 +179,10 @@ export default function ReplayStudio({
             currentAnchor={seekTime}
             onChange={setGhost}
           />
+          <BotLikenessPanel replay={replay} />
           <DetectorPanel replay={replay} />
+          <ShotXgPanel replay={replay} />
+          <CounterfactualPanel replay={replay} playerId={activePlayerId} defaultTime={seekTime} />
           <section className="card studio-review-card">
             <div className="studio-section-heading">
               <Target size={16} />

@@ -38,6 +38,9 @@ pub fn validated_plan(text: &str) -> ServiceResult<Vec<(String, Value)>> {
             | "get_training_history"
             | "get_benchmark_summary" => &[],
             "get_mistake_fingerprints" | "get_opponent_history" => &[],
+            "get_bot_likeness" => &["replay_id"],
+            "get_xg_summary" => &["replay_id"],
+            "run_counterfactual" => &["replay_id", "time_s"],
             "search_replay_events" => &["kind", "phase", "review", "cursor", "limit"],
             "list_matches" => &["cursor", "limit"],
             "get_match_metrics" => &["replay_id"],
@@ -65,9 +68,24 @@ pub fn validated_plan(text: &str) -> ServiceResult<Vec<(String, Value)>> {
                 return Err("Invalid text argument".into());
             }
         }
-        for key in ["start_s", "end_s"] {
+        for key in ["start_s", "end_s", "time_s"] {
             if args.get(key).is_some_and(|n| n.as_f64().is_none()) {
                 return Err("Invalid timeline argument".into());
+            }
+        }
+        if tool == "get_bot_likeness" && !args.contains_key("replay_id") {
+            return Err("get_bot_likeness requires replay_id".into());
+        }
+        if tool == "run_counterfactual" {
+            let time_ok = args
+                .get("time_s")
+                .and_then(Value::as_f64)
+                .is_some_and(|t| (0.0..=3600.0).contains(&t));
+            if !time_ok || !args.contains_key("replay_id") {
+                return Err("run_counterfactual requires replay_id and time_s in 0..3600".into());
+            }
+            if out.iter().any(|(t, _)| t == "run_counterfactual") {
+                return Err("At most one counterfactual run per plan".into());
             }
         }
         out.push((tool.to_string(), c["args"].clone()));
@@ -154,5 +172,22 @@ mod tests {
             .len(),
             1
         );
+    }
+
+    #[test]
+    fn counterfactual_and_detector_tools_are_bounded() {
+        let ok = r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m","time_s":12.5}},{"tool":"get_bot_likeness","args":{"replay_id":"m"}},{"tool":"get_xg_summary","args":{}}]}"#;
+        assert_eq!(validated_plan(ok).unwrap().len(), 3);
+        for t in [
+            r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m"}}]}"#,
+            r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m","time_s":-1}}]}"#,
+            r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m","time_s":1,"steps":9999}}]}"#,
+            r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m","time_s":1,"checkpoint":"C:/x"}}]}"#,
+            r#"{"calls":[{"tool":"run_counterfactual","args":{"replay_id":"m","time_s":1}},{"tool":"run_counterfactual","args":{"replay_id":"n","time_s":1}}]}"#,
+            r#"{"calls":[{"tool":"get_bot_likeness","args":{}}]}"#,
+            r#"{"calls":[{"tool":"get_bot_likeness","args":{"replay_id":"m","player_id":"x"}}]}"#,
+        ] {
+            assert!(validated_plan(t).is_err(), "{t}");
+        }
     }
 }

@@ -151,6 +151,42 @@ async getCloudPreview(message: string, replayId: string | null, playerId: string
 },
 async retryFailedImports(folder: string) : Promise<JsonValue> {
     return await TAURI_INVOKE("retry_failed_imports", { folder });
+},
+async botLikeness(replayId: string) : Promise<JsonValue> {
+    return await TAURI_INVOKE("bot_likeness", { replayId });
+},
+async setBotLabel(replayId: string, playerId: string, confirmedBot: boolean | null) : Promise<JsonValue> {
+    return await TAURI_INVOKE("set_bot_label", { replayId, playerId, confirmedBot });
+},
+async botLabels() : Promise<JsonValue> {
+    return await TAURI_INVOKE("bot_labels");
+},
+async botCalibrationReport() : Promise<JsonValue> {
+    return await TAURI_INVOKE("bot_calibration_report");
+},
+async xgModelStatus() : Promise<JsonValue> {
+    return await TAURI_INVOKE("xg_model_status");
+},
+async xgReplayShots(replayId: string) : Promise<JsonValue> {
+    return await TAURI_INVOKE("xg_replay_shots", { replayId });
+},
+async xgPlayerSummary() : Promise<JsonValue> {
+    return await TAURI_INVOKE("xg_player_summary");
+},
+async simStatus(probe: boolean) : Promise<JsonValue> {
+    return await TAURI_INVOKE("sim_status", { probe });
+},
+async setSimPath(path: string) : Promise<JsonValue> {
+    return await TAURI_INVOKE("set_sim_path", { path });
+},
+async simReconstructState(replayId: string, time: number) : Promise<JsonValue> {
+    return await TAURI_INVOKE("sim_reconstruct_state", { replayId, time });
+},
+async simValidateBall(replayId: string, time: number) : Promise<JsonValue> {
+    return await TAURI_INVOKE("sim_validate_ball", { replayId, time });
+},
+async simWhatIf(replayId: string, time: number, options: SimOptionsInput) : Promise<JsonValue> {
+    return await TAURI_INVOKE("sim_what_if", { replayId, time, options });
 }
 }
 
@@ -166,9 +202,34 @@ async retryFailedImports(folder: string) : Promise<JsonValue> {
 
 export type AiStatusDto = { current_provider: string; cloud_consent: boolean; chat_model: string; analysis_model: string; providers: Partial<{ [key in string]: ProviderStatus }> }
 export type AppError = { code: "cancelled"; message: string } | { code: "busy"; message: string } | { code: "authentication"; message: string } | { code: "unsupported"; message: string } | { code: "network"; message: string } | { code: "validation"; message: string } | { code: "storage"; message: string } | { code: "internal"; message: string }
-export type Body = { position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null }
+export type Body = { position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null;
+/**
+ * rad/s, quantized to 0.01. Absent in frames stored before analysis-3.
+ */
+angular_velocity?: [number, number, number] | null }
 export type CameraProfile = { fov: number; distance: number; height: number; angle: number; stiffness: number }
-export type Car = ({ position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null }) & { player_id: string; boost: number | null; discontinuity: boolean }
+export type Car = ({ position: [number, number, number]; rotation: [number, number, number, number]; velocity: [number, number, number] | null;
+/**
+ * rad/s, quantized to 0.01. Absent in frames stored before analysis-3.
+ */
+angular_velocity?: [number, number, number] | null }) & { player_id: string; boost: number | null; discontinuity: boolean;
+/**
+ * Raw replicated controller bytes, 128 neutral. None means not replicated/unavailable
+ * (including every frame stored before analysis-3), never "neutral".
+ */
+throttle?: number | null; steer?: number | null;
+/**
+ * Replicated component parity bits (odd = active). None = unavailable.
+ */
+boost_active?: boolean | null; jump_active?: boolean | null; double_jump_active?: boolean | null; dodge_active?: boolean | null;
+/**
+ * Replicated handbrake/powerslide boolean.
+ */
+handbrake?: boolean | null;
+/**
+ * Only recorded while dodge_active is true; quantized to 0.01.
+ */
+dodge_torque?: [number, number, number] | null }
 export type ChatResultDto = { conversation_id: string; response: string; status: string; error: string | null; evidence_ids: string[] | null; replay_id: string | null; context_chars: number | null; context_manifest: JsonValue | null }
 export type CloudPreviewDto = { provider: string; endpoint: string | null; model: string; characters: number; upper_bound_characters: number; approx_tokens: number; estimated: boolean; cost_label: string; categories: string[]; estimate_note: string }
 export type ConversationDto = { id: string; title: string; updated_at: string; mode: string | null; preset: string | null; prompt_version: string | null }
@@ -193,6 +254,7 @@ export type ModeProfile = { current_rank: string | null; target_rank: string | n
 export type ModeProgress = { matches: number; wins: number | null; win_rate: number | null; avg_boost: number | null; avg_speed: number | null; defensive_half_pct: number | null; low_boost_pct: number | null; boost_active_at_supersonic_speed_s: number | null }
 export type ModelCatalog = { provider: string; models: ModelDto[] }
 export type ModelDto = { id: string; name: string | null; description: string | null }
+export type PadEvent = { time: number; frame: number; pad_id: string; player_id: string | null; player_position: [number, number, number] | null; sequence: number }
 export type Player = { id: string; name: string; team: number; platform: string | null; is_bot: boolean; camera?: CameraProfile | null }
 export type PracticeDataDto = { transfer: TransferDataDto; plans: PracticePlanDto[]; sessions: TrainingSessionDto[]; source: string; forecast: string; reassessment: string }
 export type PracticePlanBodyDto = { title: string; drill: string; success_criterion: string; next_match_cue: string; intended_minutes: number | null; pack_id: string | null; provenance: string; prompt_version: string }
@@ -200,9 +262,31 @@ export type PracticePlanDto = { id: string; mode: string; body: PracticePlanBody
 export type PracticePlanInput = { title: string; drill: string; success_criterion: string; next_match_cue: string; intended_minutes: number | null; pack_id: string | null }
 export type ProgressDto = { player_id: string | null; player_name: string | null; matches_analyzed: number; modes: Partial<{ [key in string]: ModeProgress }>; recurring_strengths: string[]; recurring_priorities: string[]; goals: GoalDto[] }
 export type ProviderStatus = { configured: boolean | null; endpoint: string | null; default_model: string | null; status: string | null; reason: string | null; email: string | null; supported: boolean | null; expires_at: number | null }
-export type ReplayAnalysis = { summary: ReplaySummary; players: Player[]; frames: Frame[]; metrics: Metric[]; events: Event[]; coverage: Coverage }
+export type ReplayAnalysis = { summary: ReplaySummary; players: Player[]; frames: Frame[]; metrics: Metric[]; events: Event[]; coverage: Coverage;
+/**
+ * Version of the frame/event capture schema. None = captured before analysis-3.
+ */
+analysis_version?: string | null;
+/**
+ * Boost pad pickups at native frame rate (not render-sampled).
+ */
+pad_events?: PadEvent[];
+/**
+ * Replay-reported shot/save/assist events with the player and ball state at the event.
+ */
+shots?: StatSample[] }
 export type ReplaySummary = { id: string; file_hash: string; file_name: string; replay_name: string; played_at: string | null; mode: string; duration_seconds: number; blue_score: number | null; orange_score: number | null; players: Player[]; status: string; error: string | null; source_path: string; match_type: string | null; playlist_id: number | null; recorder_name: string | null; recorder_player_id: string | null; content_hash: string; map_name: string | null }
 export type SettingsDto = { replay_folder: string; player_id: string | null; player_name: string | null; modes: string[]; focus: string[]; provider: string; chat_model: string; analysis_model: string; auto_import: boolean; cloud_consent: boolean; cloud_consent_provider: string | null; rank_1v1: string | null; rank_2v2: string | null; rank_3v3: string | null; playstyle: string | null; coach_persona: string | null; onboarding_status: string | null; primary_mode: string | null; team_preference: string | null; mode_profiles: Partial<{ [key in string]: ModeProfile }> | null }
+export type ShotSample = { touch_position: [number, number, number]; ball_position: [number, number, number]; ball_velocity: [number, number, number] | null; ball_speed: number | null; player_velocity: [number, number, number] | null; player_speed: number | null; player_distance_to_ball: number | null; distance_to_goal_center: number; distance_to_goal_line: number; ball_goal_alignment: number | null; ball_speed_toward_goal: number | null }
+/**
+ * Bounded what-if options. Anything else (paths, checkpoints, identities) stays backend-controlled.
+ */
+export type SimOptionsInput = { steps: number | null; deterministic: boolean | null; run: string | null }
+/**
+ * Replay-reported statistic event. `kind` is shot | save | assist. Shot geometry is the
+ * decoder's measurement at the touch; it is not a probability or an expected-goals value.
+ */
+export type StatSample = { time: number; frame: number; kind: string; player_id: string; team: number; player_position: [number, number, number] | null; shot?: ShotSample | null }
 
 export type TeammateDto = { player_id: string; name: string; platform: string | null; shared_matches: number; wins: number; losses: number; win_rate: number; last_played: string | null }
 export type TrainingPackCatalogDto = { records: TrainingPackDto[]; source: string; live_search: string; verification: string }

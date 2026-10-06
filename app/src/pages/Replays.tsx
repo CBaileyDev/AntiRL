@@ -8,9 +8,11 @@ import {
   Clock,
   Loader2,
   ShieldQuestion,
+  Bot,
 } from "lucide-react";
 import { invoke } from "../ipc";
 import type { DetectorRecord } from "../components/DetectorPanel";
+import type { BotLabel } from "../components/BotLikenessPanel";
 import type { ReplaySummary, ImportRecord } from "../types";
 import { timeLabel } from "../ReplayViewer";
 
@@ -33,6 +35,9 @@ function teamScores(r: ReplaySummary): [string, string] {
   return [String(b ?? 0), String(o ?? 0)];
 }
 
+/** Stored local indices below this are not flagged in the list; the index is an uncalibrated heuristic. */
+const BOT_ICON_MIN_INDEX = 80;
+
 export default function Replays({
   replays,
   importRecords,
@@ -50,6 +55,18 @@ export default function Replays({
     invoke<{ records: DetectorRecord[] }>("detector_reports")
       .then((r) => {
         if (live) setDetectors(r.records ?? []);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [replays]);
+  const [botLabels, setBotLabels] = useState<BotLabel[]>([]);
+  useEffect(() => {
+    let live = true;
+    invoke<{ labels?: BotLabel[] }>("bot_labels")
+      .then((r) => {
+        if (live) setBotLabels(r.labels ?? []);
       })
       .catch(() => {});
     return () => {
@@ -330,11 +347,31 @@ export default function Replays({
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <strong style={{ fontSize: 13.5, color: "var(--text)" }}>
                         {r.replay_name || r.file_name}{" "}
+                        {(() => {
+                          const high = botLabels.filter(
+                            (l) =>
+                              l.replay_id === r.id &&
+                              l.index !== null &&
+                              l.index >= BOT_ICON_MIN_INDEX,
+                          );
+                          if (!high.length) return null;
+                          const top = Math.max(...high.map((l) => l.index ?? 0));
+                          const text = `Local heuristic index ${top} of 100 (uncalibrated, not evidence of cheating)`;
+                          return (
+                            <span title={text} style={{ fontSize: 11, color: "var(--muted)" }}>
+                              <Bot size={14} aria-hidden="true" /> uncalibrated index {top}
+                              <span className="sr-only"> . {text}</span>
+                            </span>
+                          );
+                        })()}{" "}
                         {detectors.some((d) => d.replay_id === r.id) && (
-                          <ShieldQuestion
-                            size={14}
-                            aria-label="External bot detector report recorded; unverified"
-                          />
+                          <span
+                            title="User-entered external detector report; unverified"
+                            style={{ fontSize: 11, color: "var(--muted)" }}
+                          >
+                            <ShieldQuestion size={14} aria-hidden="true" /> external report
+                            (unverified)
+                          </span>
                         )}
                       </strong>
                       <span style={{ fontSize: 11.5, color: "var(--muted)" }}>

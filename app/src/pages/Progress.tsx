@@ -3,6 +3,7 @@ import { Trophy, Zap, Gauge, Flame } from "lucide-react";
 import type { ProgressReport, ReplaySummary, Settings } from "../types";
 import IntelligencePanel from "../components/IntelligencePanel";
 import PracticePanel from "../components/PracticePanel";
+import { XgProgressCard } from "../components/XgPanels";
 import { formatStat } from "../formatStat";
 
 interface ProgressProps {
@@ -194,6 +195,7 @@ export default function Progress({
         onPracticeCreated={() => setPracticeRevision((v) => v + 1)}
         onAskCoach={onAskCoach}
       />
+      <XgProgressCard />
       <PracticePanel
         libraryRevision={replays}
         key={`${selectedMode}:${settings.player_id || ""}:${practiceRevision}`}

@@ -538,3 +538,106 @@ pub async fn save_detector_report(
     let s = state.service.clone();
     blocking(move || s.save_detector_report(&replay_id, &player_id, &body)).await
 }
+
+// Detector, xG and simulation. The backend computes everything; the UI only sends ids, times and
+// bounded options. Results are flexible documents with explicit status/limitation fields.
+#[tauri::command]
+#[specta::specta]
+pub async fn bot_likeness(
+    state: State<'_, AppState>,
+    replay_id: String,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.bot_likeness(&replay_id)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn set_bot_label(
+    state: State<'_, AppState>,
+    replay_id: String,
+    player_id: String,
+    confirmed_bot: Option<bool>,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.set_bot_label(&replay_id, &player_id, confirmed_bot)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn bot_labels(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.bot_labels()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn bot_calibration_report(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.bot_calibration_report()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn xg_model_status(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.xg_model_status()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn xg_replay_shots(
+    state: State<'_, AppState>,
+    replay_id: String,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.xg_replay_shots(&replay_id)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn xg_player_summary(state: State<'_, AppState>) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.xg_player_summary()).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn sim_status(state: State<'_, AppState>, probe: bool) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.sim_status(probe)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn set_sim_path(state: State<'_, AppState>, path: String) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.set_sim_path(&path)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn sim_reconstruct_state(
+    state: State<'_, AppState>,
+    replay_id: String,
+    time: f64,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.sim_reconstruct_state(&replay_id, time)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn sim_validate_ball(
+    state: State<'_, AppState>,
+    replay_id: String,
+    time: f64,
+) -> Result<Value, AppError> {
+    let s = state.service.clone();
+    blocking(move || s.sim_validate_ball(&replay_id, time)).await
+}
+#[tauri::command]
+#[specta::specta]
+pub async fn sim_what_if(
+    state: State<'_, AppState>,
+    replay_id: String,
+    time: f64,
+    options: SimOptionsInput,
+) -> Result<Value, AppError> {
+    if !time.is_finite() || time < 0.0 {
+        return Err(AppError::Validation("Time must be a non-negative number".into()));
+    }
+    let s = state.service.clone();
+    let options = options.into_value();
+    blocking(move || s.sim_what_if(&replay_id, time, &options)).await
+}

@@ -16,15 +16,19 @@ mod analytics;
 mod camera;
 pub mod chatgpt;
 mod conversations;
+mod detector;
 mod evidence_tools;
 mod intelligence;
 mod migrations;
 mod practice;
+mod reenrich;
 mod research;
 mod retrieval;
 mod semantics;
+mod sim;
 mod storage;
 mod transfer;
+mod xg;
 pub use ai::ChatUpdate;
 
 pub type ServiceResult<T> = Result<T, String>;
@@ -193,6 +197,7 @@ impl CoachService {
             oauth_gate: tokio::sync::Mutex::new(()),
             ai_cancel: Mutex::new(tokio_util::sync::CancellationToken::new()),
         };
+        sim::clean_sim_tmp(&service.dir);
         service.reconcile_analytics()?;
         Ok(service)
     }
@@ -226,6 +231,14 @@ impl CoachService {
         let mut merged = previous.clone();
         for (k, v) in settings.as_object().unwrap() {
             merged[k] = v.clone();
+        }
+        // The RLTRAIN_2 folder is validated here as well as in set_sim_path, but only when it
+        // changes, so a folder that has since moved does not block unrelated settings saves.
+        if merged["rltrain_path"] != previous["rltrain_path"] {
+            match merged["rltrain_path"].as_str().map(str::trim) {
+                None | Some("") => merged["rltrain_path"] = Value::Null,
+                Some(p) => merged["rltrain_path"] = json!(sim::validate_rltrain_root(p)?.to_string_lossy()),
+            }
         }
         normalize_cloud_consent(&mut merged);
         let text = serde_json::to_string(&merged).map_err(err)?;
