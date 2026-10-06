@@ -53,6 +53,9 @@ This pass is **review-only**: find, prove, and plan. A separate run will impleme
 ## Constraints
 
 - **Writes are limited.** Do not modify existing source, config, lockfiles, CI or docs. You may create files only under `review/`, plus new test files whose names start with `review_` (e.g. `crates/replay-core/tests/review_metrics.rs`, `app/tests/review_*.spec.ts`) to prove findings. Failing tests that demonstrate a bug are welcome; mark them clearly.
+  - You may also create gitignored inputs a check needs to run (e.g. the missing test key below).
+  - Delete untracked build output afterwards (e.g. `src-tauri/gen/schemas/linux-schema.json`).
+  - Work around broken config with CLI flags, environment variables, or wrapper configs under `review/`. Don't edit the config itself; log the breakage as a finding.
 - **Never touch real user data.** Never run `scripts/populate_db.mjs`. Never touch `%APPDATA%`, a real AntiRL profile, or the user's replay folders. Use a temporary profile directory and synthetic or copied fixtures.
 - **No real provider calls.** Make no network calls to OpenAI or NeoToken, and don't read, print or commit any credential. Stub the providers.
 - **Keep the palette** in Appendix B: dark navy/near-black surfaces, indigo/violet accent, team blue/orange. You may add tints, semantic aliases and separate team-vs-status colours. Don't replace the identity.
@@ -62,27 +65,26 @@ This pass is **review-only**: find, prove, and plan. A separate run will impleme
 
 Run every command you can and record each one in `review/TEST_REPORT.md` with its exit code, duration, a short summary, and the root cause of any failure. If something can't run here (no Windows, a missing system library, no network), say exactly why and keep going.
 
-- Frontend:
-  - `pnpm --dir app install --frozen-lockfile`
-  - `pnpm --dir app build` (record chunk sizes)
-  - `pnpm --dir app lint`
-  - `pnpm --dir app format:check`
-  - `pnpm --dir app test:unit`
-  - `pnpm --dir app exec playwright test`
-- Rust:
-  - `cargo fmt --all -- --check`
-  - `cargo test -p replay-core --locked`
-  - `cargo test -p coach-services --all-features --locked`
-  - `cargo test --workspace --all-features --locked` (build the frontend first; `src-tauri` embeds `app/dist`)
-  - `cargo clippy --workspace --all-targets --all-features --locked -- -D warnings`
-- Discord bot: `node integrations/discord/test.mjs`.
-- On Windows only:
+**Run the repo's own commands first, unmodified, and record their real result.** CI (`.github/workflows/quality.yml`) has never passed on GitHub, so each breakage below is a finding in its own right. Then apply the workaround and continue.
+
+The commands below were checked on Ubuntu 24.04 at `6762f8c`. The `pnpm` on PATH switches itself to 11.3.0 through the `packageManager` field.
+
+| Step | Repo command | Known result | Workaround |
+| --- | --- | --- | --- |
+| Install | `pnpm --dir app install --frozen-lockfile` | **Fails** with `ERR_PNPM_IGNORED_BUILDS esbuild`. `app/pnpm-workspace.yaml` still has pnpm's placeholder `allowBuilds: esbuild: set this to true or false`. CI dies here too. | Add `--config.strict-dep-builds=false` |
+| Frontend checks | `pnpm --dir app build`, `lint`, `format:check`, `test:unit` | Pass. The main chunk is 1.77 MB (467 kB gzip) and `dist` is 17 MB. | — |
+| Playwright | `pnpm --dir app exec playwright test` | **Fails** if the bundled browser revision is missing. Two specs then struggle: `frontend-security.spec.ts` needs about 66 s on software WebGL (the limit is 45 s), and `coaching.spec.ts` is a real timing race that fails about 2 runs in 5. The fake stream in `tests/harness.tsx` ends before the test clicks Stop. | A wrapper config under `review/` that spreads the repo config and sets `use.launchOptions.executablePath` to an installed Chromium. Run with `--workers=1 --timeout=180000 --retries=2`. Treat the race as a finding, not noise. |
+| Rust format | `cargo fmt --all -- --check` | Pass | — |
+| Rust tests | `cargo test -p replay-core --locked` / `-p coach-services --locked` | Pass: 6 tests, and 75 pass with 2 ignored. | — |
+| `--all-features` builds | `cargo test`/`clippy … --all-features` | **Won't compile on any fresh clone.** `coach-services/src/chatgpt.rs:733` uses `include_bytes!` on `tests/fixtures/synthetic-oidc-test-key.pem`, which `.gitignore:26` (`*.pem`) kept out of git. | Generate a throwaway key at that path with `openssl genrsa -out … 2048`; it is gitignored. Then 79 pass, and clippy is clean. |
+| Workspace / `src-tauri` | `cargo test --workspace --all-features --locked` (build `app/dist` first) | On Linux it needs `libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev librsvg2-dev libxdo-dev libssl-dev`. After that, `generate_context!` panics because `tauri.conf.json` lists `32x32.png`/`128x128*.png`/`icon.icns`, and only `icon.ico` and `icon.png` exist. | `TAURI_CONFIG='{"bundle":{"icon":["icons/icon.png","icons/icon.ico"]}}'`. Then 93 tests pass and clippy reports 0 warnings. Afterwards check `git diff --exit-code -- app/src/bindings.ts`. |
+| Other | `node --test integrations/discord/test.mjs`, `node scripts/test-replay-studio.mjs` (no package script runs it), `pnpm --dir app outdated`, `pnpm --dir app audit`, `cargo tree -d` | Pass, 0 vulnerabilities. Major versions are behind: Babylon 8→9, Vite 6→8, TypeScript 5→7, plugin-react 4→6. `cargo tree -d` shows about 11 real version splits. | — |
+
+- **Windows only:**
   - `./scripts/tauri.ps1 build`
-  - the `scripts/test-native-*.mjs` checks against an isolated profile. They need the release app with WebView2 remote debugging on port 9239; read each script first.
-- **Platform notes:**
-  - The repo pins Node 24 and pnpm 11.3.0.
-  - On Linux, `src-tauri` needs `libwebkit2gtk-4.1-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev libssl-dev libxdo-dev libayatana-appindicator3-dev librsvg2-dev`.
-  - The job-object sandbox, parts of `sim.rs`, and the native scripts are Windows-only.
+  - the `scripts/test-native-*.mjs` checks. They need the release app with WebView2 remote debugging (CDP ports 9236/9239/49187). Some write into the tracked `docs/validation/`; point them at an isolated profile and output folder, and read each script first.
+- **Can't run on Linux:** the job-object limits in `worker_limits.rs`, the native and `.ps1` scripts, `test-coaching-ui.mjs` / `test-frontend-security.mjs` (they need `channel: "msedge"`), and `test-discord-local.mjs` (it needs `antirl-replay.exe`).
+- **Codex cloud:** put the apt packages and the install workaround in the environment setup script, because the agent phase is offline and secrets are removed.
 - **Prove findings with tests.** Write characterization or failing tests for metric math (`EvidenceCollector`, aggregation), context assembly and truncation, the validator, migrations, and import edge cases. There are no real `.replay` fixtures in the repo. If a local Rocket League demos folder exists, copy a few replays into a temp dir (never commit them). Otherwise build synthetic frame data.
 - **Measure, don't guess.** Measure the bundle size, the IPC payload size for one opened replay, the context size per mode, and the viewer frame time if you can.
 - **See the UI yourself.**
@@ -384,6 +386,17 @@ Final message: the 15 most important findings (one line each, with ID), the 5 bi
 43. **No golden real-replay tests.** `EvidenceCollector::process_frame` has zero coverage. The fixtures folder holds only a JWKS file, and the real-replay tests are `#[ignore]`d or assert nothing.
 44. **CI runs only on `windows-latest`,** although `replay-core` and `coach-services` are platform-neutral. The native scripts are manual. The adversarial corpus has no runner.
 45. **Repo hygiene.** A 281 KB research file sits at the repo root, the status docs contradict each other, the screenshots are stale, and the author's personal path is in source.
+46. **CI has never passed.**
+    - Every GitHub run so far, including `main` at `6762f8c`, dies at `pnpm install`: the `allowBuilds` placeholder in `app/pnpm-workspace.yaml` was never filled in.
+    - Behind that sits the `--all-features` compile failure from the missing `.pem` fixture.
+    - The README's claims about CI coverage are therefore untested. Check which other checks would fail once install works.
+47. **Build portability.**
+    - `tauri.conf.json` references icons that don't exist (only `.ico`/`.png` are in `src-tauri/icons`), so any non-Windows build or bundle fails.
+    - `src-tauri/gen/schemas/linux-schema.json` is generated, but it is neither ignored nor committed.
+48. **Test reliability.**
+    - `coaching.spec.ts` races its own fake stream. CI's `retries: 1` may be hiding it.
+    - `frontend-security.spec.ts` exceeds its timeout on software rendering.
+    - `scripts/test-replay-studio.mjs` passes, but nothing runs it.
 
 ## Appendix B — Palette to keep (from `app/src/styles.css:1-78`)
 
