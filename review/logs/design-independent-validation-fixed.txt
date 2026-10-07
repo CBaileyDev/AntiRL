@@ -1,0 +1,187 @@
+[
+  {
+    "id": "J-001",
+    "challenge": "Look for any viable next action before declaring the home core flow broken.",
+    "reviewLastMatchVisible": true,
+    "reviewButton": {
+      "x": 1008.890625,
+      "y": 155,
+      "width": 198.109375,
+      "height": 45
+    },
+    "mainText": "Nova\n2V2 COMPETITIVE\nDiamond II\n\n40 local matches parsed from full replay telemetry. Zero guessed statistics.\n\nReview Last Match\nCalibrate Profile\nOVERALL WIN RATE\n65%\nAcross 40 tracked matches\nAVERAGE BOOST LEVEL\n42.6%\nContext dependent\nLegacy equal-match mean; weights unavailable\nBOOSTING AT SPEED\n12.4s\nBoost-active time at ≥2200 uu/s\nDEFENSIVE HALF SHARE\n54.2%\nActive play behind midfield line\nRecent Matches\n\nClick any match to launch the broadcast 3D Replay Studio\n\nView All (40)\n1v1\nDFH Stadium\nDuration: 5:17 • 2 Players\nDEFEAT\n2 - 3\n2v2\nMannfield\nDuration: 5:30 • 4 Players\nVICTORY\n3 - 1\n3v3\nDFH Stadium\nDuration: 5:43 • 6 Players\nVICTORY\n3 - 1\n1v1\nMannfield\nDuration: 5:56 • 2 Players\nDEFEAT\n2 - 3"
+  },
+  {
+    "id": "J-002",
+    "challenge": "Determine whether chat is actually usable at720p, then constrain claim to lost reading height.",
+    "thread": {
+      "x": 277,
+      "y": 393.75,
+      "width": 970,
+      "height": 191.25
+    },
+    "composer": {
+      "x": 295,
+      "y": 637,
+      "width": 878,
+      "height": 42
+    },
+    "composerTag": "INPUT",
+    "composerVisible": true
+  },
+  {
+    "id": "J-003",
+    "challenge": "Inspect canvas and keyboard alternative while remeasuring the mouse transport belowfold.",
+    "scrubber": {
+      "x": 301,
+      "y": 966,
+      "width": 922,
+      "height": 16
+    },
+    "canvas": {
+      "x": 285,
+      "y": 196,
+      "width": 954,
+      "height": 595.5
+    },
+    "canvasTabindex": "1"
+  },
+  {
+    "id": "J-004",
+    "challenge": "At1440x900, see whether Review is absent/blocked or merely subordinated to collapsed diagnostics.",
+    "review": {
+      "x": 1121,
+      "y": 529.5,
+      "width": 201.28125,
+      "height": 19.5
+    },
+    "diagnostics": 5,
+    "allCollapsed": true
+  },
+  {
+    "id": "K-001",
+    "challenge": "ARIA dialog attributes might be mitigated by actual focus/inert behavior; test rather than infer.",
+    "initialInside": false,
+    "tabInside": false,
+    "deleteInside": false,
+    "deleteStillOpenAfterEscape": true,
+    "deleteAriaModal": "true",
+    "bgInert": false
+  },
+  {
+    "id": "K-002",
+    "challenge": "Unassociated visual labels do not necessarily mean an empty computed accessible name; inspect the ARIA tree.",
+    "ariaTree": "- img\n- heading \"Replays\" [level=3]\n- text: Rocket League Replay Folder Path\n- textbox: C:\\ReviewFixtures\n- button \"Browse\"\n- text: \"Standard Epic path: Documents\\\\My Games\\\\Rocket League\\\\TAGame\\\\DemosEpic\"\n- checkbox \"Automatically check the replay folder for new or changed matches\"\n- text: Automatically check the replay folder for new or changed matches\n- img\n- heading \"Player\" [level=3]\n- text: Which player are you?\n- combobox \"Which player are you?\":\n  - option \"Nova - 40 matches (auto-detected)\" [selected]\n- text: Auto-detected as the human player in the most replays. Save to confirm. Player Name\n- textbox \"e.g. yoitzjerm\": Nova\n- text: Platform Account ID\n- textbox \"e.g. platform:your-account-id\": review:you\n- text: 1v1 Rank\n- img \"Platinum I\"\n- combobox \"1v1 rank\":\n  - option \"Unknown / skipped\"\n  - option \"Platinum I\" [selected]\n  - option \"Supersonic Legend\"\n- text: 2v2 Rank\n- img \"Diamond II\"\n- combobox \"2v2 rank\":\n  - option \"Unknown / skipped\"\n  - option \"Diamond II\" [selected]\n  - option \"Supersonic Legend\"\n- text: 3v3 Rank\n- img \"Diamond II\"\n- combobox \"3v3 rank\":\n  - option \"Unknown / skipped\"\n  - option \"Diamond II\" [selected]\n  - option \"Supersonic Legend\"\n- img\n- heading \"Counterfactual simulator\" [level=3]\n- paragraph: Optional. Points AntiRL at your local RLTRAIN_2 folder so Replay Studio can simulate a trained policy. AntiRL only reads the newest checkpoint's configuration and runs the local engine; nothing is copied or uploaded.\n- text: RLTRAIN_2 folder\n- textbox \"RLTRAIN_2 folder\":\n  - /placeholder: C:\\path\\to\\RLTRAIN_2\n- button \"Validate and save\" [disabled]\n- button \"Test engine\"\n- status \"Simulator status\":\n  - paragraph:\n    - strong: Unavailable\n    - text: · Simulation engine not configured\n  - paragraph: \"Location source: unknown\"\n- img\n- heading \"AI Coach\" [level=3]\n- checkbox \"Offline coaching · no cloud provider selected When enabled, your messages, conversation history, player profile, coaching memory, match metrics and cited events may be sent to this provider. A data and cost preview appears before each cloud message. Original replay files are never uploaded.\" [disabled]\n- strong: Offline coaching · no cloud provider selected\n- text: When enabled, your messages, conversation history, player profile, coaching memory, match metrics and cited events may be sent to this provider. A data and cost preview appears before each cloud message. Original replay files are never uploaded. Active Provider\n- combobox:\n  - option \"Offline only · no cloud requests\" [selected]\n  - option \"NeoToken V2 (api.v2.neokens.com)\"\n  - option \"OpenAI Direct API (api.openai.com)\"\n  - option \"ChatGPT sign-in · experimental\"\n- text: Chat & Analysis Model\n- combobox:\n  - option \"review-stub\" [selected]\n- button \"Query live model catalog\":\n  - img\n- paragraph: Offline coaching uses your local replay evidence and practice catalog. No API key, subscription or internet connection is required.\n- button \"Save changes\":\n  - img\n  - text: Save changes\n- img\n- heading \"Coaching Memory\" [level=3]\n- text: Editable Markdown files in coach-memory/\n- button \"weekly-focus\"\n- textbox \"new_note.md\"\n- button [disabled]:\n  - img\n- strong: weekly-focus\n- button \"Save Note\":\n  - img\n  - text: Save Note\n- button \"Delete Note\":\n  - img\n- textbox: Pick up two small pads on the way back to defence.",
+    "noExplicitLabel": [
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "placeholder": null,
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "placeholder": "e.g. yoitzjerm",
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "placeholder": "e.g. platform:your-account-id",
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "SELECT",
+        "type": "select-one",
+        "placeholder": null,
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "SELECT",
+        "type": "select-one",
+        "placeholder": null,
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "placeholder": "new_note.md",
+        "id": "",
+        "title": null
+      },
+      {
+        "tag": "TEXTAREA",
+        "type": "textarea",
+        "placeholder": null,
+        "id": "",
+        "title": null
+      }
+    ]
+  },
+  {
+    "id": "K-003",
+    "challenge": "Check actual computed text uses and background rather than token ratios alone.",
+    "uses": [
+      {
+        "text": "40 local matches parsed from full replay telemetry. Zero guessed statistics.",
+        "color": "rgb(100, 116, 139)",
+        "size": "12.5px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "OVERALL WIN RATE",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Across 40 tracked matches",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "AVERAGE BOOST LEVEL",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Legacy equal-match mean; weights unavailable",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "BOOSTING AT SPEED",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Boost-active time at ≥2200 uu/s",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "DEFENSIVE HALF SHARE",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Active play behind midfield line",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      }
+    ]
+  }
+]

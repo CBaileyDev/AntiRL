@@ -1,0 +1,197 @@
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+   Compiling antirl v0.1.0 (C:\Users\barke\Documents\AntiRL\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.62s
+     Running unittests src\main.rs (target\debug\deps\antirl-4a193f967fd3cc9d.exe)
+
+running 9 tests
+test errors::tests::error_serializes_to_stable_code_and_message ... ok
+test ingest::tests::rejects_empty_oversized_and_changed_input ... ok
+test ingest::tests::corrupted_snapshot_is_replaced_from_verified_source ... ok
+test tests::export_ipc_bindings ... ok
+test ingest::tests::unchanged_failed_or_imported_file_never_creates_snapshot ... ok
+test dto::tests::practice_and_catalog_contracts_match_service_payloads ... ok
+test ingest::tests::duplicate_and_deleted_hash_are_checked_before_copy ... ok
+test dto::tests::transfer_contract_decodes_measurements_and_missing_values ... ok
+test worker_limits::tests::suspended_child_runs_only_after_job_assignment_and_resume ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests\review_contracts.rs (target\debug\deps\review_contracts-d3bacd9e15df5c8f.exe)
+
+running 5 tests
+test review_substring_error_classification_changes_with_incidental_text ... ok
+test errors::tests::error_serializes_to_stable_code_and_message ... ok
+test review_malformed_settings_save_is_successful_then_contract_fails ... ok
+test dto::tests::practice_and_catalog_contracts_match_service_payloads ... ok
+test dto::tests::transfer_contract_decodes_measurements_and_missing_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src\lib.rs (target\debug\deps\coach_services-b9e43facb102297c.exe)
+
+running 81 tests
+test ai::tests::live_synthetic_coach_stream ... ignored, Opt-in provider test with synthetic replay data only
+test analytics::tests::crash_worker ... ok
+test ai::tests::extract_content_handles_reasoning_and_errors ... ok
+test ai::tests::exact_library_count_question_is_local_and_uses_full_library ... ok
+test ai::tests::provider_parameters_match_model_families_and_responses_never_store ... ok
+test ai::tests::responses_stream_requires_completed_terminal_event ... ok
+test ai::tests::stream_handles_utf8_boundaries_reasoning_and_incomplete_responses ... ok
+test ai::tests::provider_failure_gives_honest_local_summary_without_replacing_cancelled_or_partial_text ... ok
+test ai::tests::streaming_deltas_hide_split_think_tags_and_have_linear_size ... ok
+test analytics::tests::dates ... ok
+test analytics::tests::weighted_and_unknown ... ok
+test ai::tests::parses_fenced_findings_and_maps_ids ... ok
+test camera::tests::ini_requires_camera_section_and_complete_valid_profile ... ok
+test ai::tests::filtered_completion_never_becomes_a_complete_saved_answer ... ok
+test ai::tests::withheld_pack_codes_include_malformed_and_cancelled_candidates ... ok
+test chatgpt::integration::tests::secure_values_have_pkce_entropy_and_distinct_states ... ok
+test chatgpt::integration::tests::callback_binds_state_path_and_issued_registration ... ok
+test detector::tests::real_replays_when_provided ... ok
+test intelligence::tests::tracker_links_never_guess_epic_ids_as_names ... ok
+test reenrich::tests::real_snapshot_reenrichment_end_to_end ... ignored
+test retrieval::tests::counterfactual_and_detector_tools_are_bounded ... ok
+test retrieval::tests::plans_cannot_override_scope_or_read_arbitrary_files ... ok
+test intelligence::tests::scored_goals_and_team_flags_are_searchable_without_becoming_blame ... ok
+test intelligence::tests::context_uses_pre_goal_score_and_unknowns ... ok
+test chatgpt::integration::tests::dynamic_loopback_receives_fragmented_callback_and_ignores_favicon ... ok
+test sim::tests::airborne_flip_state_comes_from_history ... ok
+test sim::tests::reconstruction_refuses_unknowns_and_never_defaults ... ok
+test chatgpt::integration::tests::refresh_fixture_preserves_registration_resource_and_rotates_tokens ... ok
+test sim::tests::ball_comparison_passes_matching_path_and_fails_offsets ... ok
+test chatgpt::integration::tests::signed_identity_rejects_wrong_issuer_audience_nonce_expiry_and_tampering ... ok
+test detector::tests::discontinuities_and_non_live_frames_split_segments ... ok
+test detector::tests::coarse_sampling_makes_cadence_unavailable_not_zero ... ok
+test detector::tests::missing_or_short_input_is_unavailable_never_neutral ... ok
+test detector::tests::discrete_grid_stream_scores_above_keyboard_above_analog ... ok
+test conversations::tests::legacy_records_survive_scope_migration_and_repeated_open ... ok
+test sim::tests::mode_gate_requires_matching_team_size ... ok
+test sim::tests::observation_layout_is_checked_before_the_engine_runs ... ok
+test sim::tests::discovery_reads_newest_checkpoint_and_flags_problems ... ok
+test tests::test_note_content_rejects_credentials ... ok
+test storage::tests::interrupted_frame_migration_rolls_back_with_original_backup ... ok
+test sim::tests::runner_parses_output_enforces_limits_and_never_uses_a_shell ... ok
+test reenrich::tests::stale_replay_is_enriched_without_touching_metrics_and_invalidates_cache ... ok
+test reenrich::tests::missing_or_corrupt_snapshot_is_unavailable_or_failed_not_fabricated ... ok
+test reenrich::tests::mismatched_identity_or_hash_is_rejected ... ok
+test ai::tests::changing_provider_does_not_reuse_old_cloud_consent ... ok
+test storage::tests::compressed_frames_round_trip_and_queries_use_metadata ... ok
+test ai::tests::cancellation_between_waiters_is_durable_and_new_requests_reset_it ... ok
+test xg::tests::labels_goals_and_marks_missing_position ... ok
+test ai::tests::configured_user_absent_is_never_replaced_by_recorder ... ok
+test xg::tests::split_is_by_match_without_leakage ... ok
+test xg::tests::gate_blocks_small_samples ... ok
+test xg::tests::recovers_coefficient_directions ... ok
+test camera::tests::saved_cameras_are_account_scoped ... ok
+test ai::tests::coaching_projection_refreshes_without_render_frames ... ok
+test intelligence::tests::all_mode_queries_keep_fingerprints_separate_and_duel_drills_have_no_teammates ... ok
+test analytics::tests::failed_rebuild_keeps_verified_projection ... ok
+test storage::tests::teammate_latest_date_is_independent_of_insert_order_and_offsets ... ok
+
+running 1 test
+test intelligence::tests::goal_phase_is_distinct_from_lead_in_and_reports_are_sourced ... ok
+test ai::tests::context_contains_players_metrics_events ... ok
+test analytics::tests::reconcile_revision_delete_and_restart ... ok
+test tests::test_settings_and_storage ... ok
+test storage::tests::snapshot_retention_is_explicit_and_bad_frame_blob_does_not_break_library ... ok
+test tests::legacy_or_switched_provider_requires_explicit_scoped_consent ... ok
+test ai::tests::personal_library_identity_survives_missing_or_out_of_mode_replay ... ok
+test tests::test_replay_and_progress_flow ... ok
+test practice::tests::practice_survives_restart_without_cross_mode_or_identity_leak ... ok
+test storage::tests::legacy_database_migrates_frames_and_reopens_without_loss ... ok
+test storage::tests::tombstone_survives_restart_and_snapshot_is_removed ... ok
+test intelligence::tests::queries_reviews_cache_and_drills_are_scoped ... ok
+test storage::tests::unchanged_success_and_failure_are_durable_and_retry_is_scoped ... ok
+test analytics::tests::process_exit_rolls_back_projection_and_reconciles_source_commit ... ok
+test transfer::tests::chronology_context_missing_version_and_overlaps_are_explicit ... ok
+test transfer::tests::switching_and_new_cycles_preserve_history_and_wait_for_new_practice ... ok
+test analytics::tests::recent_previous_lifetime_are_personal_and_mode_scoped ... ok
+test transfer::tests::checkins_are_editable_durable_local_and_survive_replay_deletion ... ok
+test transfer::tests::windows_select_before_metric_filter_and_preserve_zero_weights ... ok
+test transfer::tests::migration_retains_old_plans_logs_and_does_not_invent_completion_time ... ok
+test sim::tests::runner_times_out ... ok
+test sim::tests::what_if_end_to_end_with_stub_engine_and_validation_gate ... ok
+test sim::tests::status_degrades_to_unavailable_with_reasons ... ok
+test detector::tests::labels_calibration_requires_both_classes_then_reports_auc ... ok
+
+test result: ok. 79 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 1.36s
+
+     Running tests\review_ai.rs (target\debug\deps\review_ai-d9c69329b65a7f2e.exe)
+
+running 11 tests
+test review_spaced_pack_codes_and_extended_tokens_pass_filter ... ok
+test review_provider_error_event_is_silently_ignored ... ok
+test review_stream_displays_unverified_codes_before_final_filter ... ok
+test review_analysis_rejects_honest_negation ... ok
+test review_analysis_accepts_invented_prose_numbers_grades_and_forecasts ... ok
+test review_prompt_delimiter_player_name_corrupts_local_count ... ok
+test review_exact_claim_passes_but_context_rounded_claim_fails ... ok
+test review_unknown_team_is_blue_and_draw_is_lost ... ok
+test review_real_timeline_window_is_first_eight_seconds_without_continuation ... ok
+test review_real_offline_chat_reports_injected_count ... ok
+test review_library_context_measurement_and_truncation ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests\review_experimental.rs (target\debug\deps\review_experimental-5417dfd1d2c4edc8.exe)
+
+running 10 tests
+test review_pipe_holder_child ... ignored, Internal review subprocess helper
+test review_pipe_inherited_holder ... ignored, Internal review subprocess helper
+test review_ball_validation_accepts_eight_duplicate_start_samples ... ok
+test review_engine_envelope_accepts_missing_decision_geometry ... ok
+test xg::review_missing_one_defender_treated_as_complete_feature ... ok
+test xg::review_xg_metres_are_off_by_ten ... ok
+test xg::review_goal_after_opponent_touch_still_labels_old_shot_goal ... ok
+test detector::review_fifteen_hz_keyboard_scores_maximum_without_cadence ... ok
+test review_xg_status_pools_modes_and_nonpersonal_matches ... ok
+test review_engine_timeout_does_not_cover_readers_after_parent_exit ... ok
+
+test result: ok. 8 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.92s
+
+     Running tests\review_storage.rs (target\debug\deps\review_storage-7fed815a0e67ef65.exe)
+
+running 10 tests
+test review_opened_replay_payload_measurement ... ok
+test review_teammates_unknown_result_and_draw_become_losses ... ok
+test review_messages_query_has_no_supporting_index ... ok
+test review_wrong_settings_types_are_persisted_without_validation ... ok
+test review_delete_retains_replay_snapshot_when_explicitly_requested ... ok
+test review_analytics_combines_incompatible_metric_versions ... ok
+test review_memory_load_bypasses_write_size_and_content_guards ... ok
+test review_library_accepts_dates_analytics_excludes_from_recent ... ok
+test review_corrupt_coach_row_prevents_entire_profile_open ... ok
+test review_analytics_query_scales_with_entire_library ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.72s
+
+     Running unittests src\lib.rs (target\debug\deps\replay_core-41521bc6e4f1d3ec.exe)
+
+running 6 tests
+test tests::angular_velocity_is_quantized_and_nonfinite_dropped ... ok
+test tests::threshold_and_active_boost_are_independent_and_missing_is_not_zero ... ok
+test tests::resource_integrals_preserve_real_zero_and_observation_weights ... ok
+test tests::test_validation_rejects_empty_players ... ok
+test tests::test_validation_validates_good_analysis ... ok
+test tests::old_stored_frames_without_analysis_3_fields_still_deserialize ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\main.rs (target\debug\deps\antirl_replay-5baf227a76b71e84.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests coach_services
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests replay_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

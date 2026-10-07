@@ -1,0 +1,29 @@
+✘ [ERROR] Could not resolve "react/jsx-runtime"
+
+    review/review_frontend_probes.tsx:13:40:
+      13 │ ...throws(()=>renderToStaticMarkup(<TrajectoryPlot replay={base} r...
+         ╵                                    ^
+
+  You can mark the path "react/jsx-runtime" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467
+  let error = new Error(text);
+              ^
+
+Error: Build failed with 1 error:
+review/review_frontend_probes.tsx:13:40: ERROR: Could not resolve "react/jsx-runtime"
+    at failureErrorWithLog (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:926:25
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:878:52
+    at buildResponseToResult (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:924:7)
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:951:16
+    at responseCallbacks.<computed> (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+
+Node.js v22.23.2

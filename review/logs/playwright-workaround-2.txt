@@ -1,0 +1,20 @@
+[WebServer] (node:33200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:71024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:55048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (4.9s)
+  ✓  2 tests\evidence-practice.spec.ts:2:1 › typed practice actions preserve mode isolation and malformed evidence fails visibly (447ms)
+  ✓  3 tests\frontend-security.spec.ts:3:1 › provider consent, cloud preview, external links, import failures, identity and viewer cameras (6.4s)
+  ✓  4 tests\intelligence.spec.ts:2:1 › intelligence reviews, library query, camera, reference and external score boundaries (654ms)
+  ✓  5 tests\sim.spec.ts:8:1 › bot-likeness shows signals, confounders, labels and an uncalibrated report (292ms)
+  ✓  6 tests\sim.spec.ts:32:1 › xG states unavailable with a reason, then shows per-shot values when the model passes (371ms)
+  ✓  7 tests\sim.spec.ts:54:1 › counterfactual gates by mode, refuses honestly, and plots simulated vs actual (548ms)
+  ✓  8 tests\sim.spec.ts:95:1 › RLTRAIN_2 path setting validates through the backend and reports the source (253ms)
+  ✓  9 tests\transfer.spec.ts:2:1 › practice transfer workflow, missing telemetry, edits, skips, manual dates and narrow layout (865ms)
+
+  9 passed (16.7s)

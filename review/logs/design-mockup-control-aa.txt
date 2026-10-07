@@ -1,0 +1,31 @@
+{
+  "controlStateChecks": 156,
+  "failed": [],
+  "nestedInteractive": [
+    {
+      "page": "match-report",
+      "count": 0
+    },
+    {
+      "page": "today",
+      "count": 0
+    },
+    {
+      "page": "replay-studio",
+      "count": 0
+    },
+    {
+      "page": "coach",
+      "count": 0
+    },
+    {
+      "page": "progress",
+      "count": 0
+    },
+    {
+      "page": "onboarding",
+      "count": 0
+    }
+  ],
+  "notes": "Foreground/background composed from computed colors; opaque control backgrounds and flat ancestors checked. Not a full text/gradient AA audit. Prototype styles are self-contained and not production implementation."
+}

@@ -1,0 +1,14 @@
+    Blocking waiting for file lock on build directory
+   Compiling antirl v0.1.0 (C:\Users\barke\Documents\AntiRL\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.40s
+     Running tests\review_contracts.rs (target\debug\deps\review_contracts-3f444a71e540cb49.exe)
+
+running 5 tests
+test review_substring_error_classification_changes_with_incidental_text ... ok
+test errors::tests::error_serializes_to_stable_code_and_message ... ok
+test review_malformed_settings_save_is_successful_then_contract_fails ... ok
+test dto::tests::practice_and_catalog_contracts_match_service_payloads ... ok
+test dto::tests::transfer_contract_decodes_measurements_and_missing_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

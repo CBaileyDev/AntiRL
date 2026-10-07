@@ -1,0 +1,40 @@
+[WebServer] (node:44192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:25528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:59544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+REVIEW_PAGE_ERROR @vitejs/plugin-react can't detect preamble. Something is wrong.
+  ✘  1 ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B (5.4s)
+
+
+  1) ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Replay A' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Replay A' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Replay A' })
+
+
+      3 |   page.on('pageerror', error => console.log('REVIEW_PAGE_ERROR', error.message));
+      4 |   await page.goto('/@fs/C:/Users/barke/Documents/AntiRL/review/model-state/index.html');
+    > 5 |   await expect(page.getByRole('heading', { name: 'Replay A' })).toBeVisible({ timeout: 5000 });
+        |                                                                 ^
+      6 |   await page.getByText('Bot detection · local bot-likeness index', { exact: true }).click();
+      7 |   await page.getByText('Shots · expected goals (xG)', { exact: true }).click();
+      8 |   await expect(page.getByText('0.73', { exact: true })).toBeVisible();
+        at C:\Users\barke\Documents\AntiRL\review\model-state\review_model_state.spec.ts:5:65
+
+    Error Context: ..\review\model-state\results\review_model_state-charact-f49a6-ores-after-prop-switch-to-B\error-context.md
+
+  1 failed
+    ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B 

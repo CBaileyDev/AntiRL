@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import ts from '../app/node_modules/typescript/lib/typescript.js';
+const source = fs.readFileSync('app/src/pages/Replays.tsx', 'utf8');
+const start = source.indexOf('function teamScores(');
+const end = source.indexOf('\n}\n', start) + 2;
+assert(start >= 0 && end > start);
+const exact = source.slice(start, end);
+const javascript = ts.transpileModule(exact, {compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
+const teamScores = new Function(javascript + ';return teamScores;')();
+assert.deepEqual(teamScores({blue_score:1,orange_score:3}), ['1','3']);
+assert.deepEqual(teamScores({blue_score:null,orange_score:null}), ['-','-']);
+assert.deepEqual(teamScores({blue_score:null,orange_score:3}), ['0','3']);
+assert.deepEqual(teamScores({blue_score:3,orange_score:null}), ['3','0']);
+const result = {method:'Exact private helper extracted verbatim from production Replays.tsx and transpiled without edits', source_sha256:crypto.createHash('sha256').update(exact).digest('hex'), known:['1','3'], both_missing:['-','-'], blue_missing:{expected:['-','3'],actual:['0','3']},orange_missing:{expected:['3','-'],actual:['3','0']}, controls_passed:4,scope:'Accepted nullable score contract; no real partial-score replay fixture asserted'};
+fs.writeFileSync('review/SCORE_VALIDATION.json', JSON.stringify(result,null,2));
+console.log(JSON.stringify(result));

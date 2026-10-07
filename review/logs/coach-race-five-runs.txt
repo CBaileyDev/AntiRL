@@ -1,0 +1,20 @@
+
+Running 5 tests using 2 workers
+
+(node:65552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (5.1s)
+  ✓  1 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (5.1s)
+(node:38740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (4.9s)
+  ✓  4 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (4.9s)
+(node:41648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 tests\coaching.spec.ts:3:1 › safe coach rendering, scroll anchors, cancellation, exports and onboarding (5.0s)
+
+  5 passed (17.1s)

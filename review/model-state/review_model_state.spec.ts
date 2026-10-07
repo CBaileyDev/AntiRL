@@ -1,0 +1,21 @@
+import { expect, test } from '../../app/node_modules/@playwright/test/index.mjs';
+test('characterization: real experimental components retain replay A scores after prop switch to B', async ({ page }) => {
+  page.on('pageerror', error => console.log('REVIEW_PAGE_ERROR', error.message));
+  await page.goto('/@fs/C:/Users/barke/Documents/AntiRL/review/model-state/index.html');
+  await expect(page.getByRole('heading', { name: 'Replay A' })).toBeVisible({ timeout: 5000 });
+  await page.getByText('Bot detection · local bot-likeness index', { exact: true }).click();
+  await page.getByText('Shots · expected goals (xG)', { exact: true }).click();
+  await expect(page.getByText('0.73', { exact: true })).toBeVisible();
+  await expect(page.getByText('Player from A', { exact: true }).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Switch replay prop to B' }).click();
+  await expect(page.getByRole('heading', { name: 'Replay B' })).toBeVisible();
+  await page.getByText('Bot detection · local bot-likeness index', { exact: true }).click();
+  await page.getByText('Shots · expected goals (xG)', { exact: true }).click();
+  await expect(page.getByText('0.73', { exact: true })).toBeVisible();
+  await expect(page.getByText('Player from A', { exact: true }).first()).toBeVisible();
+  const calls = await page.evaluate(() => window.modelCalls);
+  expect(calls.filter(c => c.command === 'bot_likeness').map(c => c.id)).toEqual(['A']);
+  expect(calls.filter(c => c.command === 'xg_replay_shots').map(c => c.id)).toEqual(['A']);
+  console.log('REVIEW_COMPONENT_STALE_RESULTS', JSON.stringify(calls));
+  await page.screenshot({ path: 'C:/Users/barke/Documents/AntiRL/review/model-state/replay-B-old-results.png', fullPage: true });
+});

@@ -1,0 +1,207 @@
+$ tsc --noEmit && vite build
+vite v6.4.3 building for production...
+transforming...
+✓ 2509 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/core.js is dynamically imported by C:/Users/barke/Documents/AntiRL/app/src/App.tsx but also statically imported by C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/dpi.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/event.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/image.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/window.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+plugin-dialog@2.8.1/node_modules/@tauri-apps/plugin-dialog/dist-js/index.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+plugin-opener@2.7.0/node_modules/@tauri-apps/plugin-opener/dist-js/index.js, C:/Users/barke/Documents/AntiRL/app/src/bindings.ts, C:/Users/barke/Documents/AntiRL/app/src/ipc.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/event.js is dynamically imported by C:/Users/barke/Documents/AntiRL/app/src/App.tsx but also statically imported by C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@tauri-apps+api@2.12.1/node_modules/@tauri-apps/api/window.js, C:/Users/barke/Documents/AntiRL/app/src/bindings.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Materials/imageProcessingConfiguration.js is dynamically imported by C:/Users/barke/Documents/AntiRL/app/src/viewerScene.ts but also statically imported by C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Materials/PBR/pbrBaseMaterial.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Materials/standardMaterial.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/scene.js, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/mesh.vertexData.js is dynamically imported by C:/Users/barke/Documents/AntiRL/app/src/viewerScene.ts but also statically imported by C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/boxBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/capsuleBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/cylinderBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/decalBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/discBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/goldbergBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/groundBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/icoSphereBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/linesBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/planeBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/polygonBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/polyhedronBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/ribbonBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/sphereBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/tiledBoxBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/tiledPlaneBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/torusBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/Builders/torusKnotBuilder.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/abstractMesh.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/geometry.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/mesh.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/polygonMesh.js, C:/Users/barke/Documents/AntiRL/app/node_modules/.pnpm/@babylonjs+core@8.56.2/node_modules/@babylonjs/core/Meshes/trailMesh.js, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/index.html                                                     0.42 kB │ gzip:   0.29 kB
+dist/assets/inter-vietnamese-400-normal-DMkecbls.woff2              4.97 kB
+dist/assets/inter-vietnamese-600-normal-Cc8MFFhd.woff2              5.10 kB
+dist/assets/inter-vietnamese-700-normal-DlLaEgI2.woff2              5.10 kB
+dist/assets/inter-vietnamese-500-normal-DOriooB6.woff2              5.11 kB
+dist/assets/inter-greek-ext-400-normal-DGGRlc-M.woff2               5.26 kB
+dist/assets/inter-greek-ext-500-normal-C4iEst2y.woff2               5.43 kB
+dist/assets/inter-greek-ext-600-normal-DRtmH8MT.woff2               5.43 kB
+dist/assets/inter-greek-ext-700-normal-qfdV9bQt.woff2               5.44 kB
+dist/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff               6.50 kB
+dist/assets/inter-vietnamese-500-normal-mJboJaSs.woff               6.60 kB
+dist/assets/inter-vietnamese-700-normal-BZaoP0fm.woff               6.63 kB
+dist/assets/inter-vietnamese-600-normal-BuLX-rYi.woff               6.64 kB
+dist/assets/inter-greek-ext-400-normal-KugGGMne.woff                7.06 kB
+dist/assets/inter-greek-ext-500-normal-2j5mBUwD.woff                7.19 kB
+dist/assets/inter-greek-ext-600-normal-B8X0CLgF.woff                7.21 kB
+dist/assets/inter-greek-ext-700-normal-BoQ6DsYi.woff                7.22 kB
+dist/assets/inter-cyrillic-400-normal-obahsSVq.woff2                7.71 kB
+dist/assets/inter-greek-400-normal-B4URO6DV.woff2                   7.78 kB
+dist/assets/inter-cyrillic-500-normal-BasfLYem.woff2                7.90 kB
+dist/assets/inter-cyrillic-700-normal-CjBOestx.woff2                7.90 kB
+dist/assets/inter-greek-500-normal-BIZE56-Y.woff2                   7.92 kB
+dist/assets/inter-greek-700-normal-C3JjAnD8.woff2                   7.92 kB
+dist/assets/inter-greek-600-normal-plRanbMR.woff2                   7.94 kB
+dist/assets/inter-cyrillic-600-normal-CWCymEST.woff2                7.97 kB
+dist/assets/inter-cyrillic-400-normal-HOLc17fK.woff                 9.78 kB
+dist/assets/inter-cyrillic-700-normal-DrXBdSj3.woff                 9.91 kB
+dist/assets/inter-greek-400-normal-q2sYcFCs.woff                    9.92 kB
+dist/assets/inter-cyrillic-600-normal-4D_pXhcN.woff                 9.94 kB
+dist/assets/inter-cyrillic-500-normal-CxZf_p3X.woff                 9.94 kB
+dist/assets/inter-greek-500-normal-Xzm54t5V.woff                    9.98 kB
+dist/assets/inter-greek-700-normal-BUv2fZ6O.woff                    9.98 kB
+dist/assets/inter-greek-600-normal-BZpKdvQh.woff                   10.03 kB
+dist/assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2           10.23 kB
+dist/assets/inter-cyrillic-ext-500-normal-B0yAr1jD.woff2           10.43 kB
+dist/assets/inter-cyrillic-ext-600-normal-Dfes3d0z.woff2           10.48 kB
+dist/assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2           10.50 kB
+dist/assets/inter-cyrillic-ext-400-normal-DQukG94-.woff            13.34 kB
+dist/assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff            13.41 kB
+dist/assets/inter-cyrillic-ext-500-normal-BmqWE9Dz.woff            13.45 kB
+dist/assets/inter-cyrillic-ext-600-normal-Bcila6Z-.woff            13.46 kB
+dist/assets/inter-latin-400-normal-C38fXH4l.woff2                  23.66 kB
+dist/assets/inter-latin-500-normal-Cerq10X2.woff2                  24.27 kB
+dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2                  24.36 kB
+dist/assets/inter-latin-600-normal-LgqL8muc.woff2                  24.45 kB
+dist/assets/inter-latin-400-normal-CyCys3Eg.woff                   30.70 kB
+dist/assets/inter-latin-600-normal-CiBQ2DWP.woff                   31.26 kB
+dist/assets/inter-latin-500-normal-BL9OpVg8.woff                   31.28 kB
+dist/assets/inter-latin-700-normal-BLAVimhd.woff                   31.32 kB
+dist/assets/inter-latin-ext-400-normal-C1nco2VV.woff2              35.00 kB
+dist/assets/inter-latin-ext-500-normal-CV4jyFjo.woff2              36.02 kB
+dist/assets/inter-latin-ext-700-normal-Ca8adRJv.woff2              36.24 kB
+dist/assets/inter-latin-ext-600-normal-D2bJ5OIk.woff2              36.26 kB
+dist/assets/inter-latin-ext-400-normal-77YHD8bZ.woff               47.56 kB
+dist/assets/inter-latin-ext-500-normal-BxGbmqWO.woff               48.49 kB
+dist/assets/inter-latin-ext-700-normal-TidjK2hL.woff               48.63 kB
+dist/assets/inter-latin-ext-600-normal-CIVaiw4L.woff               48.67 kB
+dist/assets/index-DJG48Cc5.css                                     68.71 kB │ gzip:  12.51 kB
+dist/assets/kernelBlurVaryingDeclaration-DY191e_W.js                0.17 kB │ gzip:   0.16 kB
+dist/assets/kernelBlurVaryingDeclaration-KIo24pM2.js                0.18 kB │ gzip:   0.16 kB
+dist/assets/mainUVVaryingDeclaration-DtOnHLJc.js                    0.19 kB │ gzip:   0.17 kB
+dist/assets/mainUVVaryingDeclaration-wGv7usEE.js                    0.20 kB │ gzip:   0.18 kB
+dist/assets/pointCloudVertex-CSeJbFoM.js                            0.21 kB │ gzip:   0.18 kB
+dist/assets/logDepthFragment-CQER-iYB.js                            0.23 kB │ gzip:   0.20 kB
+dist/assets/logDepthDeclaration-cWmEVjtp.js                         0.23 kB │ gzip:   0.20 kB
+dist/assets/logDepthDeclaration-BxMp2lSN.js                         0.24 kB │ gzip:   0.21 kB
+dist/assets/logDepthVertex-CO8-c6So.js                              0.27 kB │ gzip:   0.23 kB
+dist/assets/logDepthFragment-CDM1bLrN.js                            0.27 kB │ gzip:   0.22 kB
+dist/assets/fogVertex-ttQqB9w8.js                                   0.31 kB │ gzip:   0.21 kB
+dist/assets/pass.fragment-C_TCxnvH.js                               0.32 kB │ gzip:   0.25 kB
+dist/assets/logDepthVertex-C28fGTgj.js                              0.34 kB │ gzip:   0.24 kB
+dist/assets/shadowMapFragmentSoftTransparentShadow-9LNEVc7F.js      0.37 kB │ gzip:   0.27 kB
+dist/assets/vertexColorMixing-BucMmtYk.js                           0.39 kB │ gzip:   0.25 kB
+dist/assets/shadowMapFragmentSoftTransparentShadow-9lvaFJO4.js      0.41 kB │ gzip:   0.29 kB
+dist/assets/rgbdEncode.fragment-BSa6lXo7.js                         0.41 kB │ gzip:   0.30 kB
+dist/assets/rgbdDecode.fragment-DPjicAum.js                         0.41 kB │ gzip:   0.31 kB
+dist/assets/glowMapMerge.vertex-CdTn4VWe.js                         0.44 kB │ gzip:   0.30 kB
+dist/assets/fogVertex-woORHFor.js                                   0.44 kB │ gzip:   0.26 kB
+dist/assets/pass.fragment-CLXPsw0O.js                               0.45 kB │ gzip:   0.30 kB
+dist/assets/packingFunctions-CY6bn3hY.js                            0.49 kB │ gzip:   0.27 kB
+dist/assets/packingFunctions-76x5gkD-.js                            0.52 kB │ gzip:   0.29 kB
+dist/assets/vertexColorMixing-Dkd2KS_r.js                           0.53 kB │ gzip:   0.28 kB
+dist/assets/depthBoxBlur.fragment-kckxVQuT.js                       0.53 kB │ gzip:   0.36 kB
+dist/assets/rgbdEncode.fragment-aJIDqdlN.js                         0.54 kB │ gzip:   0.35 kB
+dist/assets/glowMapMerge.vertex-DUQHiD7P.js                         0.55 kB │ gzip:   0.34 kB
+dist/assets/rgbdDecode.fragment-C6tXJ86I.js                         0.55 kB │ gzip:   0.35 kB
+dist/assets/meshUboDeclaration-Czfgs-h2.js                          0.56 kB │ gzip:   0.31 kB
+dist/assets/meshUboDeclaration-CujKe-Ie.js                          0.56 kB │ gzip:   0.32 kB
+dist/assets/line.fragment-DwtLF1cl.js                               0.65 kB │ gzip:   0.38 kB
+dist/assets/line.fragment-Ppc8YCDD.js                               0.65 kB │ gzip:   0.36 kB
+dist/assets/depthBoxBlur.fragment-5fzCEUo6.js                       0.71 kB │ gzip:   0.42 kB
+dist/assets/kernelBlur.vertex-CvEqsBkm.js                           0.76 kB │ gzip:   0.42 kB
+dist/assets/color.fragment-Ba0SHbGj.js                              0.79 kB │ gzip:   0.38 kB
+dist/assets/glowMapMerge.fragment-BUco8WqR.js                       0.80 kB │ gzip:   0.43 kB
+dist/assets/passCube.fragment-DRm7Z6Ij.js                           0.82 kB │ gzip:   0.35 kB
+dist/assets/instancesVertex-BeGxRDZ_.js                             0.84 kB │ gzip:   0.30 kB
+dist/assets/color.fragment-CS_YWiMB.js                              0.89 kB │ gzip:   0.42 kB
+dist/assets/instancesDeclaration-CEuHgp4g.js                        0.89 kB │ gzip:   0.32 kB
+dist/assets/kernelBlur.vertex-DJUSTx0_.js                           0.92 kB │ gzip:   0.47 kB
+dist/assets/mesh.vertexData.functions-ayNlGC5K.js                   0.96 kB │ gzip:   0.49 kB
+dist/assets/instancesDeclaration-Td_jwIlo.js                        1.00 kB │ gzip:   0.34 kB
+dist/assets/fogFragment-ChxPYlfT.js                                 1.02 kB │ gzip:   0.46 kB
+dist/assets/baseTexture.polynomial-DCiRvDqQ.js                      1.04 kB │ gzip:   0.35 kB
+dist/assets/glowMapMerge.fragment-TdrJtK50.js                       1.06 kB │ gzip:   0.50 kB
+dist/assets/clipPlaneVertex-CG7deQDz.js                             1.11 kB │ gzip:   0.31 kB
+dist/assets/clipPlaneFragment-mrhouT5r.js                           1.11 kB │ gzip:   0.32 kB
+dist/assets/glowBlurPostProcess.fragment-Dc15EcaP.js                1.12 kB │ gzip:   0.58 kB
+dist/assets/passCube.fragment-Dzcy5e_n.js                           1.13 kB │ gzip:   0.40 kB
+dist/assets/instancesVertex-BJ76He1W.js                             1.14 kB │ gzip:   0.37 kB
+dist/assets/defaultUboDeclaration-DXSpDbXy.js                       1.14 kB │ gzip:   0.50 kB
+dist/assets/fogFragment-BRPj5Juf.js                                 1.15 kB │ gzip:   0.51 kB
+dist/assets/clipPlaneFragment-BOwFolHo.js                           1.21 kB │ gzip:   0.34 kB
+dist/assets/depth.fragment-DYRs7aEC.js                              1.26 kB │ gzip:   0.56 kB
+dist/assets/clipPlaneVertex-C_rYexy7.js                             1.29 kB │ gzip:   0.34 kB
+dist/assets/color.vertex-CSD28NCk.js                                1.34 kB │ gzip:   0.59 kB
+dist/assets/textureTools-CxZ9SMZu.js                                1.37 kB │ gzip:   0.84 kB
+dist/assets/ddsTextureLoader-CWtdeVJi.js                            1.37 kB │ gzip:   0.67 kB
+dist/assets/color.vertex-izm7gT0T.js                                1.41 kB │ gzip:   0.59 kB
+dist/assets/glowBlurPostProcess.fragment-BsXGF8Kv.js                1.41 kB │ gzip:   0.66 kB
+dist/assets/index-D42OIj1B.js                                       1.44 kB │ gzip:   0.50 kB
+dist/assets/defaultUboDeclaration-BO7Mq6ex.js                       1.49 kB │ gzip:   0.48 kB
+dist/assets/glowMapGeneration.fragment-CcBl4hNx.js                  1.76 kB │ gzip:   0.69 kB
+dist/assets/line.vertex-DPF1osr_.js                                 1.90 kB │ gzip:   0.76 kB
+dist/assets/particles.fragment-bX9_fssU.js                          1.92 kB │ gzip:   0.81 kB
+dist/assets/line.vertex-D9fqjcqY.js                                 1.93 kB │ gzip:   0.75 kB
+dist/assets/kernelBlur.fragment-DNE_pjlr.js                         2.14 kB │ gzip:   0.72 kB
+dist/assets/depth.vertex-Ce3ypC4Z.js                                2.17 kB │ gzip:   0.80 kB
+dist/assets/particles.fragment-CFSYDyky.js                          2.22 kB │ gzip:   0.84 kB
+dist/assets/glowMapGeneration.vertex-D-vu8Ugv.js                    2.28 kB │ gzip:   0.73 kB
+dist/assets/glowMapGeneration.fragment-8AgsYaE2.js                  2.39 kB │ gzip:   0.79 kB
+dist/assets/hdrTextureLoader-D3ygD1rr.js                            2.42 kB │ gzip:   1.16 kB
+dist/assets/pointLight-BBr6GRCj.js                                  2.55 kB │ gzip:   0.98 kB
+dist/assets/kernelBlur.fragment-Bh2mC9df.js                         2.67 kB │ gzip:   0.79 kB
+dist/assets/glowMapGeneration.vertex-mMNXKXIk.js                    2.70 kB │ gzip:   0.82 kB
+dist/assets/iesTextureLoader-BwuTFOng.js                            2.70 kB │ gzip:   1.17 kB
+dist/assets/shadowMap.fragment-BWP9JJCh.js                          3.11 kB │ gzip:   1.09 kB
+dist/assets/dumpTools-BGjAnVHs.js                                   3.16 kB │ gzip:   1.54 kB
+dist/assets/tgaTextureLoader-ips3qFe2.js                            3.53 kB │ gzip:   1.38 kB
+dist/assets/shadowMap.fragment-CpagffJN.js                          3.66 kB │ gzip:   1.18 kB
+dist/assets/morphTargetsVertex-BWky1Znt.js                          4.26 kB │ gzip:   0.93 kB
+dist/assets/morphTargetsVertex-D5NJxKrD.js                          4.35 kB │ gzip:   0.94 kB
+dist/assets/shadowMap.vertex-BX79kCHy.js                            4.49 kB │ gzip:   1.41 kB
+dist/assets/particles.vertex-JB2U6pfd.js                            4.54 kB │ gzip:   1.29 kB
+dist/assets/shadowMap.vertex-DkQ-NZAU.js                            4.58 kB │ gzip:   1.47 kB
+dist/assets/imageProcessingFunctions-CpHQ_fOg.js                    4.72 kB │ gzip:   1.69 kB
+dist/assets/trailMesh-DnfOrtbI.js                                   5.00 kB │ gzip:   1.41 kB
+dist/assets/blurPostProcess-Vcc_q-FA.js                             5.34 kB │ gzip:   2.12 kB
+dist/assets/passPostProcess-Dufd2WU1.js                             5.37 kB │ gzip:   2.02 kB
+dist/assets/imageProcessingFunctions-DmSyiIBR.js                    5.44 kB │ gzip:   1.90 kB
+dist/assets/particles.vertex-77k7kSJc.js                            5.62 kB │ gzip:   1.39 kB
+dist/assets/helperFunctions-_chWG7ED.js                             5.87 kB │ gzip:   1.96 kB
+dist/assets/helperFunctions-DJtlkp5n.js                             6.22 kB │ gzip:   2.08 kB
+dist/assets/bakedVertexAnimation-Dz6IVh3S.js                        6.62 kB │ gzip:   1.30 kB
+dist/assets/envTextureLoader-mk0HPVtM.js                            7.02 kB │ gzip:   3.00 kB
+dist/assets/bakedVertexAnimation-Cikxuroi.js                        7.12 kB │ gzip:   1.23 kB
+dist/assets/shadowsVertex-DWavvTSd.js                               7.28 kB │ gzip:   1.71 kB
+dist/assets/default.vertex-Dx67piVS.js                              7.52 kB │ gzip:   2.01 kB
+dist/assets/default.vertex-Dmjf3w9c.js                              8.06 kB │ gzip:   2.11 kB
+dist/assets/basisTextureLoader-CNnSSIE3.js                          8.23 kB │ gzip:   3.25 kB
+dist/assets/shadowsVertex-H-sKM-mh.js                               8.70 kB │ gzip:   1.83 kB
+dist/assets/dds-CmQgFsG2.js                                         9.32 kB │ gzip:   3.53 kB
+dist/assets/pbr.vertex-Bi9OLyPT.js                                 12.97 kB │ gzip:   2.74 kB
+dist/assets/harmonicsFunctions-MbJznpqE.js                         14.26 kB │ gzip:   4.77 kB
+dist/assets/edgesRenderer-BddzLIW-.js                              14.30 kB │ gzip:   4.56 kB
+dist/assets/exrTextureLoader-Ci-9Abtg.js                           15.53 kB │ gzip:   5.80 kB
+dist/assets/ktxTextureLoader-Cizd5BEJ.js                           15.85 kB │ gzip:   4.64 kB
+dist/assets/harmonicsFunctions-CyAmOaNP.js                         15.89 kB │ gzip:   4.92 kB
+dist/assets/pbr.vertex-l2Ey8JRA.js                                 16.43 kB │ gzip:   3.32 kB
+dist/assets/viewerEngine-Dk3gCjH9.js                               20.19 kB │ gzip:   6.89 kB
+dist/assets/default.fragment-BtL803PS.js                           23.26 kB │ gzip:   5.42 kB
+dist/assets/default.fragment-DFK-_gmb.js                           24.83 kB │ gzip:   5.40 kB
+dist/assets/shadowGenerator-BEnIzfOX.js                            32.67 kB │ gzip:   8.46 kB
+dist/assets/glowLayer-DoZogM7k.js                                  40.36 kB │ gzip:   9.36 kB
+dist/assets/shadowGeneratorSceneComponent-rdPhOPIA.js              42.40 kB │ gzip:  11.53 kB
+dist/assets/postProcess-CGF_faLE.js                                54.44 kB │ gzip:  13.18 kB
+dist/assets/oitFragment-BM6MOMPU.js                                71.25 kB │ gzip:  12.75 kB
+dist/assets/oitFragment-DJkb_gBH.js                                76.80 kB │ gzip:  13.26 kB
+dist/assets/particleSystem-BmX5LyK7.js                             93.44 kB │ gzip:  19.40 kB
+dist/assets/arenaMesh-CufKt3R_.js                                  99.16 kB │ gzip:  58.77 kB
+dist/assets/pbrMaterial-5wzl_Jz4.js                               128.21 kB │ gzip:  42.59 kB
+dist/assets/pbr.fragment-ys9HU9nI.js                              133.47 kB │ gzip:  24.85 kB
+dist/assets/pbr.fragment-BL7lTv9y.js                              137.56 kB │ gzip:  24.94 kB
+dist/assets/index-WYbT7Clp.js                                   1,767.68 kB │ gzip: 467.16 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.48s

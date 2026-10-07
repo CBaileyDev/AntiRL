@@ -1,0 +1,370 @@
+[
+  {
+    "name": "labels and nav semantics",
+    "nav": [
+      {
+        "text": "Overview",
+        "current": null
+      },
+      {
+        "text": "Replay Library40",
+        "current": null
+      },
+      {
+        "text": "Replay Studio",
+        "current": null
+      },
+      {
+        "text": "Coach Chat",
+        "current": null
+      },
+      {
+        "text": "Progress & Goals",
+        "current": null
+      },
+      {
+        "text": "Teammates",
+        "current": null
+      },
+      {
+        "text": "Settings",
+        "current": null
+      }
+    ],
+    "unnamed": [
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "value": "C:\\ReviewFixtures",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": null
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "value": "Nova",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": "e.g. yoitzjerm"
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "value": "review:you",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": "e.g. platform:your-account-id"
+      },
+      {
+        "tag": "SELECT",
+        "type": "select-one",
+        "value": "none",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": null
+      },
+      {
+        "tag": "SELECT",
+        "type": "select-one",
+        "value": "review-stub",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": null
+      },
+      {
+        "tag": "INPUT",
+        "type": "text",
+        "value": "",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": "new_note.md"
+      },
+      {
+        "tag": "TEXTAREA",
+        "type": "textarea",
+        "value": "Pick up two small pads on the way back to defence.",
+        "labelCount": 0,
+        "ariaLabel": null,
+        "placeholder": null
+      }
+    ],
+    "inputsCount": 14
+  },
+  {
+    "name": "focus outlines on inputs",
+    "results": [
+      {
+        "placeholder": null,
+        "focusVisible": true,
+        "outline": "rgb(248, 250, 252) none 3px",
+        "boxShadow": "none",
+        "border": "1px solid rgb(99, 102, 241)"
+      },
+      {
+        "placeholder": "e.g. yoitzjerm",
+        "focusVisible": true,
+        "outline": "rgb(248, 250, 252) none 3px",
+        "boxShadow": "none",
+        "border": "1px solid rgb(99, 102, 241)"
+      },
+      {
+        "placeholder": "e.g. platform:your-account-id",
+        "focusVisible": true,
+        "outline": "rgb(248, 250, 252) none 3px",
+        "boxShadow": "none",
+        "border": "1px solid rgb(99, 102, 241)"
+      },
+      {
+        "placeholder": "new_note.md",
+        "focusVisible": true,
+        "outline": "rgb(248, 250, 252) none 3px",
+        "boxShadow": "none",
+        "border": "1px solid rgb(99, 102, 241)"
+      }
+    ]
+  },
+  {
+    "name": "onboarding focus leaks to background",
+    "initialFocusInside": false,
+    "escaped": [
+      {
+        "i": 0,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 1,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 2,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 3,
+        "tag": "BUTTON",
+        "text": "Overview",
+        "inside": false
+      },
+      {
+        "i": 4,
+        "tag": "BUTTON",
+        "text": "Replay Library",
+        "inside": false
+      },
+      {
+        "i": 5,
+        "tag": "BUTTON",
+        "text": "Replay Studio",
+        "inside": false
+      },
+      {
+        "i": 6,
+        "tag": "BUTTON",
+        "text": "Coach Chat",
+        "inside": false
+      },
+      {
+        "i": 7,
+        "tag": "BUTTON",
+        "text": "Progress & Goals",
+        "inside": false
+      },
+      {
+        "i": 8,
+        "tag": "BUTTON",
+        "text": "Teammates",
+        "inside": false
+      },
+      {
+        "i": 9,
+        "tag": "BUTTON",
+        "text": "Settings",
+        "inside": false
+      },
+      {
+        "i": 10,
+        "tag": "BUTTON",
+        "text": "Unconfirmed PlayerHighest · Diamond II",
+        "inside": false
+      },
+      {
+        "i": 11,
+        "tag": "BUTTON",
+        "text": "Import Replays",
+        "inside": false
+      },
+      {
+        "i": 12,
+        "tag": "BUTTON",
+        "text": "Calibrate Profile",
+        "inside": false
+      },
+      {
+        "i": 13,
+        "tag": "BUTTON",
+        "text": "View All (0)",
+        "inside": false
+      },
+      {
+        "i": 24,
+        "tag": "BODY",
+        "text": "AntiRLLocal modeStudioOverviewReplay LibraryReplay StudioCoachingCoach ChatProgress & GoalsTeammates",
+        "inside": false
+      },
+      {
+        "i": 25,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 26,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 27,
+        "tag": "BUTTON",
+        "text": "",
+        "inside": false
+      },
+      {
+        "i": 28,
+        "tag": "BUTTON",
+        "text": "Overview",
+        "inside": false
+      },
+      {
+        "i": 29,
+        "tag": "BUTTON",
+        "text": "Replay Library",
+        "inside": false
+      },
+      {
+        "i": 30,
+        "tag": "BUTTON",
+        "text": "Replay Studio",
+        "inside": false
+      },
+      {
+        "i": 31,
+        "tag": "BUTTON",
+        "text": "Coach Chat",
+        "inside": false
+      },
+      {
+        "i": 32,
+        "tag": "BUTTON",
+        "text": "Progress & Goals",
+        "inside": false
+      },
+      {
+        "i": 33,
+        "tag": "BUTTON",
+        "text": "Teammates",
+        "inside": false
+      },
+      {
+        "i": 34,
+        "tag": "BUTTON",
+        "text": "Settings",
+        "inside": false
+      },
+      {
+        "i": 35,
+        "tag": "BUTTON",
+        "text": "Unconfirmed PlayerHighest · Diamond II",
+        "inside": false
+      },
+      {
+        "i": 36,
+        "tag": "BUTTON",
+        "text": "Import Replays",
+        "inside": false
+      },
+      {
+        "i": 37,
+        "tag": "BUTTON",
+        "text": "Calibrate Profile",
+        "inside": false
+      }
+    ]
+  },
+  {
+    "name": "onboarding selection semantics",
+    "cards": [
+      {
+        "text": "Aggressive 1st ManPressure, demoing, forcing 50-50s, disruptive offense",
+        "role": "button",
+        "pressed": null,
+        "checked": null
+      },
+      {
+        "text": "Rotational 2nd ManPassing, cleanup, mid-field support, spacing balance",
+        "role": "button",
+        "pressed": null,
+        "checked": null
+      },
+      {
+        "text": "Defensive Anchor (3rd Man)Backpost coverage, shadow defense, clearing, patience",
+        "role": "button",
+        "pressed": null,
+        "checked": null
+      },
+      {
+        "text": "Mechanical Solo PlaymakerAir dribbles, flip resets, 1v1 outplays, ceiling plays",
+        "role": "button",
+        "pressed": null,
+        "checked": null
+      }
+    ]
+  },
+  {
+    "name": "delete scrim semantics and sr-only",
+    "overlay": {
+      "position": "static",
+      "background": "rgba(0, 0, 0, 0)",
+      "zIndex": "auto"
+    },
+    "unhiddenScreenReaderClass": []
+  },
+  {
+    "name": "reduced motion outside Studio",
+    "animated": []
+  },
+  {
+    "name": "none",
+    "body": "none"
+  },
+  {
+    "name": "720p transport visibility",
+    "viewportHeight": 720,
+    "transportBounds": {
+      "x": 301,
+      "y": 966,
+      "width": 922,
+      "height": 16
+    },
+    "belowFold": true
+  },
+  {
+    "name": "200 percent scale reflow",
+    "width": 720,
+    "scrollWidth": 720,
+    "composer": {
+      "x": 277,
+      "y": 788.5,
+      "width": 354,
+      "height": 42
+    },
+    "screenshot": "review/screenshots/validation/coach-200-percent-equivalent.png"
+  }
+]

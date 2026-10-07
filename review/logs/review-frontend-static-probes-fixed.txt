@@ -1,0 +1,28 @@
+✘ [ERROR] Expected "}" but found "playerId"
+
+    review/review_frontend_probes.tsx:13:161:
+      13 │ ...ll:{pos:[0,0,0]},cars:[]}]} playerId="other"/>),/null.*position...
+         │                                ~~~~~~~~
+         ╵                                }
+
+C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467
+  let error = new Error(text);
+              ^
+
+Error: Build failed with 1 error:
+review/review_frontend_probes.tsx:13:161: ERROR: Expected "}" but found "playerId"
+    at failureErrorWithLog (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:926:25
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:878:52
+    at buildResponseToResult (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:924:7)
+    at C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:951:16
+    at responseCallbacks.<computed> (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+
+Node.js v22.23.2

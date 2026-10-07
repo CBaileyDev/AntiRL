@@ -1,0 +1,3 @@
+import original from '../../app/vite.config';
+const path = (p: string) => new URL(p, import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+export default { ...original, resolve: { alias: [{ find: /^react$/, replacement: path('../../app/node_modules/react') }, { find: /^react-dom\/client$/, replacement: path('../../app/node_modules/react-dom/client.js') }, { find: /^react\/jsx-runtime$/, replacement: path('../../app/node_modules/react/jsx-runtime.js') }, { find: /^react\/jsx-dev-runtime$/, replacement: path('../../app/node_modules/react/jsx-dev-runtime.js') }] }, server: { ...original.server, fs: { allow: [path('../../')] } } };

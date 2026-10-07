@@ -1,0 +1,236 @@
+   Compiling review-metrics-probe v0.1.0 (C:\Users\barke\Documents\AntiRL\review\metrics-probe)
+warning: unused variable: `target_time`
+    --> src\lib.rs:1803:9
+     |
+1803 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1807:9
+     |
+1807 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `close_enough_to_frame_time`
+    --> src\lib.rs:1808:9
+     |
+1808 |         close_enough_to_frame_time: f32,
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_close_enough_to_frame_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1812:9
+     |
+1812 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1816:9
+     |
+1816 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1817:9
+     |
+1817 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1821:9
+     |
+1821 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1822:9
+     |
+1822 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `close_enough_to_frame_time`
+    --> src\lib.rs:1823:9
+     |
+1823 |         close_enough_to_frame_time: f32,
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_close_enough_to_frame_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1825:27
+     |
+1825 | fn get_player_name(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+     |                           ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1826:33
+     |
+1826 | fn get_player_car_hitbox(&self, player_id: &PlayerId) -> CarHitbox { unimplemented!() }
+     |                                 ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1827:31
+     |
+1827 | fn get_player_team_key(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+     |                               ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1828:32
+     |
+1828 | fn get_player_is_team_0(&self, player_id: &PlayerId) -> SubtrActorResult<bool> { Ok(true) }
+     |                                ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `actor_id`
+    --> src\lib.rs:1829:37
+     |
+1829 | fn get_player_id_from_car_id(&self, actor_id: &boxcars::ActorId) -> SubtrActorResult<PlayerId> { unimplemented!() }
+     |                                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_actor_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1830:34
+     |
+1830 | fn get_player_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { Ok(self.boost*2.55) }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1831:39
+     |
+1831 | fn get_player_last_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+     |                                       ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1832:39
+     |
+1832 | fn get_player_boost_percentage(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+     |                                       ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1833:28
+     |
+1833 | fn get_boost_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(1) }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1834:27
+     |
+1834 | fn get_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                           ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1835:34
+     |
+1835 | fn get_double_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1836:28
+     |
+1836 | fn get_dodge_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1837:33
+     |
+1837 | fn get_powerslide_active(&self, player_id: &PlayerId) -> SubtrActorResult<bool> { Ok(false) }
+     |                                 ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1838:24
+     |
+1838 | fn get_throttle(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(255) }
+     |                        ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1839:21
+     |
+1839 | fn get_steer(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(128) }
+     |                     ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1840:29
+     |
+1840 | fn get_dodge_impulse(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+     |                             ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1841:28
+     |
+1841 | fn get_dodge_torque(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1842:28
+     |
+1842 | fn get_camera_pitch(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1843:26
+     |
+1843 | fn get_camera_yaw(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+     |                          ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1844:36
+     |
+1844 | fn get_player_match_assists(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                    ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1845:34
+     |
+1845 | fn get_player_match_goals(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1846:34
+     |
+1846 | fn get_player_match_saves(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1847:34
+     |
+1847 | fn get_player_match_score(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1848:34
+     |
+1848 | fn get_player_match_shots(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: `review-metrics-probe` (lib test) generated 33 warnings (run `cargo fix --lib -p review-metrics-probe --tests` to apply 33 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.74s
+     Running unittests src\lib.rs (target\debug\deps\review_metrics_probe-196117b510572c97.exe)
+
+running 5 tests
+
+thread 'review_characterization::review_kickoff_time_not_in_active_play' (60676) panicked at src\lib.rs:1794:83:
+not implemented
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test review_characterization::review_partial_velocity_overstates_metric_sample_count ... 
+thread 'review_characterization::review_absent_player_extends_observed_low_boost_event' (28096) panicked at src\lib.rs:1794:83:
+not implemented
+ok
+
+thread 'review_characterization::review_gap_is_excluded_without_quality_accounting' (64060) panicked at src\lib.rs:1794:83:
+not implemented
+
+thread 'review_characterization::review_low_and_supersonic_boost_generate_duplicate_event_ids' (58856) panicked at src\lib.rs:1794:83:
+not implemented
+test review_characterization::review_gap_is_excluded_without_quality_accounting ... FAILED
+test review_characterization::review_absent_player_extends_observed_low_boost_event ... FAILED
+test review_characterization::review_kickoff_time_not_in_active_play ... FAILED
+test review_characterization::review_low_and_supersonic_boost_generate_duplicate_event_ids ... FAILED
+
+failures:
+
+failures:
+    review_characterization::review_absent_player_extends_observed_low_boost_event
+    review_characterization::review_gap_is_excluded_without_quality_accounting
+    review_characterization::review_kickoff_time_not_in_active_play
+    review_characterization::review_low_and_supersonic_boost_generate_duplicate_event_ids
+
+test result: FAILED. 1 passed; 4 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

@@ -1,0 +1,13 @@
+{
+  "dist_bytes": 16568921,
+  "dist_files": 218,
+  "js_bytes": 3078374,
+  "largest_js": {
+    "path": "app/dist/assets/index-WYbT7Clp.js",
+    "bytes": 1767683,
+    "gzip_bytes": 464141
+  },
+  "rank_png_bytes": 9695742,
+  "rank_png_count": 23,
+  "rank_png_largest": 790677
+}

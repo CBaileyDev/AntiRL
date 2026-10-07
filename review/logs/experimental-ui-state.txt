@@ -1,0 +1,14 @@
+file:///C:/Users/barke/Documents/AntiRL/review/model-state/playwright.config.ts:1
+import { defineConfig } from '../../app/node_modules/@playwright/test/index.js';
+         ^^^^^^^^^^^^
+SyntaxError: The requested module '../../app/node_modules/@playwright/test/index.js' does not provide an export named 'defineConfig'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at requireOrImport (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\common\index.js:1081:12)
+    at loadUserConfig (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\common\index.js:1268:46)
+    at loadConfig (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\common\index.js:1275:22)
+    at Object.loadConfigFromFile (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\common\index.js:1490:10)
+    at runTests (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (C:\Users\barke\Documents\AntiRL\app\node_modules\.pnpm\playwright@1.63.0\node_modules\playwright\lib\program.js:55:7)

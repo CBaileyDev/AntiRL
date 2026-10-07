@@ -1,0 +1,480 @@
+[
+  {
+    "id": "A-001",
+    "severity": "P1",
+    "category": "A",
+    "title": "Overlapping boost detectors produce duplicate IDs and reject a valid replay",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1199,
+      "quote": "        id: format!(\"{match_id}:{category}:{player_id}:{start:.3}\"),\n        player_id: Some(player_id.to_string()),\n        team: None,"
+    },
+    "problem": "Both segment types use the same category/player/start identifier. A player holding boost above 2200 with less than 10 boost for five seconds creates two equal IDs; validate_analysis rejects the whole replay.",
+    "trigger_or_repro": "review_validate_duplicate_events_fails_but_control_is_valid drives native Collector::process_frame snapshots for 6 seconds; change boost 0 to 33 as control.",
+    "expected_vs_actual": "Low boost case returns Analysis event references or time invalid; otherwise identical 33-boost case passes.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Give event types stable distinct identifiers, separate category from detector kind, and test simultaneous detectors.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new",
+    "validation": "Actively disproved alternate cause: same collector snapshots with boost 33 instead of 0 validate successfully. Overlap control produces exactly two different titles with identical IDs; failure persists at finish_replay and regular flush."
+  },
+  {
+    "id": "A-002",
+    "severity": "P0",
+    "category": "A",
+    "title": "Low-boost event duration includes time while the player is absent",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1014,
+      "quote": "        for car in &cars {\n            let a = self.acc.entry(car.player_id.clone()).or_default();\n            if !continuity || car.discontinuity {"
+    },
+    "problem": "Accumulator segments are flushed only for currently present cars. When a player disappears, the outstanding low-boost/boost segment survives; returning or EOF closes it at the later replay time, asserting an unobserved interval.",
+    "trigger_or_repro": "review_absent_player_extends_observed_low_boost_event: six seconds low boost, six seconds with no car, then reappear.",
+    "expected_vs_actual": "Actual observed low-boost duration is 6 s; event is 0..12 and description says boost stayed below 10 continuously.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Flush or suspend segments when a player leaves the observable set, using last observed endpoint. Record an explicit missing-state interval.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new",
+    "validation": "Native process_frame synthetic snapshots prove six seconds absent without increasing tracked_seconds. The event still extends to 12. No missing-data interpolation in the fixture or helper; current car set is empty during absence."
+  },
+  {
+    "id": "A-003",
+    "severity": "P0",
+    "category": "A",
+    "title": "Defensive-exposure event spans a timing gap that metrics explicitly exclude",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1108,
+      "quote": "        if exposed != self.exposure_team {\n            if let Some(team) = self.exposure_team.filter(|_| self.exposure_duration >= 1.0) {\n                self.events.push(coverage_event("
+    },
+    "problem": "When continuity fails, exposure is closed at the current time rather than the last continuous observation. A long skipped gap becomes part of a claimed observed exposure window.",
+    "trigger_or_repro": "review_exposure_event_spans_dropped_timing_gap: 1.2 seconds with two upfield defenders, next snapshot at 5 seconds.",
+    "expected_vs_actual": "Event is 0..5 although live_seconds is 1.2 and gap 1.2..5 is rejected.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Close exposure at previous continuous frame; clear exposure before processing discontinuities; test gap/goal/reset endpoints.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new",
+    "validation": "Active disproof attempt: test verifies live_seconds remains 1.2, proving the interval is excluded by the metric but included by event construction. Both team players are present and correctly assigned."
+  },
+  {
+    "id": "A-004",
+    "severity": "P2",
+    "category": "A",
+    "title": "Player movement and resource baselines omit the kickoff approach",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 899,
+      "quote": "            hit == Some(true) && !countdown && !self.post_goal && p.get_game_state() != Some(67);\n        let ball = if p.get_ignore_ball_syncing().ok() == Some(true) {\n            None"
+    },
+    "problem": "The shared live flag excludes all kickoff movement before first ball contact, beyond the countdown excluded by metric copy. Boost spent accelerating to kickoff and delayed/fake kickoff motion are absent from headline averages and measured active play.",
+    "trigger_or_repro": "review_kickoff_time_not_in_active_play; two seconds moving at 2250 with no first contact.",
+    "expected_vs_actual": "Zero tracked seconds and no boost/speed accumulation until after the first hit; copy says excludes countdown and goal celebration without naming kickoff approach.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Capture a gameplay phase enum and separate match/player-motion eligibility from ball-position eligibility. Document baseline semantics and create a kickoff report.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-005",
+    "severity": "P2",
+    "category": "A",
+    "title": "Dropped observation gaps have no quantified quality or exclusion summary",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 985,
+      "quote": "        let gap = !(0.0..=0.25).contains(&dt);\n        let phase_change = self.previous.as_ref().is_some_and(|f| f.live_play != live);\n        let ball_jump = self"
+    },
+    "problem": "Gaps are marked as render discontinuities and silently removed from accumulation. Coverage cannot show gap count/seconds, excluded kickoff/goal time, per-player absence, or coverage ratio, so consumers cannot assess comparability.",
+    "trigger_or_repro": "review_gap_is_excluded_without_quality_accounting; 0.4-second gap in a short synthetic replay.",
+    "expected_vs_actual": "live_seconds excludes the gap but no coverage field explains how much was discarded.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Publish per-phase/per-metric observed and excluded durations with reason codes; require a coverage threshold for comparisons.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-006",
+    "severity": "P2",
+    "category": "A",
+    "title": "Several metric sample counts describe all car frames, not valid observations",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 753,
+      "quote": "                a.samples,\n                \"measured\",\n                \"Observed active-play duration with available car state; excludes countdown and goal celebration.\","
+    },
+    "problem": "avg_speed and position metrics use a.samples even when velocity, team or ball is missing. The viewer tooltip prints sample_count as evidence, overstating supporting samples.",
+    "trigger_or_repro": "review_partial_velocity_overstates_metric_sample_count: 100 car samples with only one valid velocity.",
+    "expected_vs_actual": "avg_speed reports 100 samples but denominator is 0.1 s from a single observation.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Track valid sample counts separately for each sufficient-statistic denominator; show coverage duration as the main support.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-007",
+    "severity": "P2",
+    "category": "A",
+    "title": "Analysis validator omits sufficient statistics and coverage integrity",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 576,
+      "quote": "        if !ids.contains(m.player_id.as_str()) || m.value.is_some_and(|v| !v.is_finite()) {\n            return Err(\"Analysis metric invalid\".into());\n        }"
+    },
+    "problem": "Validator only checks metric player reference and value finiteness. Infinite numerator, negative denominator, inconsistent ratio, and NaN/live time beyond duration are accepted.",
+    "trigger_or_repro": "review_validator_accepts_corrupt_sufficient_statistics_and_coverage.",
+    "expected_vs_actual": "validate_analysis accepts negative denominator, infinite numerator and NaN coverage simultaneously.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Validate all numeric fields and nonnegative denominators; verify ratio/value consistency with tolerance and observed-time bounds.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-008",
+    "severity": "P2",
+    "category": "A",
+    "title": "Analysis validator accepts impossible metric ranges and inconsistent shot attribution",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 547,
+      "quote": "    for e in &a.shots {\n        let finite_opt = |v: Option<f32>| v.is_none_or(|n| n.is_finite());\n        if !time_ok(e.time)"
+    },
+    "problem": "Finite values alone allow negative scores, negative boost percentages, absurd sample indices and shot team disagreeing with the player. summary.players and recorder identity are not cross-checked against canonical players.",
+    "trigger_or_repro": "review_validator_accepts_negative_counts_and_wrong_shot_team sets score/boost -100, shot on opponent team, frame usize::MAX.",
+    "expected_vs_actual": "The validator accepts all constructed contradictions.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Add typed range validation by metric key, canonical participant consistency, recorder membership, and frame/index bounds.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-009",
+    "severity": "P2",
+    "category": "A",
+    "title": "Duration is the last replay timestamp and includes non-gameplay time",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 397,
+      "quote": "        duration_seconds: f64::from(last),\n        blue_score,\n        orange_score,"
+    },
+    "problem": "Replay elapsed end time is shown as Duration in Overview/Replays. It can include pre-game countdown, goal celebrations and end sequence, and does not subtract first frame time.",
+    "trigger_or_repro": "Inspect summary builder and Overview.tsx:200, Replays.tsx:416.",
+    "expected_vs_actual": "A replay ending at t=360 is displayed as 6:00 even if measured active play is 300; no match-versus-replay distinction.",
+    "evidence": "Source inspection crates/replay-core/src/lib.rs:397",
+    "recommendation": "Persist replay elapsed span, regulation/overtime time and observed player-motion duration separately; label them explicitly.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-010",
+    "severity": "P2",
+    "category": "A",
+    "title": "Exact supersonic state is not measured; detector prose calls threshold time supersonic",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1046,
+      "quote": "                        \"Boost remained active while the car was already supersonic for at least one second. Check whether aerial control or speed maintenance justified it; otherwise release boost and conserve it.\",\n                        \"boost_active_at_supersonic_speed_s\",\n                    ));"
+    },
+    "problem": "Threshold accumulation is honestly named in dictionary, so missing hysteresis is not inherently wrong. The detector prose still equates >=2200 with game state, losing the 2100..2200 one-second grace interval and confusing exact state with a threshold approximation.",
+    "trigger_or_repro": "Inspect >=2200 cuts and metric dictionary limitations; official v1.78 notes document hysteresis as unchanged.",
+    "expected_vs_actual": "Threshold metric is valid as defined; exact state/time cannot be inferred from it, yet event calls the state supersonic.",
+    "evidence": "review/research-formulas/white-0.png; https://www.rocketleague.com/news/patch-notes-v1-78?lang=en (supersonic check)",
+    "recommendation": "Keep threshold metric, change event prose to at or above 2200, or derive a separate validated state estimate with hysteresis.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-011",
+    "severity": "P2",
+    "category": "J",
+    "title": "Boost-at-speed is visually condemned despite being a neutral measurement",
+    "location": {
+      "file": "app/src/pages/Progress.tsx",
+      "line": 150,
+      "quote": "            <Flame size={16} color=\"var(--danger)\" />\n            <span className=\"pg-label\">Boosting at Speed</span>\n          </div>"
+    },
+    "problem": "Danger colour and a flame icon imply waste; parser advice still defaults to release boost without evidence about acceleration, steering or aerial purpose. The honest sentence not proven waste competes with stronger visual semantics.",
+    "trigger_or_repro": "Progress Boosting at Speed card and Overview kpi-icon-wrap waste; inspect parser segment copy.",
+    "expected_vs_actual": "Neutral context-dependent duration is presented as danger and among four hero KPIs.",
+    "evidence": "app/src/pages/Progress.tsx:149-160; app/src/pages/Overview.tsx:129; parser supersonic segment text",
+    "recommendation": "Use neutral kinematic styling; demote to descriptive stats; promote contextual pad-path/recovery opportunities once validated.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-012",
+    "severity": "P2",
+    "category": "O",
+    "title": "New threshold metrics are discarded before the product can show them",
+    "location": {
+      "file": "crates/coach-services/src/lib.rs",
+      "line": 440,
+      "quote": "                    \"boost_active_at_supersonic_speed_s\",\n                ] {\n                    row[key] = stats[\"lifetime\"][key][\"value\"].clone();"
+    },
+    "problem": "get_progress exports only six legacy metric values. New threshold duration/share is computed but absent from Progress/Overview/Studio headline stats, while boost-active duration stays prominent.",
+    "trigger_or_repro": "Compare EvidenceCollector::metrics with get_progress key list and ReplayStudio.tsx filter.",
+    "expected_vs_actual": "Computed threshold metrics exist in replay.metrics but never reach progress row or main stat strip.",
+    "evidence": "Source inspection crates/coach-services/src/lib.rs:440",
+    "recommendation": "Expose a typed stat catalog with eligibility/method/provenance, and let report needs select meaningful metrics.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-013",
+    "severity": "P2",
+    "category": "N",
+    "title": "Metric methods document gives the wrong low-boost denominator",
+    "location": {
+      "file": "docs/METRIC_METHODS.md",
+      "line": 33,
+      "quote": "| `low_boost_pct`            | Time below 10 boost          | Percentage (`%`)          | \\(\\frac{\\text{seconds}(\\text{boost} < 10.0)}{\\text{tracked\\_seconds}} \\times 100\\).                                                    | Resource measurement, not a fault determination. Pressure and starve phases can force low boost. |\n| `avg_speed`                | Average speed                | Unreal units/sec (`uu/s`) | \\(\\frac{\\int \\|\\vec{v}(t)\\| dt}{\\int dt}\\) for linear velocity vectors.                                                                | Replicated velocity depends on network snapshot rates. Does not measure decision quality.        |\n| `supersonic_boost_seconds` | Boosting at supersonic speed | Seconds (`s`)             | Cumulative duration where \\(\\|\\vec{v}\\| \\ge 2200\\text{ uu/s}\\) and `boost_active == true`.                                             | Aerial direction changes and turning speed maintenance may justify brief supersonic boost.       |"
+    },
+    "problem": "Documentation divides low seconds by tracked_seconds; implementation and versioned dictionary divide by valid boost seconds. Missing boost changes the numerical result.",
+    "trigger_or_repro": "Compare docs row with EvidenceCollector metrics and extracted research image28.",
+    "expected_vs_actual": "Docs and source disagree; code/research formula correctly exclude missing boost from denominator.",
+    "evidence": "review/research-formulas/white-0.png image28; crates/replay-core/src/lib.rs:769",
+    "recommendation": "Generate method reference from the versioned metric dictionary and remove duplicate manual formulas.",
+    "effort": "S",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-014",
+    "severity": "P2",
+    "category": "B",
+    "title": "Duration/count aggregates have no normalized rate alternative",
+    "location": {
+      "file": "crates/coach-services/src/analytics.rs",
+      "line": 312,
+      "quote": "        let weighted = !valid.is_empty()\n            && valid.iter().all(|m| {\n                m[\"numerator\"].is_number() && m[\"denominator\"].as_f64().is_some_and(|d| d > 0.0)"
+    },
+    "problem": "Duration/count metrics are equal-match means, which is a valid descriptive average but not comparable behavior intensity across forfeits, overtime and different lengths. Coach receives these near time-weighted metrics without a clear unit-specific aggregation contract.",
+    "trigger_or_repro": "Two matches with identical boost-at-speed rate but durations 60 and 360 seconds produce different raw-duration observations.",
+    "expected_vs_actual": "Count/duration averages respond to match length; method string combines legacy weights unavailable with duration/count metrics.",
+    "evidence": "Source inspection crates/coach-services/src/analytics.rs:312",
+    "recommendation": "Preserve per-match means where useful, add rate/share alternatives and a typed aggregation method per metric; make completion/coverage explicit.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-015",
+    "severity": "P2",
+    "category": "B",
+    "title": "There is no metric re-derivation path for existing libraries",
+    "location": {
+      "file": "crates/coach-services/src/reenrich.rs",
+      "line": 8,
+      "quote": "//! user data are never rewritten; only frames, pad_events, shots and analysis_version are.\nuse super::*;\nuse rusqlite::OptionalExtension;"
+    },
+    "problem": "Re-enrichment explicitly updates only capture data, never metrics/events; no source metric version upgrade/recompute operation exists. The exported functions are also absent from registered IPC.",
+    "trigger_or_repro": "Search reenrich in src-tauri/src and compare apply_reenrichment SQL; existing test asserts metrics unchanged.",
+    "expected_vs_actual": "New metric keys/formula fixes only reach new imports; stale libraries cannot be upgraded through the app.",
+    "evidence": "crates/coach-services/src/reenrich.rs:145-168; src-tauri/src/main.rs invoke_handler list; stale_replay_is_enriched_without_touching_metrics_and_invalidates_cache test",
+    "recommendation": "Implement immutable source replay plus versioned derivation records; offer cancellable worker-backed recomputation and rebuild dependent caches.",
+    "effort": "L",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-016",
+    "severity": "P2",
+    "category": "A",
+    "title": "Metric dictionary does not cover scoreboard and touch metrics that the parser emits",
+    "location": {
+      "file": "app/src/data/metrics.json",
+      "line": 4,
+      "quote": "  \"metrics\": [\n    {\n      \"key\": \"avg_boost\","
+    },
+    "problem": "The authoritative dictionary omits goals, assists, saves, shots, score and touches, including important count semantics/heuristic confidence. It includes suspected_unnecessary_boost_s despite no producer.",
+    "trigger_or_repro": "Compare parser metric keys with JSON catalog; rg suspected finds catalog only.",
+    "expected_vs_actual": "A dictionary claimed authoritative cannot explain or validate several production metrics and advertises a permanently unavailable one.",
+    "evidence": "Source inspection app/src/data/metrics.json:4",
+    "recommendation": "Make catalog complete and machine-check producer/consumer coverage; separate planned research metrics from produced metrics.",
+    "effort": "S",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-017",
+    "severity": "P3",
+    "category": "A",
+    "title": "Game phase magic numbers hide exported decoder constants",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 883,
+      "quote": "            || p.get_game_state() == Some(53);\n        let hit = p.get_ball_has_been_hit().ok();\n        if !p.current_frame_goal_events().is_empty()"
+    },
+    "problem": "53 and 67 are valid canonical subtr-actor game-state constants, but magic literals obscure meaning and create drift risk.",
+    "trigger_or_repro": "Inspect dependency frame_components.rs GAME_STATE_KICKOFF_COUNTDOWN=53 and GAME_STATE_GOAL_SCORED_REPLAY=67.",
+    "expected_vs_actual": "Codes are correct; source does not explain them at their use.",
+    "evidence": "Source inspection crates/replay-core/src/lib.rs:883",
+    "recommendation": "Import exported named constants and phase tracker instead of duplicating phase logic.",
+    "effort": "S",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-018",
+    "severity": "P2",
+    "category": "A",
+    "title": "Discovery and full decode disagree on metadata normalization",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1265,
+      "quote": "pub fn discover_replays(folder: &Path) -> Result<serde_json::Value, String> {\n    let paths = replay_paths(folder)?;\n    let mut summaries = vec![];"
+    },
+    "problem": "Discovery derives mode solely from TeamSize, accepts arbitrary header IDs, omits zero-score fallback and does not always_check_crc. Full decode filters playlists and ID characters, and fills missing zero scores. Different entry points can show inconsistent identity/mode/results for the same input.",
+    "trigger_or_repro": "Compare discover_replays to decode ID/mode/score paths; CLI discover versus parse.",
+    "expected_vs_actual": "A nonstandard playlist with TeamSize=2 discovers as 2v2 but parses as unknown; missing 0 score remains null only in discovery.",
+    "evidence": "Source inspection crates/replay-core/src/lib.rs:1265",
+    "recommendation": "Create one canonical header normalization function and explicit validation level; use it across all parsing entry points.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-019",
+    "severity": "P2",
+    "category": "A",
+    "title": "Discovery silently omits every corrupt or unreadable replay",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 1269,
+      "quote": "        let Ok(bytes) = read_replay(path) else {\n            continue;\n        };"
+    },
+    "problem": "Read and parser failures are silently continued; folder count reports successes only, hiding files and reasons. replay_paths also flattens directory-entry errors.",
+    "trigger_or_repro": "Place unreadable/corrupt .replay beside good input; discover reports success count without errors.",
+    "expected_vs_actual": "No result row for rejected inputs; users cannot distinguish no replay from decoding failure.",
+    "evidence": "Source inspection crates/replay-core/src/lib.rs:1269",
+    "recommendation": "Return per-file outcomes with reason and scanned/importable/rejected counts; retain bounded enumeration.",
+    "effort": "S",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-020",
+    "severity": "P2",
+    "category": "A",
+    "title": "Match completion and roster changes are not represented in analytics eligibility",
+    "location": {
+      "file": "crates/replay-core/src/types.rs",
+      "line": 15,
+      "quote": "pub struct ReplaySummary {\n    pub id: String,\n    pub file_hash: String,"
+    },
+    "problem": "ReplaySummary lacks completion/forfeit/leaver/mutator/season metadata. Analytics provenance asks for these absent keys and accepts all metric-bearing matches, making comparison cohorts unable to distinguish shortened or materially different play.",
+    "trigger_or_repro": "Inspect summary type, analytics match_provenance JSON and eligibility chain.",
+    "expected_vs_actual": "Short matches are included with no completion reason; source_revision cannot explain forfeits or team roster context.",
+    "evidence": "Source inspection crates/replay-core/src/types.rs:15",
+    "recommendation": "Capture available completion/playlist/mutator signals with unknown states; use explicit cohort policy rather than arbitrary 210-second rejection.",
+    "effort": "L",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-021",
+    "severity": "P2",
+    "category": "L",
+    "title": "Collector frame-processing logic has no committed tests or golden replay oracle",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 870,
+      "quote": "    fn process_frame(\n        &mut self,\n        p: &dyn ProcessorView,"
+    },
+    "problem": "Original six tests cover resource arithmetic, type compatibility and validator cases, but never process_frame. No real .replay fixture or independently checked metric oracle is tracked. This allowed duplicate IDs and continuity defects to survive.",
+    "trigger_or_repro": "Original cargo test -p replay-core --locked; inspect six unit tests and tracked fixture list.",
+    "expected_vs_actual": "No native snapshot test drives goals, kickoffs, gaps, disappearance or overlapping detectors before this review wrapper.",
+    "evidence": "review/logs/parser-characterization-final.txt",
+    "recommendation": "Commit synthetic ProcessorView regression tests, property tests and licensed/minimized golden replay fixtures with independently verified expected intervals.",
+    "effort": "L",
+    "confidence": "confirmed",
+    "lead": "confirmed"
+  },
+  {
+    "id": "A-022",
+    "severity": "P2",
+    "category": "N",
+    "title": "Research formulas are image-only and several are physically cropped",
+    "location": {
+      "file": "AntiRL Coaching Evidence Research.md",
+      "line": 64,
+      "quote": "![][image6]  \nThis quantity is measured in seconds (![][image7])1. Eligibility requires active match play, strictly excluding pre-kickoff countdowns, post-goal celebration sequences, paused states, and network discontinuities where packet delta ![][image8]1. The numerator represents threshold-compliant seconds, while the denominator encompasses total live observation seconds with valid linear velocity vectors1. If rigid body or velocity vectors are absent in frame ![][image9], ![][image10] is excluded from both numerator and denominator1. This value represents an operational kinematic threshold, not an indicator of decision quality1. It must never be presented as proof that a player is rotating correctly or maintaining proper game tempo1.\n"
+    },
+    "problem": "80 embedded formula PNGs cannot be searched/diffed/accessibly read; important summation/share/boost formulas are cut off at their right boundary in original image files. Reviewers cannot recover exact constraints from those images alone.",
+    "trigger_or_repro": "Extract image6/11/15/31/36 and composite on white; originals end mid-expression.",
+    "expected_vs_actual": "Threshold text exists elsewhere but formula images themselves omit trailing expressions and labels.",
+    "evidence": "review/research-formulas/white-0.png",
+    "recommendation": "Replace formula images with versioned plaintext/LaTeX and test vectors; reduce root report to decision history linked to source-backed ADRs.",
+    "effort": "S",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-023",
+    "severity": "P2",
+    "category": "O",
+    "title": "Research mode cards prescribe absolute tactics and unvalidated numeric outcomes",
+    "location": {
+      "file": "AntiRL Coaching Evidence Research.md",
+      "line": 172,
+      "quote": "short drill: Low-Risk Shadow Defense Scrimmage: Complete 3 ranked 1v1 games with an absolute rule against flipping into defensive challenges; rely entirely on driving, powerslide turns, and single-jump blocks5.  \nmeasurable practice outcome: Zero defensive challenges that result in the player sliding past the ball into the opponent's backboard or corner1.  \nmatch-transfer check: Empty-net counter-attack goals conceded drop to ![][image39] per match across a 5-game evaluation block1.  "
+    },
+    "problem": "The report calls its cards evidence-grounded but prescribes absolute no-flip ranked play, fixed midfield limits, zero kickoff goals and universal boost/recovery thresholds. It also says 36 boost enables any save. These are hypotheses, not calibrated detector or coaching facts; the repository audit deliberately rejected them.",
+    "trigger_or_repro": "Read section03 plus extracted images38..54, and RESEARCH_AUDIT mode-card rejection.",
+    "expected_vs_actual": "Unverified tactical heuristics are written as guarantees and target metrics; citations do not validate numeric cutoffs.",
+    "evidence": "review/research-formulas/white-1.png; review/research-formulas/white-2.png; docs/archive/reviews/RESEARCH_AUDIT.md",
+    "recommendation": "Keep drill constraints as optional authored experiments with exceptions; support direct replay observations and expert-reviewed annotations; do not import universal targets.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-024",
+    "severity": "P2",
+    "category": "O",
+    "title": "Research over-abstention conflates no calibrated forecast with no useful comparison",
+    "location": {
+      "file": "AntiRL Coaching Evidence Research.md",
+      "line": 456,
+      "quote": "* *Cross-Sectional Confounding*: Comparing a Diamond player's speed to an SSL player demonstrates how experts move, but provides zero information on the rate at which an individual can acquire those motor-perceptual skills1.\n\n### **Decision: Full Abstention from Promotional Forecasting**"
+    },
+    "problem": "The report overstates evidence restrictions (e.g. cross-sectional expert comparison provides zero information and strict one observation for every tactical question). Avoiding unsupported grades/forecasts is correct, but prohibits descriptive personal baselines and multi-moment explanations that can help the player.",
+    "trigger_or_repro": "Read sections00/02/08 and self-critique beside prior research audit rejection of categorical impossibility.",
+    "expected_vs_actual": "Research often substitutes a universal ban for bounded claim language; current product inherits long caveats instead of useful low-risk coaching.",
+    "evidence": "Source inspection AntiRL Coaching Evidence Research.md:456",
+    "recommendation": "Separate measured personal changes, estimated hypotheses and calibrated comparisons; permit 2\u20133 evidence moments supporting one priority, with optional method details.",
+    "effort": "M",
+    "confidence": "confirmed",
+    "lead": "new"
+  },
+  {
+    "id": "A-025",
+    "severity": "P2",
+    "category": "O",
+    "title": "Native decoded kickoff/pad/stat data is underused for practical coaching",
+    "location": {
+      "file": "crates/replay-core/src/lib.rs",
+      "line": 127,
+      "quote": "    let mut contact_collector = StatsCollector::with_builtin_module_names([\"touch\"])\n        .map_err(|_| \"Contact analysis graph unavailable\".to_string())?;\n    processor"
+    },
+    "problem": "Only touch statistics are requested from the decoder graph; native pad pickups, shot geometry and controller capture exist, but report focuses on average boost/speed/half share. Kickoff outcomes, pad-pathing, recovery windows and you-versus-opponent deltas are absent from the main report.",
+    "trigger_or_repro": "Compare captured pad_events/shots/controller fields to hero metrics and event detector inventory.",
+    "expected_vs_actual": "High-value available facts do not create next actions; unvalidated research panels compete for attention.",
+    "evidence": "Source inspection crates/replay-core/src/lib.rs:127",
+    "recommendation": "Prioritize kickoff timelines, pad-route opportunities, recovery speed and direct comparative event evidence; stage 50/50/touch-quality hypotheses behind annotated validation.",
+    "effort": "L",
+    "confidence": "confirmed",
+    "lead": "new"
+  }
+]

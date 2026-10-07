@@ -1,0 +1,87 @@
+[
+  {
+    "path": "crates/coach-services/src/ai.rs",
+    "status": "reviewed",
+    "reason": "Full context/provider/stream/grounding/offline code and embedded tests; source-extracted executable probes."
+  },
+  {
+    "path": "crates/coach-services/src/evidence_tools.rs",
+    "status": "reviewed",
+    "reason": "Full retrieval tool/scoping/budget code; real public timeline retrieval probe."
+  },
+  {
+    "path": "crates/coach-services/src/retrieval.rs",
+    "status": "reviewed",
+    "reason": "Full strict plan validator and dispatcher; SQL/identity/path allowlist and limits."
+  },
+  {
+    "path": "crates/coach-services/src/conversations.rs",
+    "status": "reviewed",
+    "reason": "Full scopes/history mutation/migration tests; persistent conversation metadata."
+  },
+  {
+    "path": "crates/coach-services/src/research.rs",
+    "status": "reviewed",
+    "reason": "Complete tag/mode retrieval implementation."
+  },
+  {
+    "path": "crates/coach-services/src/lib.rs",
+    "status": "reviewed",
+    "reason": "Full AI-facing settings, model/key APIs, identity, memory, conversations and fallback; storage details jointly reviewed by storage agent."
+  },
+  {
+    "path": "crates/coach-services/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Provider feature/dependency boundaries and test dependencies."
+  },
+  {
+    "path": "app/src/data/coach-prompts.json",
+    "status": "reviewed",
+    "reason": "Every system/common/mode/preset prompt and conflicts."
+  },
+  {
+    "path": "app/src/data/metrics.json",
+    "status": "reviewed",
+    "reason": "Authoritative prompt dictionary; unavailable research metric and semantics."
+  },
+  {
+    "path": "app/src/data/research-cards.json",
+    "status": "reviewed",
+    "reason": "All three reviewed cards, lineage, limitations and coaching usefulness."
+  },
+  {
+    "path": "app/src/data/training-packs.json",
+    "status": "reviewed",
+    "reason": "20 records: source confirmation/untested gameplay labels; retrieval fit and taxonomy."
+  },
+  {
+    "path": "docs/validation/coaching-corpus.json",
+    "status": "reviewed",
+    "reason": "All30 declarative expected-limit entries; no executable adversarial inputs/assertions."
+  },
+  {
+    "path": "docs/archive/reviews/RESEARCH_AUDIT.md",
+    "status": "reviewed",
+    "reason": "Full deliberate rejection rationale; do not revive unsupported tactical thresholds."
+  },
+  {
+    "path": "AntiRL Coaching Evidence Research.md",
+    "status": "skimmed",
+    "reason": "Read00/02/03/08/self-critique in full as hypotheses; formula image review delegated parser agent."
+  },
+  {
+    "path": "crates/coach-services/tests/review_ai.rs",
+    "status": "reviewed",
+    "reason": "Added10 review probes; exact copied helper semantics plus real public APIs."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/README.md",
+    "status": "skimmed",
+    "reason": "Fixture inventory; only public synthetic JWKS tracked; real replay absent."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/synthetic-oidc-jwks.json",
+    "status": "skimmed",
+    "reason": "Synthetic public JWKS; detailed sign-in security delegated storage agent."
+  }
+]

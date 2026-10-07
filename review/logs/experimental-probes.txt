@@ -1,0 +1,45 @@
+C:\Users\barke\Documents\AntiRL\crates\coach-services\tests\review_experimental.rs
+error: float literals must have an integer part
+   --> \\?\C:\Users\barke\Documents\AntiRL\crates\coach-services\tests\review_experimental.rs:832:77
+    |
+832 |  const CONTACT_UU:f64=300.;const MAX_WINDOW_S:f64=2.;const MIN_WINDOW_S:f64=.75;
+    |                                                                             ^^^
+    |
+help: must have an integer part
+    |
+832 |  const CONTACT_UU:f64=300.;const MAX_WINDOW_S:f64=2.;const MIN_WINDOW_S:f64=0.75;
+    |                                                                             +
+
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+error: float literals must have an integer part
+   --> crates\coach-services\tests\review_experimental.rs:832:77
+    |
+832 |  const CONTACT_UU:f64=300.;const MAX_WINDOW_S:f64=2.;const MIN_WINDOW_S:f64=.75;
+    |                                                                             ^^^
+    |
+help: must have an integer part
+    |
+832 |  const CONTACT_UU:f64=300.;const MAX_WINDOW_S:f64=2.;const MIN_WINDOW_S:f64=0.75;
+    |                                                                             +
+
+error: no rules expected `[`
+   --> crates\coach-services\tests\review_experimental.rs:327:152
+    |
+327 | ...yboard","throttle":255,"steer":[0,128,255][i%3],"jump_active":false,"dodge_active":false}]})).collect::<Vec<_>>()});
+    |                                              ^ no rules expected this token in macro call
+    |
+    = note: while trying to match end of macro
+
+error: no rules expected `.`
+   --> crates\coach-services\tests\review_experimental.rs:803:59
+    |
+803 |   assert_eq!(FEATURES[3],"ball_height_m");assert_eq!(f[3],.1); //100uu is1m.
+    |                                                           ^ no rules expected this token in macro call
+    |
+note: while trying to match meta-variable `$right:expr`
+   --> C:\Users\barke\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib/rustlib/src/rust\library\core\src\macros\mod.rs:43:18
+    |
+ 43 |     ($left:expr, $right:expr $(,)?) => {{
+    |                  ^^^^^^^^^^^
+
+error: could not compile `coach-services` (test "review_experimental") due to 3 previous errors

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "D-008",
+    "patch": {
+      "severity": "P2",
+      "confidence": "likely",
+      "validation": "Untrusted data is system content; prose reminder and field lengths reduce risk but no role boundary. Only deterministic delimiter corruption proven; no model instruction takeover/exfiltration tested. Downgrade to P2 likely boundary risk."
+    },
+    "reason": "Inspect role placement, limits, data-never-instructions policy and fixed tool scope; separate injection surface from successful takeover."
+  },
+  {
+    "id": "G-019",
+    "patch": {
+      "severity": "P1",
+      "confidence": "confirmed",
+      "validation": "Originalcomponent crashes contract-allowed live nullable futureball; preceding gate does not validatefuture actualplot. All3realfixtures nullballs are non-live and excluded; native successfulsim flow unverified. Downgrade toP1 confirmedcomponentcrash, explicitscope."
+    },
+    "reason": "Validate good start then nullable future gap; inspect backend gate and copiedrealframes to rule out actual common fixture crash."
+  },
+  {
+    "id": "H-001",
+    "patch": {
+      "trigger_or_repro": "Built viewerEngine-Dk3gCjH9.js imports Babylon constructors from the1,767,683-byte main chunk; static camera import graph confirms startup engine cost. Vite warns about several Babylon scene dependencies, not specifically viewerEngine."
+    },
+    "reason": "Inspect actual build warning and chunk imports; avoid misstating a specific warning."
+  },
+  {
+    "id": "H-005",
+    "patch": {
+      "confidence": "confirmed",
+      "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; ReplayViewer.tsx:104-109; Coach.tsx:559,579,1097"
+    },
+    "reason": "Original ReplayViewer initializer throws with synthetic restricted-storage getItem. Coach storage counterpart source-derived."
+  },
+  {
+    "id": "G-018",
+    "patch": {
+      "evidence": "review/PLAYHEAD_VALIDATION.json; review/logs/validation-playhead.txt; review/screenshots/validation/stale-lab-playhead.png; ReplayStudio.tsx:169-185",
+      "trigger_or_repro": "Real-App harness scrubs ReplayViewer with End to320seconds; Counterfactual start time remains0. Parent seekTime has no live playhead update."
+    },
+    "reason": "Added independent browser reproduction."
+  },
+  {
+    "id": "G-003",
+    "patch": {
+      "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; review/screenshots/before/empty-progress-goals-1280x720.png"
+    },
+    "reason": "Correct screenshot filename and latest probe log."
+  },
+  {
+    "id": "L-002",
+    "patch": {
+      "trigger_or_repro": "Fresh git-archive all-features compile exits101 missing synthetic-oidc-test-key.pem. Generating key alone makes compile pass but leaves one signed-identity test failing because checked-in JWKS matches another key. A matching synthetic key+JWKS pair under review snapshot yields79pass2ignored.",
+      "evidence": "review/logs/fresh-all-features-original.txt; review/logs/fresh-all-features-workaround.txt; review/logs/fresh-all-features-paired-workaround.txt; .gitignore:26"
+    },
+    "reason": "Lone-key workaround is insufficient; public JWKS must correspond."
+  }
+]

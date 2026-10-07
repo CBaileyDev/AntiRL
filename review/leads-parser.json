@@ -1,0 +1,61 @@
+{
+  "11": {
+    "status": "confirmed",
+    "finding_ids": [
+      "A-004",
+      "A-005",
+      "A-009",
+      "A-010",
+      "A-017"
+    ],
+    "detail": "Confirm hard2200 cutoff, omitted kickoff approach, gap exclusion, numeric phase codes and duration=last frame. Missing hysteresis is not a defect in a correctly labeled threshold metric; dictionary explicitly warns approximation. Unknown-team-to-Blue AI display delegated to AI reviewer."
+  },
+  "12": {
+    "status": "confirmed",
+    "finding_ids": [
+      "A-011",
+      "A-012"
+    ],
+    "detail": "New threshold uptime/share calculated but get_progress whitelist and Studio metric filter omit them. Danger/flame styling remains. Text has explicit not proven waste, so literal waste accusation is refuted; visual and parser release-boost guidance defect confirmed."
+  },
+  "13": {
+    "status": "confirmed",
+    "finding_ids": [
+      "B-005",
+      "A-013",
+      "A-014",
+      "A-016"
+    ],
+    "detail": "Mixed metric versions reproduced by storage agent B-005. Docs denominator differs; code matches image28 valid-boost denominator. Plain equal-match duration/count mean is mathematically valid, but needs rates and typed methods for comparison. Suspected unnecessary boost is intentionally unimplemented and explicitly unavailable, so dictionary mention does not by itself fabricate a value."
+  },
+  "14": {
+    "status": "confirmed",
+    "finding_ids": [
+      "A-015"
+    ],
+    "detail": "Capture re-enrichment explicitly preserves metrics/events. No reenrich command registration exists. Formula/version upgrade not supported."
+  },
+  "15": {
+    "status": "confirmed",
+    "finding_ids": [
+      "B-006"
+    ],
+    "detail": "Different date grammars reproduced by storage agent, including date-only and offset-free ISO acceptance in library but exclusion from analytics/transfer. Timezone uncertainty is intentional; grammar mismatch is not."
+  },
+  "16": {
+    "status": "confirmed",
+    "finding_ids": [
+      "A-020",
+      "A-023",
+      "A-024"
+    ],
+    "detail": "Numeric differences confirmed: intelligence samples context3seconds before events, transfer windows10before/10after, no210second gate. But alleged fault attribution deviation is refuted: intelligence makes neutral matching context, not fault judgement; research6seconds is an outcome heuristic, not that lookback contract. 20match and210s rules are uncalibrated proposals deliberately rejected; do not add arbitrary cutoffs. Missing completion/cohort metadata remains a defect."
+  },
+  "43": {
+    "status": "confirmed",
+    "finding_ids": [
+      "A-021"
+    ],
+    "detail": "Six original replay-core tests do not invoke process_frame; no tracked replay fixture. This review adds9native snapshot proofs. Three copied real local fixtures parse, but do not become independently checked goldens."
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "G-001",
+    "patch": {
+      "title": "Overview result fallbacks and partial library scores invent match outcomes",
+      "problem": "Overview falls back to players[0] when selected identity is absent and treats missing scores as0, showing another player's win or an invented0-0defeat. Library teamScores correctly shows dashes when both sides are absent, but substitutes0 when exactly one score is missing. Nullable score sides are allowed by the DTO; a missing side must remain unknown rather than a measured zero.",
+      "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; review/SCORE_VALIDATION.json; review/logs/library-score-characterization.txt; app/src/pages/Replays.tsx:33-37",
+      "validation": "Independent original-component control confirms absent identity and both missing scores in Overview. Final exact-source library helper controls: known1/3->1/3; bothmissing->dash/dash; one-sidedmissing->0/3or3/0 ratherthanunknown. No actual partial-score realfixture asserted. Existing P0 is wrong personalized/displayed numbers, not replay corruption. Independent counter-control: current parser normalizes missing zero-goal score headers and produces paired scores (lib.rs:377-384). Partial-side display is a contract/legacy/bad-row edge, P2 by itself; retained G-001 P0 comes from Overview identity/result defects."
+    }
+  }
+]

@@ -1,0 +1,38 @@
+src/App.tsx(93,37): error TS2538: Type 'undefined' cannot be used as an index type.
+src/App.tsx(139,26): error TS2345: Argument of type '(cur: ChatMsg[]) => ChatMsg[] | { role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; ... 10 more ...; id: string; }[]' is not assignable to parameter of type 'SetStateAction<ChatMsg[]>'.
+  Type '(cur: ChatMsg[]) => ChatMsg[] | { role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; ... 10 more ...; id: string; }[]' is not assignable to type '(prevState: ChatMsg[]) => ChatMsg[]'.
+    Type 'ChatMsg[] | { role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }[]' is not assignable to type 'ChatMsg[]'.
+      Type '{ role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }[]' is not assignable to type 'ChatMsg[]'.
+        Type '{ role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }' is not assignable to type 'ChatMsg'.
+          Types of property 'evidence_ids' are incompatible.
+            Type 'string[] | null' is not assignable to type 'string[] | undefined'.
+              Type 'null' is not assignable to type 'string[] | undefined'.
+src/App.tsx(207,47): error TS2532: Object is possibly 'undefined'.
+src/components/CounterfactualPanel.tsx(84,31): error TS18047: 'f.ball' is possibly 'null'.
+src/components/CounterfactualPanel.tsx(102,15): error TS18047: 'f.ball' is possibly 'null'.
+src/components/TransferPanel.tsx(247,63): error TS2345: Argument of type 'Partial<{ [x: string]: number; }>' is not assignable to parameter of type 'Record<string, number>'.
+  'string' index signatures are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/components/TransferPanel.tsx(403,27): error TS2345: Argument of type 'Partial<{ [x: string]: number; }>' is not assignable to parameter of type 'Record<string, number>'.
+  'string' index signatures are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/pages/Coach.tsx(414,7): error TS2345: Argument of type '{ role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }[]' is not assignable to parameter of type 'SetStateAction<ChatMsg[]>'.
+  Type '{ role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }[]' is not assignable to type 'ChatMsg[]'.
+    Type '{ role: "user" | "assistant"; content: string; timestamp: string | null; status: string | null; legacy_warning: string | null; replay_id: string | null; evidence_ids: string[] | null; ... 9 more ...; id: string; }' is not assignable to type 'ChatMsg'.
+      Types of property 'evidence_ids' are incompatible.
+        Type 'string[] | null' is not assignable to type 'string[] | undefined'.
+          Type 'null' is not assignable to type 'string[] | undefined'.
+src/pages/Coach.tsx(732,11): error TS2322: Type 'string[] | null' is not assignable to type 'string[] | undefined'.
+  Type 'null' is not assignable to type 'string[] | undefined'.
+src/pages/Overview.tsx(121,47): error TS2345: Argument of type 'number | null | undefined' is not assignable to parameter of type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+src/pages/Overview.tsx(135,47): error TS2345: Argument of type 'number | null | undefined' is not assignable to parameter of type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+src/pages/Overview.tsx(148,47): error TS2345: Argument of type 'number | null | undefined' is not assignable to parameter of type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+src/pages/Progress.tsx(225,40): error TS2345: Argument of type 'number | null' is not assignable to parameter of type 'number'.
+  Type 'null' is not assignable to type 'number'.
+src/pages/Progress.tsx(246,40): error TS2345: Argument of type 'number | null' is not assignable to parameter of type 'number'.
+  Type 'null' is not assignable to type 'number'.

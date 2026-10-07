@@ -1,0 +1,4 @@
+    Checking replay-core v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\replay-core)
+    Checking coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+    Checking antirl v0.1.0 (C:\Users\barke\Documents\AntiRL\src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.81s

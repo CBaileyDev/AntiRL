@@ -1,0 +1,187 @@
+[
+  {
+    "path": "crates/coach-services/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/001_base.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/003_practice.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/004_replay_storage.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/005_deleted_match_ids.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/006_transfer.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/007_intelligence.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/008_detector.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/analytics_001_base.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/analytics_002_provenance.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/lib.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/storage.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/analytics.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/conversations.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/camera.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/reenrich.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/semantics.rs",
+    "status": "skimmed",
+    "reason": "Normalization boundary inspected; detailed metric semantics belongs parser/AI reviewer."
+  },
+  {
+    "path": "src-tauri/src/auto_import.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/commands.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/dto.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/errors.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/ingest.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/main.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/worker_limits.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/build.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/tauri.conf.json",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/capabilities/default.json",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/.env.example",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/core.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/package.json",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/README.md",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/register.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/render.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/server.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/test.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  }
+]

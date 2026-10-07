@@ -1,0 +1,145 @@
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+   Compiling antirl v0.1.0 (C:\Users\barke\Documents\AntiRL\src-tauri)
+warning: struct `SimOptionsInput` is never constructed
+  --> src-tauri\tests\..\src\dto.rs:15:12
+   |
+15 | pub struct SimOptionsInput {
+   |            ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `into_value` is never used
+  --> src-tauri\tests\..\src\dto.rs:21:12
+   |
+20 | impl SimOptionsInput {
+   | -------------------- method in this implementation
+21 |     pub fn into_value(self) -> Value {
+   |            ^^^^^^^^^^
+
+warning: struct `IdentityCandidate` is never constructed
+  --> src-tauri\tests\..\src\dto.rs:70:12
+   |
+70 | pub struct IdentityCandidate {
+   |            ^^^^^^^^^^^^^^^^^
+
+warning: struct `IdentityDto` is never constructed
+  --> src-tauri\tests\..\src\dto.rs:78:12
+   |
+78 | pub struct IdentityDto {
+   |            ^^^^^^^^^^^
+
+warning: struct `LibraryDto` is never constructed
+  --> src-tauri\tests\..\src\dto.rs:87:12
+   |
+87 | pub struct LibraryDto {
+   |            ^^^^^^^^^^
+
+warning: struct `ConversationDto` is never constructed
+  --> src-tauri\tests\..\src\dto.rs:94:12
+   |
+94 | pub struct ConversationDto {
+   |            ^^^^^^^^^^^^^^^
+
+warning: struct `MessageBody` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:104:12
+    |
+104 | pub struct MessageBody {
+    |            ^^^^^^^^^^^
+
+warning: struct `MessageDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:124:12
+    |
+124 | pub struct MessageDto {
+    |            ^^^^^^^^^^
+
+warning: struct `MemoryDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:131:12
+    |
+131 | pub struct MemoryDto {
+    |            ^^^^^^^^^
+
+warning: struct `TeammateDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:139:12
+    |
+139 | pub struct TeammateDto {
+    |            ^^^^^^^^^^^
+
+warning: struct `ImportEntry` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:151:12
+    |
+151 | pub struct ImportEntry {
+    |            ^^^^^^^^^^^
+
+warning: struct `PracticePlanInput` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:163:12
+    |
+163 | pub struct PracticePlanInput {
+    |            ^^^^^^^^^^^^^^^^^
+
+warning: struct `ModeProgress` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:173:12
+    |
+173 | pub struct ModeProgress {
+    |            ^^^^^^^^^^^^
+
+warning: struct `GoalDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:185:12
+    |
+185 | pub struct GoalDto {
+    |            ^^^^^^^
+
+warning: struct `ProgressDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:195:12
+    |
+195 | pub struct ProgressDto {
+    |            ^^^^^^^^^^^
+
+warning: struct `ModelDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:206:12
+    |
+206 | pub struct ModelDto {
+    |            ^^^^^^^^
+
+warning: struct `ModelCatalog` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:213:12
+    |
+213 | pub struct ModelCatalog {
+    |            ^^^^^^^^^^^^
+
+warning: struct `ProviderStatus` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:219:12
+    |
+219 | pub struct ProviderStatus {
+    |            ^^^^^^^^^^^^^^
+
+warning: struct `AiStatusDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:231:12
+    |
+231 | pub struct AiStatusDto {
+    |            ^^^^^^^^^^^
+
+warning: struct `CloudPreviewDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:240:12
+    |
+240 | pub struct CloudPreviewDto {
+    |            ^^^^^^^^^^^^^^^
+
+warning: struct `ChatResultDto` is never constructed
+   --> src-tauri\tests\..\src\dto.rs:254:12
+    |
+254 | pub struct ChatResultDto {
+    |            ^^^^^^^^^^^^^
+
+warning: `antirl` (test "review_contracts") generated 21 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.15s
+     Running tests\review_contracts.rs (target\debug\deps\review_contracts-3f444a71e540cb49.exe)
+
+running 5 tests
+test review_substring_error_classification_changes_with_incidental_text ... ok
+test errors::tests::error_serializes_to_stable_code_and_message ... ok
+test dto::tests::practice_and_catalog_contracts_match_service_payloads ... ok
+test review_malformed_settings_save_is_successful_then_contract_fails ... ok
+test dto::tests::transfer_contract_decodes_measurements_and_missing_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

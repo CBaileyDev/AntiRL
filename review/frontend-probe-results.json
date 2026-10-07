@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Null recorded ball crashes successful simulation trajectory plot",
+    "status": "confirmed"
+  },
+  {
+    "name": "Overtime positive countup displayed without overtime label",
+    "status": "confirmed"
+  },
+  {
+    "name": "Overview fabricates own victory when selected identity absent",
+    "status": "confirmed"
+  },
+  {
+    "name": "Overview unknown scores becomes fabricated 0-0 defeat",
+    "status": "confirmed"
+  },
+  {
+    "name": "Progress missing metrics becomes factual zero percentages",
+    "status": "confirmed"
+  },
+  {
+    "name": "Restricted preference storage throws before viewer mounts",
+    "status": "confirmed"
+  }
+]

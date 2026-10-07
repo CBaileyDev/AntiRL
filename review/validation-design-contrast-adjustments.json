@@ -1,0 +1,72 @@
+[
+  {
+    "id": "K-003",
+    "title": "Small faint/accent text and primary-button text fail AA contrast",
+    "problem": "#64748b has3.767:1 on#121722 and3.426:1 on#182030; #6366f1 text has4.013:1 and3.65:1 on these surfaces, and is used at11\u201313px. Primary buttons use white on#6366f1 at4.467:1 and white on hover#818cf8 at2.982:1, below4.5:1 for normal text. The existing palette can remain while normal text/actions use verified lighter text or darker indigo backgrounds.",
+    "evidence": "review/design-census.json; review/DESIGN_INDEPENDENT_VALIDATION.json; app/src/styles.css:474-481; review/MOCKUP_CONTROL_QA.json; review/logs/design-mockup-control-aa.txt",
+    "recommendation": "Use --muted/#a8b4c8 for small metadata, #818cf8/#a5b4fc for accent text, and #4f46e5 plus white for small-text primary buttons with an AA hover. Retain brand#6366f1 and faint#64748b for non-text identity/chrome. Verify hover/focus/active/disabled composites; mockup controls now pass156 default/hover/focus contrast checks, with zero nested interactive controls.",
+    "validation_note": "Independent actual computed styles confirm faint11\u201312.5px usage. Root independently calculated primary-button ratios; opaque mockup controls were then measured with the same relative-luminance method. Full gradient/text WCAG certification is not claimed."
+  },
+  {
+    "id": "K-008",
+    "problem": "The chat log has aria-live=off, which sensibly avoids token-by-token speech. The source exposes role=status for non-complete message states and notices, so cancellation/error has some announcement support. Complete answers remove the per-message status and have no dedicated answer-ready announcement; starting generation shows a plain loading div. Live screen-reader speech remains untested. The gap is completion/start status, not total absence of all status regions.",
+    "evidence": "app/src/pages/Coach.tsx:1075-1076,1141-1146,1174-1190; review/DESIGN_STREAM_VALIDATION.json; review/logs/design-stream-motion.txt",
+    "validation_note": "Browser with synthetic stream finds no role=status during generation, then cancelled \u00b7 partial response after Stop. Existing cancellation role=status mitigates the original broad claim; complete-answer speech is not claimed as a reproduced NVDA failure."
+  },
+  {
+    "id": "K-009",
+    "confidence": "confirmed",
+    "problem": "The only reduced-motion CSS override targets Studio descendants. Browser with prefers-reduced-motion:reduce shows Coach's .spin loading icon still running spin1s infinite. The loading-startup state had no animation, but a real rendered chat-stream state now confirms the global preference is not honored.",
+    "evidence": "review/DESIGN_STREAM_VALIDATION.json; review/logs/design-stream-motion.txt; app/src/styles.css:2093-2094,2928-2935",
+    "validation_note": "Actual browser motion media query true; computed Coach spinner animationName=spin, duration=1s. Scope defect actively reproduced in a streaming state, not inferred from a generic loading snapshot."
+  },
+  {
+    "id": "J-010",
+    "location": {
+      "file": "app/src/pages/Replays.tsx",
+      "line": 378,
+      "quote": "                        {r.played_at || \"Recent Match\"} {r.map_name ? `\u00b7 ${r.map_name}` : \"\"}\n                      </span>\n                    </div>"
+    }
+  },
+  {
+    "id": "J-007",
+    "problem": "User-visible strings explain legacy aggregation, weights unavailable, context dependence and forecasts not inferred where the next decision should be. The final expanded lexical inventory finds137candidate source lines and40unavailable occurrences across TSX/data (includes code and prompt strings, not137rendered caveats). Repeated disclaimers turn an honest coach into an audit log.",
+    "evidence": "review/DISCLAIMER_INVENTORY.md; review/logs/design-complete-hedge-inventory.txt; review/screenshots/before/overview-1440x900.png; review/screenshots/before/progress-goals-1440x900.png"
+  },
+  {
+    "id": "J-003",
+    "location": {
+      "file": "app/src/styles.css",
+      "line": 1420,
+      "quote": ".arena-wrapper {\n  position: relative;\n  width: 100%;\n  height: 600px;"
+    }
+  },
+  {
+    "id": "J-002",
+    "location": {
+      "file": "app/src/pages/Coach.tsx",
+      "line": 795,
+      "quote": "      <header className=\"coach-header\">\n        <div className=\"coach-header-main\">\n          <label className=\"coach-field coach-field-grow\">"
+    }
+  },
+  {
+    "id": "J-002",
+    "title": "Coach spends roughly 300px of prime workspace on administration before the thread"
+  },
+  {
+    "id": "J-003",
+    "title": "Replay transport falls below the fold at the 1280\u00d7720 target viewport"
+  },
+  {
+    "id": "J-005",
+    "title": "Four-step setup front-loads 15 rank/time fields and playstyle/persona choices"
+  },
+  {
+    "id": "K-004",
+    "title": "Settings keyboard focus discards the global outline and relies on a 1px border change"
+  },
+  {
+    "id": "K-010",
+    "title": "Timeline targets are 5\u00d720px pins on top of the scrubber"
+  }
+]

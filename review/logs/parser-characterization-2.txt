@@ -1,0 +1,206 @@
+   Compiling review-metrics-probe v0.1.0 (C:\Users\barke\Documents\AntiRL\review\metrics-probe)
+error[E0046]: not all trait items implemented, missing: `get_player_is_team_0`
+    --> src\lib.rs:1779:2
+     |
+1779 |  impl ProcessorView for FakeView { fn get_replay_meta(&self) -> SubtrActorResult<ReplayMeta> { unimplemented!() }
+     |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `get_player_is_team_0` in implementation
+     |
+     = help: implement the missing item: `fn get_player_is_team_0(&self, _: &boxcars::RemoteId) -> std::result::Result<bool, SubtrActorError> { todo!() }`
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1802:9
+     |
+1802 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1806:9
+     |
+1806 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `close_enough_to_frame_time`
+    --> src\lib.rs:1807:9
+     |
+1807 |         close_enough_to_frame_time: f32,
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_close_enough_to_frame_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1811:9
+     |
+1811 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1815:9
+     |
+1815 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1816:9
+     |
+1816 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1820:9
+     |
+1820 |         player_id: &PlayerId,
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `target_time`
+    --> src\lib.rs:1821:9
+     |
+1821 |         target_time: f32,
+     |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_target_time`
+
+warning: unused variable: `close_enough_to_frame_time`
+    --> src\lib.rs:1822:9
+     |
+1822 |         close_enough_to_frame_time: f32,
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_close_enough_to_frame_time`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1824:27
+     |
+1824 | fn get_player_name(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+     |                           ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1825:33
+     |
+1825 | fn get_player_car_hitbox(&self, player_id: &PlayerId) -> CarHitbox { unimplemented!() }
+     |                                 ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1826:31
+     |
+1826 | fn get_player_team_key(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+     |                               ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `actor_id`
+    --> src\lib.rs:1827:37
+     |
+1827 | fn get_player_id_from_car_id(&self, actor_id: &boxcars::ActorId) -> SubtrActorResult<PlayerId> { unimplemented!() }
+     |                                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_actor_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1828:34
+     |
+1828 | fn get_player_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { Ok(self.boost*2.55) }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1829:39
+     |
+1829 | fn get_player_last_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+     |                                       ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1830:39
+     |
+1830 | fn get_player_boost_percentage(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+     |                                       ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1831:28
+     |
+1831 | fn get_boost_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(1) }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1832:27
+     |
+1832 | fn get_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                           ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1833:34
+     |
+1833 | fn get_double_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1834:28
+     |
+1834 | fn get_dodge_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1835:33
+     |
+1835 | fn get_powerslide_active(&self, player_id: &PlayerId) -> SubtrActorResult<bool> { Ok(false) }
+     |                                 ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1836:24
+     |
+1836 | fn get_throttle(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(255) }
+     |                        ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1837:21
+     |
+1837 | fn get_steer(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(128) }
+     |                     ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1838:29
+     |
+1838 | fn get_dodge_impulse(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+     |                             ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1839:28
+     |
+1839 | fn get_dodge_torque(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1840:28
+     |
+1840 | fn get_camera_pitch(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+     |                            ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1841:26
+     |
+1841 | fn get_camera_yaw(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+     |                          ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1842:36
+     |
+1842 | fn get_player_match_assists(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                    ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1843:34
+     |
+1843 | fn get_player_match_goals(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1844:34
+     |
+1844 | fn get_player_match_saves(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1845:34
+     |
+1845 | fn get_player_match_score(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+warning: unused variable: `player_id`
+    --> src\lib.rs:1846:34
+     |
+1846 | fn get_player_match_shots(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+     |                                  ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_player_id`
+
+For more information about this error, try `rustc --explain E0046`.
+warning: `review-metrics-probe` (lib test) generated 32 warnings
+error: could not compile `review-metrics-probe` (lib test) due to 1 previous error; 32 warnings emitted

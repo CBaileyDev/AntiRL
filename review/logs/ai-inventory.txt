@@ -1,0 +1,154 @@
+1:# Task Group: AntiRL Windows Tauri app repair, practice-transfer tracking, UI polish, and replay-grounded coaching
+2:scope: maintain the implemented AntiRL Windows replay-coach app: local practice-transfer tracking, Coach identity/mode correctness, launch/rebuild reliability, polished React/Babylon UI, and truthful replay-evidence AI coaching.
+3:applies_to: cwd=C:\Users\barke\Documents\AntiRL; reuse_rule=inspect the current checkout, running processes, provider configuration, and stored replay records before reuse; the earlier Gemini handoff describes the original empty-target state, not current maintenance work.
+9:- rollout_summaries/2026-10-05T15-57-27-2jwS-antirl_audit_launch_ui_ai_grounding.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T11-57-27-01a10cc8-c8d1-7b20-b82c-55ced8b1ca92.jsonl, updated_at=2026-10-05T15:22:50+00:00, thread_id=01a10cc8-c8d1-7b20-b82c-55ced8b1ca92, rebuilt EXE launched and final code gates passed)
+13:- AntiRL, Tauri, Rust, React, WebView2, HRESULT(0x800700AA), pnpm --dir app, target/release/antirl.exe, cargo test --workspace, npx tsc --noEmit
+19:- rollout_summaries/2026-10-05T15-57-27-2jwS-antirl_audit_launch_ui_ai_grounding.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T11-57-27-01a10cc8-c8d1-7b20-b82c-55ced8b1ca92.jsonl, updated_at=2026-10-05T15:22:50+00:00, thread_id=01a10cc8-c8d1-7b20-b82c-55ced8b1ca92, procedural viewer and settings/model picker improved)
+23:- AntiRL, Application Settings, model dropdown, OpenCode config, NeoToken, Babylon.js, ReplayViewer, RankBadge, RankSelect, RocketSim, Player Chase
+25:## Task 3: Ground the Coach in replay evidence and persistent context, partial
+29:- rollout_summaries/2026-10-05T15-57-27-2jwS-antirl_audit_launch_ui_ai_grounding.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T11-57-27-01a10cc8-c8d1-7b20-b82c-55ced8b1ca92.jsonl, updated_at=2026-10-05T15:22:50+00:00, real replay-grounded response verified; latest interaction paths remain partly untested)
+30:- rollout_summaries/2026-10-05T16-00-51-TKDJ-antirl_rank_artwork_ui_review_and_validation.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=\\?\C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T12-00-51-01a10ccb-e38c-7a33-a4cb-af5225c8723f.jsonl, updated_at=2026-10-05T19:47:50+00:00, thread_id=01a10ccb-e38c-7a33-a4cb-af5225c8723f, Coach paths inspected but no implementation or end-to-end latency/quality proof)
+40:- rollout_summaries/2026-10-05T20-28-52-0LOr-antirl_coaching_roadmap_and_ai_handoff.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T16-28-53-01a10dc1-442c-7f03-b302-5df43860d1f3.jsonl, updated_at=2026-10-05T20:38:20+00:00, thread_id=01a10dc1-442c-7f03-b302-5df43860d1f3, documentation-only roadmap; local Markdown links verified)
+44:- AntiRL, supersonic_boost_seconds, analytics.sqlite3, Coach.tsx, ReplayViewer.tsx, metric dictionary, Gemini Deep Research, Sol, training packs, player grading, rank forecasts
+50:- rollout_summaries/2026-10-05T16-00-51-TKDJ-antirl_rank_artwork_ui_review_and_validation.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=\\?\C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T12-00-51-01a10ccb-e38c-7a33-a4cb-af5225c8723f.jsonl, updated_at=2026-10-05T19:47:50+00:00, thread_id=01a10ccb-e38c-7a33-a4cb-af5225c8723f, 23 packaged rank images and quality checks validated)
+60:- rollout_summaries/2026-10-05T16-00-51-TKDJ-antirl_rank_artwork_ui_review_and_validation.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=\\?\C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T12-00-51-01a10ccb-e38c-7a33-a4cb-af5225c8723f.jsonl, updated_at=2026-10-05T19:47:50+00:00, thread_id=01a10ccb-e38c-7a33-a4cb-af5225c8723f, settings refresh/CSP repair and native frontend build validated)
+70:- rollout_summaries/2026-10-05T16-00-51-TKDJ-antirl_rank_artwork_ui_review_and_validation.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=\\?\C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T12-00-51-01a10ccb-e38c-7a33-a4cb-af5225c8723f.jsonl, updated_at=2026-10-05T19:47:50+00:00, thread_id=01a10ccb-e38c-7a33-a4cb-af5225c8723f, short native WebView2 render benchmark only)
+80:- rollout_summaries/2026-10-06T01-11-01-dQk7-antirl_practice_transfer_and_1v1_coach_identity_fix.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T21-11-01-01a10ec3-9508-7731-bb6f-9fccbf511dd7.jsonl, updated_at=2026-10-06T05:31:21+00:00, thread_id=01a10ec3-9508-7731-bb6f-9fccbf511dd7, implemented and fully code-gated)
+81:- rollout_summaries/2026-10-06T00-54-16-fTQg-antirl_practice_transfer_brainstorm.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T20-54-16-01a10eb4-3fad-7ff2-b1bf-0d3f62de5a0c.jsonl, updated_at=2026-10-06T01:07:34+00:00, thread_id=01a10eb4-3fad-7ff2-b1bf-0d3f62de5a0c, original product direction; superseded by the implemented design where they differ)
+85:- practice transfer, TransferPanel.tsx, transfer.rs, 006_transfer.sql, metrics-2, analytics_context, used, missed, no_opportunity, unsure, skipped, cloud-safe practice history
+91:- rollout_summaries/2026-10-06T01-11-01-dQk7-antirl_practice_transfer_and_1v1_coach_identity_fix.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T21-11-01-01a10ec3-9508-7731-bb6f-9fccbf511dd7.jsonl, updated_at=2026-10-06T05:31:21+00:00, thread_id=01a10ec3-9508-7731-bb6f-9fccbf511dd7, identity-scope regression fixed and release rebuilt)
+99:- when polishing product UI, the user asked to “make sure things arent repeated”, remove duplicate “AntiRL”/“Application Settings”, and keep it “spacious and modern” -> proactively inspect screenshots for repeated branding/headings, spacing, overflow, and visual consistency. [Task 2]
+103:- when designing coaching onboarding, the user said rank, goals, and practice availability should be asked there -> make fields editable, skippable, and mode-specific instead of repeatedly asking ad hoc in chat. The reported Plat 1 1v1 / Diamond 2 2v2/3v3 and Champion-to-high-Champion goals are planning context, not hardcoded facts. [Task 4]
+113:- Existing app data is under `%APPDATA%\com.antirl.coach`. AntiRL detects the NeoToken credential from `~/.config/opencode/opencode.json`, matching RLTRAIN_2; do not record or copy its secret. [Task 1][Task 2]
+118:- `supersonic_boost_seconds` is accumulated only while speed is `>= 2200 uu/s` and boost is active. It is neither total supersonic uptime nor automatically waste; pair it with a versioned metric dictionary and contextual review events. [Task 4]
+119:- General Coach context includes lifetime/library summaries and up to 20 recent matches, but the recent list is not reliably filtered to focus player and selected mode; the no-match/general path also lacks metric definitions. [Task 4]
+126:- Practice transfer is now implemented locally: `006_transfer.sql` and `transfer.rs` maintain one active player/mode cycle, snapshot cue/metric/reference context/clock policy, and persist editable per-replay check-ins (`used`, `missed`, `no_opportunity`, `unsure`, `skipped`). `TransferPanel.tsx` is integrated through PracticePanel, Progress, and App. [Task 8]
+127:- Treat legacy `completed_at=now()` as logging time rather than a reliable practice boundary. Transfer uses explicit completion time and UTC-offset controls; deterministic windows select the closest 10 preceding and earliest 10 following eligible matches before metric availability filtering. Preserve unknowns and exclusion reasons for unresolved chronology, ties/overlap, incompatible metric versions, missing weights, and context mismatches. [Task 8]
+131:- The current release rebuild command is `pnpm --dir app build` followed by `cargo build --release -p antirl --bin antirl` from `C:\Users\barke\Documents\AntiRL`; artifact is `target/release/antirl.exe`. [Task 8]
+138:- Do not report Coach improvements complete without measured response latency and end-to-end suggestions validated against replay telemetry, goals, player profile, and recent-match context. [Task 3][Task 4]
+139:- Symptom: advice says to increase “supersonic” time -> cause: `supersonic_boost_seconds` was mistaken for supersonic uptime and boosting while supersonic was labeled waste -> fix: distinguish the measured condition, a heuristic review event, and confirmed inefficiency. Do not recommend fixed boost minima/averages, shot quotas, or matching average speed across modes without contextual evidence. [Task 4]
+218:- Production defaults to WebGL. Native WebGPU is diagnostic-only because native PBR geometry rendered nearly white; browser WebGPU is not valid evidence for native WebGPU. Preserve the unrelated AntiRL/Vite server on port 1420; owned ZensCoach QA ports 1421/9224 were closed. [Task 2]
+225:# Task Group: AntiRL Gemini one-shot replay-coach implementation handoff
+226:scope: evidence-backed prompt and document handoff for building a new Rocket League replay-coaching app from scratch in AntiRL.
+227:applies_to: cwd=C:\Users\barke\Documents\AntiRL; reuse_rule=use the prompt/doc structure for a new local coding-agent build, but re-audit the target repository and replay corpus before treating paths, parser versions, or reference projects as current.
+233:- rollout_summaries/2026-10-05T04-18-37-KNks-rocket_league_gemini_one_shot_prompt_handoff.md (cwd=\\?\C:\Users\barke\Documents\AntiRL, rollout_path=C:\Users\barke\.codex\sessions\2026\10\05\rollout-2026-10-05T00-18-37-01a10a48-fb12-7a72-9b6d-08e07e9c3e38.jsonl, updated_at=2026-10-05T04:37:59+00:00, thread_id=01a10a48-fb12-7a72-9b6d-08e07e9c3e38, prompt, docs, and parser probe validated)
+237:- AntiRL, Gemini, GEMINI_ONE_SHOT_PROMPT.md, rrrocket v0.11.6, 29/29 PASS, Tauri 2, React, SQLite, Babylon, The Trap, OpenAI SIWC
+241:- when asked where the app was, the user answered “build it from scratch” -> treat `C:\Users\barke\Documents\AntiRL` as a new-project target, not an assumed existing implementation. [Task 1]
+254:- Keep RLTRAIN_2, ZensCoach, and other references read-only; do not copy credentials, databases, replay originals, or project state into AntiRL. Do not treat screenshots, saved corpus reports, or UI controls as proof of current implementation. [Task 1]
+272:- when selecting rotation content, the user asked to choose “which wallpapers will be included in the main rotation and per game” -> provide individual inclusion controls in both contexts, not only collection-level toggles. [Task 1]
+483:- `AutomationProperties.AccessibilityView` is unsupported in this WPF XAML context; remove the decorative glyph metadata and rely on the tab accessible name, then build immediately. [Task 1]
+510:- Rocket League, WPF-UI Acrylic, WindowChrome, Freezable inheritance-context, VirtualizingGridView, MotionContentControl, 16 MiB thumbnail cache, HANDOFF_2026-10-01_GLASS_REPAIR.md
+533:- A synchronous `WindowChrome` change during `Loaded` can cause a Freezable inheritance-context crash when transparency is enabled; defer/coalesce material application until after initial rendering. [Task 2]
+830:- Never treat video permission/effectiveness claims as independently verified. Pyannote needs accepted model access plus a valid HF read token; don't search browser/password stores for it. A protected audio.cpp directory must be handled through app/elevated context, not deletion/rename. [Task 1]
+1188:scope: high-level tool selection and market context for authorized research, with explicit boundaries around surveillance, data brokers, biometrics, and location intelligence.
+1203:- when asking for “grey area ones that typically get sold” -> provide high-level examples and market context with legality, privacy, access restrictions, and misuse risks; do not provide individual-targeting/surveillance instructions. [Task 1]
+1208:- PimEyes, data brokers, Social Links, restricted Clearview AI, and location-intelligence tools such as Webloc need explicit access/privacy/legal context; claims to live-track anyone from a phone number alone are suspect. [Task 1]
+1404:- when asked to “take a look at this and my assignments and help me,” inspect the actual files and prior context first; default to non-destructive drafts and state clearly that Canvas was not submitted. [Task 2]
+1658:- `MatchReport::ToJson()` already offers compact kickoff, territory, possession, aerial, shot/save, boost/demo/goal metrics and goal clips. Use structured telemetry first and sparse rendered clips only for ambiguous events; assistant context is currently one text string, so vision needs a separate request-format/gateway capability check. [Task 3]
+2392:scope: transfer accessible assistant context and locate locally installed games without claiming discovery before a verified path is found.
+2393:applies_to: cwd=C:\Users\barke\Documents\Codex\2026-09-20\you-are-helping-me-import-context and cwd=C:\Users\barke\Documents\Codex\2026-09-20\whe; reuse_rule=history access and launcher/install state are ephemeral; use only as a retrieval starting point.
+2395:## Task 1: Import accessible cross-assistant context, partial
+2399:- rollout_summaries/2026-09-20T18-58-08-FTOp-import_context_summary_from_accessible_history.md (cwd=\\?\C:\Users\barke\Documents\Codex\2026-09-20\you-are-helping-me-import-context, rollout_path=C:\Users\barke\.codex\sessions\2026\09\20\rollout-2026-09-20T14-57-52-01a0c02e-d0a7-7c51-b7d4-8f1d91094a09.jsonl, updated_at=2026-09-20T18:59:47+00:00, thread_id=01a0c02e-d0a7-7c51-b7d4-8f1d91094a09, partial)
+2403:- cross-assistant context, accessible history, read_thread, memory_summary.md, API limit
+2417:- History/context transfer is necessarily partial: preserve the most stable operating preferences and reference concrete source files rather than presenting an exhaustive past-chat reconstruction. [Task 1]
+2542:- when discussing autopilot, the user asked whether it understands “air dribbles, flip resets, demo/bump goals, boost management and stealing” -> surface mechanic metrics and curriculum context, not only generic PPO metrics. [Task 1]
+2753:scope: safety boundary and static-risk context for a Windows UE dumper with kernel driver and anti-cheat-evasion indicators.
+docs/archive/reviews\RESEARCH_AUDIT.md
+docs/archive/reviews\REPLAY_STUDIO_REVIEW_2026-10-05.md
+docs/archive/reviews\RANK_QUALITY_REVIEW_2026-10-05.md
+docs/archive/reviews\MESH_FIDELITY_REVIEW_2026-10-05.md
+docs/archive/reviews\APP_REVIEW_2026-10-05.md
+app/src/data\training-packs.json
+app/src/data\research-cards.json
+app/src/data\metrics.json
+app/src/data\coach-prompts.json
+crates/coach-services\Cargo.toml
+crates/coach-services\tests\fixtures\synthetic-oidc-jwks.json
+crates/coach-services\tests\fixtures\README.md
+crates/coach-services\src\xg.rs
+crates/coach-services\src\transfer.rs
+crates/coach-services\src\storage.rs
+crates/coach-services\src\sim.rs
+crates/coach-services\src\semantics.rs
+crates/coach-services\src\retrieval.rs
+crates/coach-services\src\research.rs
+crates/coach-services\src\reenrich.rs
+crates/coach-services\src\practice.rs
+crates/coach-services\src\migrations.rs
+crates/coach-services\src\migrations\analytics_002_provenance.sql
+crates/coach-services\src\migrations\analytics_001_base.sql
+crates/coach-services\src\migrations\008_detector.sql
+crates/coach-services\src\migrations\007_intelligence.sql
+crates/coach-services\src\migrations\006_transfer.sql
+crates/coach-services\src\migrations\005_deleted_match_ids.sql
+crates/coach-services\src\migrations\004_replay_storage.sql
+crates/coach-services\src\migrations\003_practice.sql
+crates/coach-services\src\migrations\001_base.sql
+crates/coach-services\src\lib.rs
+crates/coach-services\src\intelligence.rs
+crates/coach-services\src\evidence_tools.rs
+crates/coach-services\src\detector.rs
+crates/coach-services\src\conversations.rs
+crates/coach-services\src\chatgpt.rs
+crates/coach-services\src\camera.rs
+crates/coach-services\src\analytics.rs
+crates/coach-services\src\ai.rs
+1:# **Evidence-Grounded Coaching Architecture and Implementation Specification for AntiRL**
+3:## **00\_EXECUTIVE\_DECISIONS.md**
+7:### **Immediate Implementation Mandates**
+27:### **Prerequisite Research Programs**
+32:### **Deferral and Rejection Rationale**
+37:## **01\_SOURCE\_LEDGER.csv**
+55:## **02\_METRIC\_DICTIONARY.md**
+59:### **Kinematic and Movement Metrics**
+61:#### **Time at or Above Supersonic Threshold**
+67:#### **Supersonic Threshold Share**
+73:#### **Average Speed**
+79:### **Resource Allocation Metrics**
+81:#### **Boost Active at Supersonic Speed**
+94:#### **Average Boost Level**
+100:#### **Low-Boost Exposure Share**
+106:#### **Suspected Unnecessary Boost Duration**
+112:### **Positional and Tactical Metrics**
+114:#### **Defensive Half Share**
+121:#### **Time Ahead of Ball**
+127:#### **Ball Contact and Possession Quality**
+144:### **Evaluation of Questionable Coaching Heuristics**
+157:## **03\_MODE\_COACHING\_CARDS.md**
+161:### **Competitive 1v1 Guidance Cards**
+209:### **Competitive 2v2 Guidance Cards**
+257:### **Competitive 3v3 Guidance Cards**
+290:## **04\_TRAINING\_PACK\_CATALOG.csv**
+317:### **Limitations of Static Training Packs**
+330:## **05\_BENCHMARK\_STUDY.md**
+332:### **Benchmark Acquisition and Manifest Specification**
+346:### **Stratified Sampling Design**
+360:### **Statistical Sample Size Justification**
+367:### **User-Facing Comparative Guidance**
+377:### **Benchmark Manifest Schema (benchmark\_manifest.csv)**
+398:## **06\_GRADING\_VALIDATION.md**
+400:### **Evaluative Tier Architecture**
+409:### **Calibration Anchor Definitions (1–100 Scale)**
+417:### **Evaluative Dimensions and Feature Mapping**
+436:### **Prohibited Attribution Failure Modes**
+445:## **07\_PROGRESSION\_FEASIBILITY.md**
+447:### **Evaluation of Skill Acquisition Literature**
+458:### **Decision: Full Abstention from Promotional Forecasting**
+462:### **Milestone and Reassessment Architecture**
+486:## **08\_PROMPT\_MODULES\_AND\_EVALS.md**
+488:### **System Prompt Core Specification**
+502:### **Mode-Specific System Modules**
+506:#### **Module: Competitive 1v1**
+510:#### **Module: Competitive 2v2**
+514:#### **Module: Competitive 3v3**
+518:### **Deterministic Tool Contracts**
+566:### **Adversarial Evaluation Test Suite**
+579:## **09\_IMPLEMENTATION\_DECISIONS.md**
+581:### **Architectural Dependency Hierarchy**
+595:### **Engineering Work Packages**
+610:## **Actionable Self-Critique**
+612:### **Features Demonstrating High Utility**
+616:### **Features Exhibiting Low Utility**
+620:### **Potential Confusions to Mitigate**
+624:### **Unsupported Capabilities**
+628:#### **Works cited**

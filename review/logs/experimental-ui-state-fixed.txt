@@ -1,0 +1,40 @@
+[WebServer] (node:53912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:15812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:45108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] The request url "C:\Users\barke\Documents\AntiRL\review\model-state\index.html" is outside of Vite serving allow list.
+[WebServer] 
+[WebServer] - C:/Users/barke/Documents/AntiRL/app
+[WebServer] 
+[WebServer] Refer to docs https://vite.dev/config/server-options.html#server-fs-allow for configurations and more details.
+[WebServer] 
+  ✘  1 ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B (30.0s)
+
+
+  1) ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByText('Bot detection · local bot-likeness index', { exact: true })
+
+
+      2 | test('characterization: real experimental components retain replay A scores after prop switch to B', async ({ page }) => {
+      3 |   await page.goto('/@fs/C:/Users/barke/Documents/AntiRL/review/model-state/index.html');
+    > 4 |   await page.getByText('Bot detection · local bot-likeness index', { exact: true }).click();
+        |                                                                                     ^
+      5 |   await page.getByText('Shots · expected goals (xG)', { exact: true }).click();
+      6 |   await expect(page.getByText('0.73', { exact: true })).toBeVisible();
+      7 |   await expect(page.getByText('Player from A', { exact: true }).first()).toBeVisible();
+        at C:\Users\barke\Documents\AntiRL\review\model-state\review_model_state.spec.ts:4:85
+
+    Error Context: ..\review\model-state\results\review_model_state-charact-f49a6-ores-after-prop-switch-to-B\error-context.md
+
+  1 failed
+    ..\review\model-state\review_model_state.spec.ts:2:1 › characterization: real experimental components retain replay A scores after prop switch to B 

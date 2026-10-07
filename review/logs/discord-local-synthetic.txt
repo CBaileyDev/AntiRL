@@ -1,0 +1,1 @@
+PASS: local signed Discord HTTP boundary; no Discord messages sent

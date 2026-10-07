@@ -1,0 +1,3 @@
+$ prettier --check src tests index.html package.json *.ts *.js
+Checking formatting...
+All matched files use Prettier code style!

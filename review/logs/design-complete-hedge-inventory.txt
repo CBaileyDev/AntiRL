@@ -1,0 +1,1 @@
+{"lines": 4042, "redefined_selectors": 48, "font_sizes": 25, "inline_styles": 156, "possible_dead": 55, "color_literals": 55, "disclaimer_candidate_lines": 137, "unavailable_occurrences": 40}

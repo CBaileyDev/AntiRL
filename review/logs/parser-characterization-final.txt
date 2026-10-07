@@ -1,0 +1,22 @@
+   Compiling review-metrics-probe v0.1.0 (C:\Users\barke\Documents\AntiRL\review\metrics-probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.33s
+     Running unittests src\lib.rs (target\debug\deps\review_metrics_probe-196117b510572c97.exe)
+
+running 9 tests
+test review_characterization::review_partial_velocity_overstates_metric_sample_count ... ok
+test review_characterization::review_gap_is_excluded_without_quality_accounting ... ok
+exposure event 0..5 includes dropped gap 1.2..5.0; observed live seconds 1.test review_characterization::review_kickoff_time_not_in_active_play ... 2000000476837158ok
+
+test review_characterization::review_exposure_event_spans_dropped_timing_gap ... ok
+overlapping boost events: [("m:boost:steam:1:0.000", "Extended low-boost window", 0.0, 6.099999904632568), ("m:boost:steam:1:0.000", "Review supersonic boost", 0.0, 6.099999904632568)]
+low-boost event 0..12; actual observed seconds test review_characterization::review_low_and_supersonic_boost_generate_duplicate_event_ids ... 6ok
+
+test review_characterization::review_validator_accepts_corrupt_sufficient_statistics_and_coverage ... ok
+test review_characterization::review_validator_accepts_negative_counts_and_wrong_shot_team ... ok
+test review_characterization::review_absent_player_extends_observed_low_boost_event ... ok
+validation low boost 0: Err("Analysis event references or time invalid")
+validation low boost 33: Ok(())
+test review_characterization::review_validate_duplicate_events_fails_but_control_is_valid ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+

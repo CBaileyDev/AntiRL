@@ -1,0 +1,52 @@
+[
+  {
+    "lead": 1,
+    "status": "confirmed",
+    "evidence": "D-001: exact current builder loses match in All after heavy mode summaries; citation mapping is safely truncated, but current evidence disappears."
+  },
+  {
+    "lead": 2,
+    "status": "confirmed",
+    "evidence": "D-004/D-005: negation rejection confirmed; rounding is partial because exact permitted metric values separately supplied1007-1018, so inevitable rounding fallback refuted."
+  },
+  {
+    "lead": 3,
+    "status": "confirmed",
+    "evidence": "D-002/D-003/D-006: prose numbers/policy unenforced, provisional pack leakage and spaced-code bypass reproduced."
+  },
+  {
+    "lead": 4,
+    "status": "confirmed",
+    "evidence": "D-011: keyword pseudo-planner confirmed; prose-scraping subclaim refuted, current retrieval.rs strictly parses JSON with optional fences.1000 reasoning-inclusive output cap risk, not live-starvation proof."
+  },
+  {
+    "lead": 5,
+    "status": "confirmed",
+    "evidence": "D-012: first120 rows at15Hz=7.933s, no continuation; whole oversized result dropped by16KB dispatcher."
+  },
+  {
+    "lead": 6,
+    "status": "confirmed",
+    "evidence": "D-008: raw metadata and notes in system role confirmed; model exploitation untested, likely. Opener scope delegated M storage/security."
+  },
+  {
+    "lead": 7,
+    "status": "confirmed",
+    "evidence": "D-010: GC/SSL/rank-expectations/1-3 priorities conflict with calibration/default-one guidance."
+  },
+  {
+    "lead": 8,
+    "status": "confirmed",
+    "evidence": "D-009 unscoped memory; D-024 All default. xG pooling/playlist mapping assigned experimental/parser agents."
+  },
+  {
+    "lead": 9,
+    "status": "confirmed",
+    "evidence": "D-015-018/D-022-023: protocol/model guesses, defaults conflict, fresh clients, top-level error mishandled, proxy handling unverified. Docs live-verification contradiction confirmed by source-doc comparison, delegated N."
+  },
+  {
+    "lead": 10,
+    "status": "confirmed",
+    "evidence": "D-007/D-020: prompts parsed as count/offline data bus; deterministic count corrupted by profile delimiter."
+  }
+]

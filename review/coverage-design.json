@@ -1,0 +1,132 @@
+[
+  {
+    "path": "app/src/styles.css",
+    "status": "reviewed",
+    "reason": "Token/color/type census, duplicate/dead-rule candidates, focus/control/dialog/motion/timeline rules and fresh browser renders."
+  },
+  {
+    "path": "app/src/components/OnboardingModal.tsx",
+    "status": "reviewed",
+    "reason": "Complete4step form, save/escape/focus/selection semantics and all4 fresh screenshots."
+  },
+  {
+    "path": "app/src/components/GoalTracker.tsx",
+    "status": "reviewed",
+    "reason": "Entire unused wrapper and prop/import census."
+  },
+  {
+    "path": "app/src/components/RankSelect.tsx",
+    "status": "reviewed",
+    "reason": "Complete native select/rank asset composition and accessible naming."
+  },
+  {
+    "path": "app/src/components/RankBadge.tsx",
+    "status": "skimmed",
+    "reason": "Asset sizing/label integration in fresh views; full runtime audit by frontend."
+  },
+  {
+    "path": "app/src/pages/Overview.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/Replays.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/ReplayStudio.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/Coach.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/Progress.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/Settings.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/pages/Teammates.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/App.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/ReplayViewer.tsx",
+    "status": "skimmed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit."
+  },
+  {
+    "path": "app/src/components/BotLikenessPanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/DetectorPanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/CounterfactualPanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/XgPanels.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/EvidenceHistory.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/PracticePanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/TransferPanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/IntelligencePanel.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/components/ReferenceComparison.tsx",
+    "status": "skimmed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent."
+  },
+  {
+    "path": "app/src/data/metrics.json",
+    "status": "skimmed",
+    "reason": "Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent."
+  },
+  {
+    "path": "app/src/data/coach-prompts.json",
+    "status": "skimmed",
+    "reason": "Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent."
+  },
+  {
+    "path": "app/src/data/research-cards.json",
+    "status": "skimmed",
+    "reason": "Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent."
+  }
+]

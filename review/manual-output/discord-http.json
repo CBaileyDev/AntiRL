@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "checks": [
+    "real localhost signed ping",
+    "invalid signatures rejected",
+    "application ID enforced",
+    "guild allowlist enforced",
+    "request body budget enforced"
+  ],
+  "live_messages_sent": 0
+}

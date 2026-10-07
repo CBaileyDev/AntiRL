@@ -1,0 +1,15 @@
+{
+  "motion": true,
+  "spinner": [
+    {
+      "class": "lucide lucide-loader-circle spin",
+      "animation": "spin",
+      "duration": "1s"
+    }
+  ],
+  "liveLog": "off",
+  "statuses": [],
+  "stoppedStatuses": [
+    "cancelled · partial response"
+  ]
+}

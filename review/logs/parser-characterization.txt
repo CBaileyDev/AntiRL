@@ -1,0 +1,16 @@
+     Locking 70 packages to latest Rust 1.88 compatible versions
+      Adding sha2 v0.10.9 (available: v0.11.0)
+   Compiling review-metrics-probe v0.1.0 (C:\Users\barke\Documents\AntiRL\review\metrics-probe)
+error: mismatched closing delimiter: `}`
+    --> src\lib.rs:1787:49
+     |
+1774 | mod review_characterization {
+     |                             - closing delimiter possibly meant for this
+...
+1787 | fn current_in_game_team_player_counts(&self) -> [usize { [self.ids.len(),0] }
+     |                                                 ^ unclosed delimiter
+...
+1866 | fn current_frame_goal_events(&self) -> &[GoalEvent] { &[] } }
+     |                                                             ^ mismatched closing delimiter
+
+error: could not compile `review-metrics-probe` (lib test) due to 1 previous error

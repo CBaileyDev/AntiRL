@@ -1,0 +1,6 @@
+PASS characterization: Null recorded ball crashes successful simulation trajectory plot
+PASS characterization: Overtime positive countup displayed without overtime label
+PASS characterization: Overview fabricates own victory when selected identity absent
+PASS characterization: Overview unknown scores becomes fabricated 0-0 defeat
+PASS characterization: Progress missing metrics becomes factual zero percentages
+PASS characterization: Restricted preference storage throws before viewer mounts

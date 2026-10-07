@@ -1,0 +1,6 @@
+{
+  "source": "crates/coach-services/src/ai.rs",
+  "sha256": "3a7dceaad1d26c318e57bd338145ea346d851115a37d39a9b34f1a6b74b7e90d",
+  "generated": "crates\\coach-services\\tests\\review_ai.rs",
+  "method": "verbatim extracted private helper functions with mock persistence; public CoachService used for real analytics and timeline retrieval"
+}
