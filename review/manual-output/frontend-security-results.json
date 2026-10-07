@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "offline provider default",
+    "explicit reseller consent",
+    "provider change revokes consent",
+    "unsupported sign-in explained",
+    "failure results and retry",
+    "identity confirmation",
+    "narrow width",
+    "no remote font requests",
+    "cloud preview prevents premature request",
+    "native opener keeps webview in app",
+    "all camera switches",
+    "play/pause/seek scoreboard"
+  ],
+  "errors": []
+}

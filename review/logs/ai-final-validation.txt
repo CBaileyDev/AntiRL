@@ -1,0 +1,23 @@
+C:\Users\barke\Documents\AntiRL\crates\coach-services\tests\review_ai.rs
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.63s
+     Running tests\review_ai.rs (target\debug\deps\review_ai-13d2bf20887dd104.exe)
+
+running 11 tests
+test review_spaced_pack_codes_and_extended_tokens_pass_filter ... ok
+test review_provider_error_event_is_silently_ignored ... ok
+test review_stream_displays_unverified_codes_before_final_filter ... ok
+test review_analysis_rejects_honest_negation ... ok
+test review_analysis_accepts_invented_prose_numbers_grades_and_forecasts ... ok
+test review_exact_claim_passes_but_context_rounded_claim_fails ... ok
+test review_prompt_delimiter_player_name_corrupts_local_count ... ok
+test review_unknown_team_is_blue_and_draw_is_lost ... ok
+REVIEW_TIMELINE_BYTES 11367
+test review_real_timeline_window_is_first_eight_seconds_without_continuation ... ok
+test review_real_offline_chat_reports_injected_count ... ok
+REVIEW_CONTEXT_MEASUREMENTS [{"context_chars":32776,"event_ids":0,"has_match_header":true,"library_chars":24564,"library_matches":60,"mode":"1v1","truncated":false},{"context_chars":33759,"event_ids":1,"has_match_header":true,"library_chars":24564,"library_matches":60,"mode":"2v2","truncated":false},{"context_chars":32776,"event_ids":0,"has_match_header":true,"library_chars":24564,"library_matches":60,"mode":"3v3","truncated":false},{"context_chars":47801,"event_ids":0,"has_match_header":false,"library_chars":72361,"library_matches":60,"mode":"All","truncated":true}]
+test review_library_context_measurement_and_truncation ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+AI ledger/leads/report finalized

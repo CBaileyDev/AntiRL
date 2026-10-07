@@ -1,0 +1,14 @@
+    Blocking waiting for file lock on build directory
+   Compiling replay-core v0.1.0 (C:\Users\barke\Documents\AntiRL\review\snapshot\crates\replay-core)
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\review\snapshot\crates\coach-services)
+error: couldn't read `crates\coach-services\src\../tests/fixtures/synthetic-oidc-test-key.pem`: The system cannot find the file specified. (os error 2)
+   --> crates\coach-services\src\chatgpt.rs:733:63
+    |
+733 |               let key = jsonwebtoken::EncodingKey::from_rsa_pem(include_bytes!(
+    |  _______________________________________________________________^
+734 | |                 "../tests/fixtures/synthetic-oidc-test-key.pem"
+735 | |             ))
+    | |_____________^
+
+error: could not compile `coach-services` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

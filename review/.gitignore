@@ -1,0 +1,8 @@
+# Reproducible review inputs and build caches, not deliverables.
+__pycache__/
+.vite/
+snapshot/
+browser-cache/
+metrics-probe/target/
+frontend-probes.cjs
+manual-data/

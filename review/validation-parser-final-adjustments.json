@@ -1,0 +1,29 @@
+[
+  {
+    "id": "A-010",
+    "severity": "P3",
+    "title": "Supersonic event wording is less precise than the threshold definition",
+    "problem": "The dictionary correctly defines time at or above2200uu/s as a threshold approximation. The event prose calls the window already supersonic, which is true for qualifying samples but makes the threshold/state distinction less clear across the product. The game-state grace interval below2200 is intentionally outside this measurement; no numerical or hysteresis bug is asserted.",
+    "expected_vs_actual": "The numerical metric is correct as defined. Event copy should consistently describe the observed speed threshold rather than imply it measures all time in the exact game state.",
+    "recommendation": "Keep the threshold metric and change event wording to at or above2200uu/s for consistency. Add a separate validated state estimate only if the product needs exact supersonic-state time.",
+    "effort": "S",
+    "validation": "Reread the dictionary and Psyonix unchanged state rules. >=2200 is sufficient for state entry; omitting the lower-speed grace interval does not make the explicitly defined threshold metric incorrect. Retained as terminology precision only."
+  },
+  {
+    "id": "A-024",
+    "category": "N",
+    "title": "Research declares forecasting statistically infeasible without a suitable longitudinal cohort",
+    "location": {
+      "file": "AntiRL Coaching Evidence Research.md",
+      "line": 450,
+      "quote": "In Rocket League, predicting a player's calendar timeline to reach Champion or Grand Champion is statistically infeasible due to five structural confounders1:"
+    },
+    "problem": "The report turns real limitations and confounders into a categorical claim that Rocket League calendar forecasting is statistically infeasible. It supplies no suitable mode-specific longitudinal cohort or executed forecasting/calibration study, and the research audit explicitly says the cited cross-sectional cognition paper cannot establish a permanent impossibility theorem. Abstaining from current uncalibrated forecasts is appropriate; treating that lack of evidence as proof no future calibrated model can work is unsupported.",
+    "trigger_or_repro": "Read research section07 line450, source-ledger cognition citation, and RESEARCH_AUDIT SRC-10/calendar timeline decisions. Also inspect ENG-03: personal rolling summaries are explicitly required, refuting the earlier allegation that the specification bans descriptive personal baselines.",
+    "expected_vs_actual": "Expected a bounded statement that AntiRL currently lacks validated forecasting data and therefore abstains. Actual research claims statistical infeasibility from confounders alone. A single highest-priority observation can legitimately be supported by several moments; no contradiction is alleged there.",
+    "evidence": "AntiRL Coaching Evidence Research.md:449-456; docs/archive/reviews/RESEARCH_AUDIT.md SRC-10 and Calendar rank timelines rows; review/PARSER_REVIEW.md",
+    "recommendation": "Retain current abstention, but state the missing empirical gates precisely. Future estimates require a representative mode-specific longitudinal cohort, held-out calibration and honest uncertainty; personal descriptive baselines and multi-moment support for one priority remain useful now.",
+    "effort": "S",
+    "validation": "Actively disproved the earlier broad interpretation: ENG-03 requires personal baselines and one priority does not prohibit multiple supporting moments. Scope narrowed to the unsupported categorical feasibility claim; no forecasting feature is recommended before calibration."
+  }
+]

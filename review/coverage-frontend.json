@@ -1,0 +1,277 @@
+[
+  {
+    "path": "app/src/App.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/arenaMesh.ts",
+    "status": "skimmed",
+    "reason": "Generated quantized/base64 stadium geometry metadata and use in viewerScene checked; encoded vertex payload not hand-reviewed."
+  },
+  {
+    "path": "app/src/bindings.ts",
+    "status": "skimmed",
+    "reason": "Generated IPC request/response signatures, nullable frame/metric types and domain exports examined; generator output not manually reviewed line by line."
+  },
+  {
+    "path": "app/src/components/BoostRing.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/BotLikenessPanel.tsx",
+    "status": "skimmed",
+    "reason": "Props and request lifetimes inspected; experimental reviewer owns scientific/scope/stale-result findings."
+  },
+  {
+    "path": "app/src/components/CameraSettings.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/CounterfactualPanel.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/DetectorPanel.tsx",
+    "status": "skimmed",
+    "reason": "Component integration inspected; experimental reviewer owns model claim/verdict details."
+  },
+  {
+    "path": "app/src/components/EvidenceHistory.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/GhostOverlay.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/GoalTracker.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/IntelligencePanel.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/OnboardingModal.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/PracticePanel.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/RankBadge.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/RankSelect.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/ReferenceComparison.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/SimSettings.tsx",
+    "status": "skimmed",
+    "reason": "Settings and path IPC inspected; experimental reviewer owns simulator workflow/status validity."
+  },
+  {
+    "path": "app/src/components/TitleBar.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/TransferPanel.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/ViewerHud.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/XgPanels.tsx",
+    "status": "skimmed",
+    "reason": "Props and request lifetimes inspected; experimental reviewer owns scientific/scope/stale-result findings."
+  },
+  {
+    "path": "app/src/data/coach-prompts.json",
+    "status": "skimmed",
+    "reason": "Frontend prompt use traced; AI reviewer owns full policy/prompt review."
+  },
+  {
+    "path": "app/src/data/metrics.json",
+    "status": "skimmed",
+    "reason": "Formatter/dictionary consumers checked; parser and AI reviewers own authoritative metric semantics."
+  },
+  {
+    "path": "app/src/data/research-cards.json",
+    "status": "skimmed",
+    "reason": "Research UI/rendering path checked; experimental reviewer owns scientific claim/source review."
+  },
+  {
+    "path": "app/src/data/training-packs.json",
+    "status": "skimmed",
+    "reason": "Frontend catalog/search/copy flow checked; AI reviewer owns codes/source validity."
+  },
+  {
+    "path": "app/src/download.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/errors.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/evidenceResponses.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/externalLinks.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/formatStat.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/ipc.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/main.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/metricDictionary.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Coach.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Overview.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Progress.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Replays.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/ReplayStudio.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Settings.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Teammates.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/rankMath.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/replayMath.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/ReplayViewer.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/styles.css",
+    "status": "skimmed",
+    "reason": "Relevant layout, focus, timeline and palette selectors inspected. Design reviewer owns full selector/copy/accessibility audit."
+  },
+  {
+    "path": "app/src/surfaceTextures.ts",
+    "status": "skimmed",
+    "reason": "Seeded procedural texture algorithm and allocation/initialization use examined; no independent visual/material numerical oracle."
+  },
+  {
+    "path": "app/src/types.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerAssets.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerCameras.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerEngine.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerGeometry.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerQuality.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerRigs.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerScene.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerTime.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  }
+]

@@ -1,0 +1,93 @@
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.35s
+     Running unittests src\lib.rs (target\debug\deps\coach_services-63452b63f7975bc4.exe)
+
+running 77 tests
+test ai::tests::live_synthetic_coach_stream ... ignored, Opt-in provider test with synthetic replay data only
+test analytics::tests::crash_worker ... ok
+test ai::tests::exact_library_count_question_is_local_and_uses_full_library ... ok
+test ai::tests::provider_parameters_match_model_families_and_responses_never_store ... ok
+test ai::tests::extract_content_handles_reasoning_and_errors ... ok
+test ai::tests::responses_stream_requires_completed_terminal_event ... ok
+test ai::tests::filtered_completion_never_becomes_a_complete_saved_answer ... ok
+test ai::tests::withheld_pack_codes_include_malformed_and_cancelled_candidates ... ok
+test ai::tests::stream_handles_utf8_boundaries_reasoning_and_incomplete_responses ... ok
+test ai::tests::provider_failure_gives_honest_local_summary_without_replacing_cancelled_or_partial_text ... ok
+test analytics::tests::dates ... ok
+test ai::tests::streaming_deltas_hide_split_think_tags_and_have_linear_size ... ok
+test camera::tests::ini_requires_camera_section_and_complete_valid_profile ... ok
+test analytics::tests::weighted_and_unknown ... ok
+test detector::tests::real_replays_when_provided ... ok
+test ai::tests::parses_fenced_findings_and_maps_ids ... ok
+test intelligence::tests::tracker_links_never_guess_epic_ids_as_names ... ok
+test reenrich::tests::real_snapshot_reenrichment_end_to_end ... ignored
+test intelligence::tests::context_uses_pre_goal_score_and_unknowns ... ok
+test retrieval::tests::plans_cannot_override_scope_or_read_arbitrary_files ... ok
+test retrieval::tests::counterfactual_and_detector_tools_are_bounded ... ok
+test intelligence::tests::scored_goals_and_team_flags_are_searchable_without_becoming_blame ... ok
+test sim::tests::reconstruction_refuses_unknowns_and_never_defaults ... ok
+test sim::tests::airborne_flip_state_comes_from_history ... ok
+test sim::tests::ball_comparison_passes_matching_path_and_fails_offsets ... ok
+test detector::tests::discontinuities_and_non_live_frames_split_segments ... ok
+test detector::tests::coarse_sampling_makes_cadence_unavailable_not_zero ... ok
+test detector::tests::missing_or_short_input_is_unavailable_never_neutral ... ok
+test detector::tests::discrete_grid_stream_scores_above_keyboard_above_analog ... ok
+test conversations::tests::legacy_records_survive_scope_migration_and_repeated_open ... ok
+test sim::tests::mode_gate_requires_matching_team_size ... ok
+test sim::tests::observation_layout_is_checked_before_the_engine_runs ... ok
+test storage::tests::interrupted_frame_migration_rolls_back_with_original_backup ... ok
+test sim::tests::discovery_reads_newest_checkpoint_and_flags_problems ... ok
+test tests::test_note_content_rejects_credentials ... ok
+test analytics::tests::failed_rebuild_keeps_verified_projection ... ok
+test ai::tests::configured_user_absent_is_never_replaced_by_recorder ... ok
+
+running 1 test
+test reenrich::tests::mismatched_identity_or_hash_is_rejected ... ok
+test ai::tests::changing_provider_does_not_reuse_old_cloud_consent ... ok
+test ai::tests::coaching_projection_refreshes_without_render_frames ... ok
+test storage::tests::compressed_frames_round_trip_and_queries_use_metadata ... ok
+test ai::tests::cancellation_between_waiters_is_durable_and_new_requests_reset_it ... ok
+test xg::tests::gate_blocks_small_samples ... ok
+test xg::tests::labels_goals_and_marks_missing_position ... ok
+test xg::tests::recovers_coefficient_directions ... ok
+test xg::tests::split_is_by_match_without_leakage ... ok
+test camera::tests::saved_cameras_are_account_scoped ... ok
+test chatgpt::disabled_tests::disabled_build_never_accepts_placeholder_tokens ... ok
+test sim::tests::runner_parses_output_enforces_limits_and_never_uses_a_shell ... ok
+test storage::tests::snapshot_retention_is_explicit_and_bad_frame_blob_does_not_break_library ... ok
+test intelligence::tests::goal_phase_is_distinct_from_lead_in_and_reports_are_sourced ... ok
+test reenrich::tests::stale_replay_is_enriched_without_touching_metrics_and_invalidates_cache ... ok
+test reenrich::tests::missing_or_corrupt_snapshot_is_unavailable_or_failed_not_fabricated ... ok
+test ai::tests::context_contains_players_metrics_events ... ok
+test storage::tests::teammate_latest_date_is_independent_of_insert_order_and_offsets ... ok
+test analytics::tests::process_exit_rolls_back_projection_and_reconciles_source_commit ... ok
+test tests::legacy_or_switched_provider_requires_explicit_scoped_consent ... ok
+test tests::test_settings_and_storage ... ok
+test tests::test_replay_and_progress_flow ... ok
+test practice::tests::practice_survives_restart_without_cross_mode_or_identity_leak ... ok
+test storage::tests::legacy_database_migrates_frames_and_reopens_without_loss ... ok
+test sim::tests::runner_times_out ... ok
+test analytics::tests::reconcile_revision_delete_and_restart ... ok
+test intelligence::tests::all_mode_queries_keep_fingerprints_separate_and_duel_drills_have_no_teammates ... ok
+test storage::tests::tombstone_survives_restart_and_snapshot_is_removed ... ok
+test ai::tests::personal_library_identity_survives_missing_or_out_of_mode_replay ... ok
+test storage::tests::unchanged_success_and_failure_are_durable_and_retry_is_scoped ... ok
+test intelligence::tests::queries_reviews_cache_and_drills_are_scoped ... ok
+test transfer::tests::checkins_are_editable_durable_local_and_survive_replay_deletion ... ok
+test transfer::tests::switching_and_new_cycles_preserve_history_and_wait_for_new_practice ... ok
+test transfer::tests::chronology_context_missing_version_and_overlaps_are_explicit ... ok
+test analytics::tests::recent_previous_lifetime_are_personal_and_mode_scoped ... ok
+test transfer::tests::windows_select_before_metric_filter_and_preserve_zero_weights ... ok
+test sim::tests::what_if_end_to_end_with_stub_engine_and_validation_gate ... ok
+test transfer::tests::migration_retains_old_plans_logs_and_does_not_invent_completion_time ... ok
+test sim::tests::status_degrades_to_unavailable_with_reasons ... ok
+test detector::tests::labels_calibration_requires_both_classes_then_reports_auc ... ok
+
+test result: ok. 75 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 1.85s
+
+   Doc-tests coach_services
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

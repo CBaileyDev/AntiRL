@@ -1,0 +1,65 @@
+{
+  "fixture": "sample-1.replay",
+  "size_bytes": 778674,
+  "exit_code": 0,
+  "duration_s": 11.093,
+  "mode": "2v2",
+  "duration_replay_seconds": 201.98040771484375,
+  "live_play_seconds": 135.14991188049316,
+  "decoded_frames": 3753,
+  "render_frames": 1883,
+  "players": 4,
+  "events": 16,
+  "event_types": {
+    "boost": 6,
+    "demo": 2,
+    "goal": 4,
+    "rotation": 4
+  },
+  "pad_events": 149,
+  "stat_samples": 5,
+  "ipc_json_bytes": 3229466,
+  "metric_keys": [
+    "ahead_ball_pct",
+    "assists",
+    "avg_ball_distance",
+    "avg_boost",
+    "avg_speed",
+    "boost_active_at_supersonic_speed_s",
+    "defensive_half_pct",
+    "goals",
+    "low_boost_pct",
+    "saves",
+    "score",
+    "shots",
+    "time_at_or_above_supersonic_threshold_pct",
+    "time_at_or_above_supersonic_threshold_s",
+    "touches",
+    "tracked_seconds"
+  ],
+  "boost_valid_seconds_range": [
+    135.1037082672119,
+    135.14991188049316
+  ],
+  "render_discontinuities": 15,
+  "duplicate_event_ids": 0,
+  "metric_counts": {
+    "ahead_ball_pct": 4,
+    "assists": 4,
+    "avg_ball_distance": 4,
+    "avg_boost": 4,
+    "avg_speed": 4,
+    "boost_active_at_supersonic_speed_s": 4,
+    "defensive_half_pct": 4,
+    "goals": 4,
+    "low_boost_pct": 4,
+    "saves": 4,
+    "score": 4,
+    "shots": 4,
+    "time_at_or_above_supersonic_threshold_pct": 4,
+    "time_at_or_above_supersonic_threshold_s": 4,
+    "touches": 4,
+    "tracked_seconds": 4
+  }
+}
+Full parser JSON retained only in process memory; player names/IDs and source paths not logged.

@@ -1,0 +1,2862 @@
+[
+  {
+    "name": "match-report",
+    "nestedInteractive": 0,
+    "inlineStyles": 5,
+    "results": [
+      {
+        "state": "default",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "← Previous",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "← Previous",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "← Previous",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Open Studio ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Open Studio ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Open Studio ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Practise this · 10 min",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Practise this · 10 min",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Practise this · 10 min",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "How we measure ⓘ",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "How we measure ⓘ",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "How we measure ⓘ",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  },
+  {
+    "name": "today",
+    "nestedInteractive": 0,
+    "inlineStyles": 4,
+    "results": [
+      {
+        "state": "default",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Change mode ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Change mode ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Change mode ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Start 10-minute drill ▷",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Start 10-minute drill ▷",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Start 10-minute drill ▷",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  },
+  {
+    "name": "replay-studio",
+    "nestedInteractive": 0,
+    "inlineStyles": 11,
+    "results": [
+      {
+        "state": "default",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Top down ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Top down ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Top down ⌄",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Ask Coach",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Ask Coach",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Ask Coach",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "↶",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "↶",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "↶",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "▶",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "▶",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "▶",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "↷",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "↷",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "↷",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "1×",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "1×",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "1×",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "? Shortcuts",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "? Shortcuts",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "? Shortcuts",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Review",
+        "classes": "selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Review",
+        "classes": "selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Review",
+        "classes": "selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Events",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Events",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Events",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Stats",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Stats",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Stats",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Lab",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Lab",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Lab",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 6.991939500247879,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "ⓘ Why this moment?",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "ⓘ Why this moment?",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "ⓘ Why this moment?",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Yes",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Yes",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Yes",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "No",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "No",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "No",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Unsure",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Unsure",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Unsure",
+        "classes": "",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  },
+  {
+    "name": "coach",
+    "nestedInteractive": 0,
+    "inlineStyles": 7,
+    "composerBounds": {
+      "x": 419,
+      "y": 764.71875,
+      "width": 684,
+      "height": 48.78125,
+      "top": 764.71875,
+      "right": 1103,
+      "bottom": 813.5,
+      "left": 419
+    },
+    "results": [
+      {
+        "state": "default",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "＋ New conversation",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ New conversation",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ New conversation",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "•••",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "•••",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "•••",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Edit context",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Edit context",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Edit context",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Add to my practice",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Add to my practice",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Add to my practice",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Copy",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 9.454200504420971,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Copy",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 6.93476485240299,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Copy",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 9.454200504420971,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Useful ♡",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 9.454200504420971,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Useful ♡",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 6.93476485240299,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Useful ♡",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 9.454200504420971,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Send ↑",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Send ↑",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Send ↑",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Play ↗",
+        "classes": "button ",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          24,
+          32,
+          48,
+          1
+        ],
+        "ratio": 15.581735815058408,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "How this answer was built ⓘ",
+        "classes": "quiet mt",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "How this answer was built ⓘ",
+        "classes": "quiet mt",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "How this answer was built ⓘ",
+        "classes": "quiet mt",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  },
+  {
+    "name": "progress",
+    "nestedInteractive": 0,
+    "inlineStyles": 3,
+    "results": [
+      {
+        "state": "default",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Import",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 18.923673259586288,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "1v1",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "1v1",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "1v1",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "2v2",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "2v2",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "2v2",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "3v3",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "3v3",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "3v3",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "10",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "10",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "10",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "25 games",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "25 games",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "25 games",
+        "classes": "selected",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "50",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "50",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "50",
+        "classes": "",
+        "color": "rgb(148, 163, 184)",
+        "background": [
+          8,
+          10,
+          15,
+          1
+        ],
+        "ratio": 7.721942996567566,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Measurement details ⓘ",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 8.560435887639619,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Measurement details ⓘ",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 6.93476485240299,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Measurement details ⓘ",
+        "classes": "quiet",
+        "color": "rgb(168, 180, 200)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 8.560435887639619,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Review follow-up moments",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Review follow-up moments",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Review follow-up moments",
+        "classes": "primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "＋ Add a goal",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "＋ Add a goal",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "＋ Add a goal",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "View log ↗",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "View log ↗",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "View log ↗",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  },
+  {
+    "name": "onboarding",
+    "nestedInteractive": 0,
+    "inlineStyles": 2,
+    "results": [
+      {
+        "state": "default",
+        "text": "Change",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Change",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Change",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "1v1Duels",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "1v1Duels",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "1v1Duels",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "2v2Doubles",
+        "classes": "option selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18.919999999999998,
+          21.04,
+          42.12,
+          1
+        ],
+        "ratio": 17.174023162767465,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "2v2Doubles",
+        "classes": "option selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18.919999999999998,
+          21.04,
+          42.12,
+          1
+        ],
+        "ratio": 17.174023162767465,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "2v2Doubles",
+        "classes": "option selected",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18.919999999999998,
+          21.04,
+          42.12,
+          1
+        ],
+        "ratio": 17.174023162767465,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "3v3Standard",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "3v3Standard",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "3v3Standard",
+        "classes": "option",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Browse",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Browse",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          32,
+          41,
+          61,
+          1
+        ],
+        "ratio": 13.880732076453318,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Browse",
+        "classes": "quiet",
+        "color": "rgb(248, 250, 252)",
+        "background": [
+          18,
+          23,
+          34,
+          1
+        ],
+        "ratio": 17.134700244782906,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      },
+      {
+        "state": "default",
+        "text": "Open my first match report →",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "hover",
+        "text": "Open my first match report →",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          67,
+          56,
+          202,
+          1
+        ],
+        "ratio": 7.9031114800249425,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": null
+      },
+      {
+        "state": "focus",
+        "text": "Open my first match report →",
+        "classes": "button primary",
+        "color": "rgb(255, 255, 255)",
+        "background": [
+          79,
+          70,
+          229,
+          1
+        ],
+        "ratio": 6.287528596095884,
+        "threshold": 4.5,
+        "pass": true,
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "focusOutline": "rgb(165, 180, 252) solid 3px"
+      }
+    ]
+  }
+]

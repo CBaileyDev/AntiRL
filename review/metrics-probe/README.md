@@ -1,0 +1,1 @@
+Review-only white-box tests. lib.rs is generated directly from current replay-core/src/lib.rs without implementation changes. Only module and dictionary include paths are absolute. The appended tests implement ProcessorView synthetic snapshots; unused methods panic. No replay, profile, credential or network provider is read. Regenerate with review/review_metric_probe.py.

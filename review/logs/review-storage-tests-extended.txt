@@ -1,0 +1,28 @@
+    Blocking waiting for file lock on build directory
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.00s
+     Running tests\review_storage.rs (target\debug\deps\review_storage-90f83c367433b071.exe)
+
+running 9 tests
+mixed legacy + metrics-2 reported as metrics-2: {"avg_boost":{"count":2,"denominator":600.0,"method":"time_weighted","numerator":30000.0,"value":50.0}}
+get_messages SQL plan: SCAN messages
+memory load accepted 200025 bytes despite save rejecting same content
+malformed settings accepted: {"analysis_model":"gpt-6-astra","auto_import":"yes","chat_model":42,"cloud_consent":false,"cloud_consent_provider":null,"focus":["boost","rotations","defense"],"modes":["1v1","2v2","3v3"],"player_id":null,"player_name":null,"provider":"unrecognized","rank_1v1":null,"rank_2v2":null,"rank_3v3":null,"replay_folder":[],"review_unknown_field":"kept"}
+unknown + draw reported as: {"last_played":"2026-01-01T00:00:00+00:00","losses":2,"name":"Mate","platform":null,"player_id":"review:mate","shared_matches":2,"win_rate":0.0,"wins":0}
+test review_memory_load_bypasses_write_size_and_content_guards ... ok
+test review_messages_query_has_no_supporting_index ... ok
+library parsed 2 dates; analytics treated both as unknown
+test review_analytics_combines_incompatible_metric_versions ... ok
+test review_wrong_settings_types_are_persisted_without_validation ... ok
+test review_delete_retains_replay_snapshot_when_explicitly_requested ... ok
+test review_teammates_unknown_result_and_draw_become_losses ... ok
+test review_library_accepts_dates_analytics_excludes_from_recent ... ok
+bad row Some("invalid JSON") prevents launch: Local storage operation failed: expected value at line 1 column 1
+bad row None prevents launch: Local storage operation failed: Invalid column type Null at index: 1, name: coach_body
+test review_corrupt_coach_row_prevents_entire_profile_open ... ok
+unchanged analytics query: matches=40 compact_bytes=83762 elapsed_ms=96 context_bytes=7577
+unchanged analytics query: matches=400 compact_bytes=83762 elapsed_ms=1265 context_bytes=7583
+test review_analytics_query_scales_with_entire_library ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.58s
+

@@ -1,0 +1,398 @@
+[
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/overview-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-library-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-studio-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-chat-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/progress-goals-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/teammates-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/settings-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/delete-dialog-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-streaming-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-overview-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-library-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-studio-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-coach-chat-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-progress-goals-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-teammates-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-settings-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-1-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-2-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-3-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-4-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-loading-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=loading",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-error-1280x720.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=error",
+    "scrollWidth": 1280
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/overview-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-library-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-studio-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-chat-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/progress-goals-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/teammates-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/settings-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/delete-dialog-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-streaming-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-overview-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-library-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-studio-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-coach-chat-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-progress-goals-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-teammates-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-settings-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-1-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-2-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-3-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-4-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-loading-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=loading",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-error-1440x900.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=error",
+    "scrollWidth": 1440
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/overview-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-library-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/replay-studio-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-chat-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/progress-goals-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/teammates-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/settings-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/delete-dialog-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/coach-streaming-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=heavy",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-overview-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-library-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-replay-studio-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-coach-chat-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-progress-goals-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-teammates-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/empty-settings-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=empty",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-1-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-2-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-3-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/onboarding-step-4-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=new",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-loading-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=loading",
+    "scrollWidth": 1920
+  },
+  {
+    "type": "screenshot",
+    "file": "review/screenshots/before/startup-error-1920x1080.png",
+    "url": "http://127.0.0.1:1445/review/harness/index.html?state=error",
+    "scrollWidth": 1920
+  }
+]

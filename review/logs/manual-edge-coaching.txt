@@ -1,0 +1,3 @@
+Browser ready
+Fixture loaded
+PASS: focused browser UI regressions (synthetic)

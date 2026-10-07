@@ -1,0 +1,27 @@
+[
+  {
+    "lead": 44,
+    "status": "confirmed",
+    "evidence": "L-004/L-005/L-006: single windows-latest CI job, manual native scripts, declarative adversarial coaching corpus without runner. Windows unit tests do exercise job-object limits; do not say all native constraints are untested."
+  },
+  {
+    "lead": 45,
+    "status": "confirmed",
+    "evidence": "N-001/N-002/E-014: root research images and self-citations, contradictory validation docs, developer path. Fresh 66 real-App screenshots replace reliance on stale captures; old captures were not assumed to represent current source."
+  },
+  {
+    "lead": 46,
+    "status": "confirmed",
+    "evidence": "L-001/L-002: all five inspected anonymous GitHub quality runs fail Install frontend, including 6762f8c. Same unmodified command passes cached checkout but fails fresh git archive. After install workaround, missing ignored PEM blocks all-features compilation. Generating key alone fails JWT signature; paired throwaway key/public JWKS in review snapshot passes79/2ignored. Later unmodified Windows checks largely pass, but original Playwright Stop race fails8/1."
+  },
+  {
+    "lead": 47,
+    "status": "confirmed",
+    "evidence": "N-005: four missing declared icons confirmed by filesystem/config comparison; Windows build succeeds. Linux/macOS build panic was not reproduced on Windows. Linux schema is neither tracked nor ignored, but generation was not exercised, so the untracked-output runtime subclaim is source-only."
+  },
+  {
+    "lead": 48,
+    "status": "confirmed",
+    "evidence": "L-003/L-007: original Playwright8pass/1Stopfailure; wrapper9pass; five subsequent coaching repetitions pass, so supplied2/5 frequency unverified. frontend-security original17.6s and software-WebGL11.2s pass under45s; supplied Ubuntu66s timeout not reproduced here. Standalone Studio math script passes but CI/package scripts never run it."
+  }
+]

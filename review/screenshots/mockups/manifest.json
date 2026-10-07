@@ -1,0 +1,2213 @@
+[
+  {
+    "name": "match-report",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/match-report-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 884,
+    "mainBounds": {
+      "x": 148,
+      "y": 64,
+      "width": 1132,
+      "height": 819.765625,
+      "top": 64,
+      "right": 1280,
+      "bottom": 883.765625,
+      "left": 148
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1161.96875,
+          "y": 10,
+          "width": 94.03125,
+          "height": 43,
+          "top": 10,
+          "right": 1256,
+          "bottom": 53,
+          "left": 1161.96875
+        }
+      },
+      {
+        "text": "← Previous",
+        "bounds": {
+          "x": 1008.234375,
+          "y": 104.09375,
+          "width": 106.578125,
+          "height": 43,
+          "top": 104.09375,
+          "right": 1114.8125,
+          "bottom": 147.09375,
+          "left": 1008.234375
+        }
+      },
+      {
+        "text": "Practise this · 10 min",
+        "bounds": {
+          "x": 191,
+          "y": 306.78125,
+          "width": 170.6875,
+          "height": 43,
+          "top": 306.78125,
+          "right": 361.6875,
+          "bottom": 349.78125,
+          "left": 191
+        }
+      },
+      {
+        "text": "How we measure ⓘ",
+        "bounds": {
+          "x": 1089.234375,
+          "y": 386.78125,
+          "width": 166.765625,
+          "height": 43,
+          "top": 386.78125,
+          "right": 1256,
+          "bottom": 429.78125,
+          "left": 1089.234375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "today",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/today-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 879,
+    "mainBounds": {
+      "x": 148,
+      "y": 64,
+      "width": 1132,
+      "height": 814.59375,
+      "top": 64,
+      "right": 1280,
+      "bottom": 878.59375,
+      "left": 148
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1161.96875,
+          "y": 10,
+          "width": 94.03125,
+          "height": 43,
+          "top": 10,
+          "right": 1256,
+          "bottom": 53,
+          "left": 1161.96875
+        }
+      },
+      {
+        "text": "Change mode ⌄",
+        "bounds": {
+          "x": 1118.234375,
+          "y": 104.09375,
+          "width": 137.765625,
+          "height": 43,
+          "top": 104.09375,
+          "right": 1256,
+          "bottom": 147.09375,
+          "left": 1118.234375
+        }
+      },
+      {
+        "text": "Start 10-minute drill ▷",
+        "bounds": {
+          "x": 191,
+          "y": 461.1875,
+          "width": 181.015625,
+          "height": 43,
+          "top": 461.1875,
+          "right": 372.015625,
+          "bottom": 504.1875,
+          "left": 191
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "replay-studio",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/replay-studio-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 720,
+    "mainBounds": {
+      "x": 148,
+      "y": 64,
+      "width": 1132,
+      "height": 656,
+      "top": 64,
+      "right": 1280,
+      "bottom": 720,
+      "left": 148
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1161.96875,
+          "y": 10,
+          "width": 94.03125,
+          "height": 43,
+          "top": 10,
+          "right": 1256,
+          "bottom": 53,
+          "left": 1161.96875
+        }
+      },
+      {
+        "text": "Top down ⌄",
+        "bounds": {
+          "x": 1033.109375,
+          "y": 78.5,
+          "width": 109.875,
+          "height": 43,
+          "top": 78.5,
+          "right": 1142.984375,
+          "bottom": 121.5,
+          "left": 1033.109375
+        }
+      },
+      {
+        "text": "↶",
+        "bounds": {
+          "x": 200,
+          "y": 524,
+          "width": 33,
+          "height": 32,
+          "top": 524,
+          "right": 233,
+          "bottom": 556,
+          "left": 200
+        }
+      },
+      {
+        "text": "▶",
+        "bounds": {
+          "x": 243,
+          "y": 524,
+          "width": 32.34375,
+          "height": 32,
+          "top": 524,
+          "right": 275.34375,
+          "bottom": 556,
+          "left": 243
+        }
+      },
+      {
+        "text": "↷",
+        "bounds": {
+          "x": 285.34375,
+          "y": 524,
+          "width": 33,
+          "height": 32,
+          "top": 524,
+          "right": 318.34375,
+          "bottom": 556,
+          "left": 285.34375
+        }
+      },
+      {
+        "text": "1×",
+        "bounds": {
+          "x": 798.671875,
+          "y": 524,
+          "width": 35.15625,
+          "height": 32,
+          "top": 524,
+          "right": 833.828125,
+          "bottom": 556,
+          "left": 798.671875
+        }
+      },
+      {
+        "text": "? Shortcuts",
+        "bounds": {
+          "x": 843.828125,
+          "y": 524,
+          "width": 88.171875,
+          "height": 32,
+          "top": 524,
+          "right": 932,
+          "bottom": 556,
+          "left": 843.828125
+        }
+      },
+      {
+        "text": "Review",
+        "bounds": {
+          "x": 999,
+          "y": 149,
+          "width": 63.71875,
+          "height": 42,
+          "top": 149,
+          "right": 1062.71875,
+          "bottom": 191,
+          "left": 999
+        }
+      },
+      {
+        "text": "Events",
+        "bounds": {
+          "x": 1062.71875,
+          "y": 149,
+          "width": 61.265625,
+          "height": 42,
+          "top": 149,
+          "right": 1123.984375,
+          "bottom": 191,
+          "left": 1062.71875
+        }
+      },
+      {
+        "text": "Stats",
+        "bounds": {
+          "x": 1123.984375,
+          "y": 149,
+          "width": 51.71875,
+          "height": 42,
+          "top": 149,
+          "right": 1175.703125,
+          "bottom": 191,
+          "left": 1123.984375
+        }
+      },
+      {
+        "text": "Lab",
+        "bounds": {
+          "x": 1175.703125,
+          "y": 149,
+          "width": 43.171875,
+          "height": 42,
+          "top": 149,
+          "right": 1218.875,
+          "bottom": 191,
+          "left": 1175.703125
+        }
+      },
+      {
+        "text": "ⓘ Why this moment?",
+        "bounds": {
+          "x": 1097.84375,
+          "y": 352.671875,
+          "width": 129.15625,
+          "height": 64,
+          "top": 352.671875,
+          "right": 1227,
+          "bottom": 416.671875,
+          "left": 1097.84375
+        }
+      },
+      {
+        "text": "Yes",
+        "bounds": {
+          "x": 1013,
+          "y": 688.765625,
+          "width": 56.578125,
+          "height": 43,
+          "top": 688.765625,
+          "right": 1069.578125,
+          "bottom": 731.765625,
+          "left": 1013
+        }
+      },
+      {
+        "text": "No",
+        "bounds": {
+          "x": 1077.578125,
+          "y": 688.765625,
+          "width": 51.15625,
+          "height": 43,
+          "top": 688.765625,
+          "right": 1128.734375,
+          "bottom": 731.765625,
+          "left": 1077.578125
+        }
+      },
+      {
+        "text": "Unsure",
+        "bounds": {
+          "x": 1136.734375,
+          "y": 688.765625,
+          "width": 80.671875,
+          "height": 43,
+          "top": 688.765625,
+          "right": 1217.40625,
+          "bottom": 731.765625,
+          "left": 1136.734375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "coach",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/coach-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 720,
+    "mainBounds": {
+      "x": 148,
+      "y": 64,
+      "width": 1132,
+      "height": 656,
+      "top": 64,
+      "right": 1280,
+      "bottom": 720,
+      "left": 148
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1161.96875,
+          "y": 10,
+          "width": 94.03125,
+          "height": 43,
+          "top": 10,
+          "right": 1256,
+          "bottom": 53,
+          "left": 1161.96875
+        }
+      },
+      {
+        "text": "＋ New conversation",
+        "bounds": {
+          "x": 162,
+          "y": 84,
+          "width": 147,
+          "height": 64,
+          "top": 84,
+          "right": 309,
+          "bottom": 148,
+          "left": 162
+        }
+      },
+      {
+        "text": "•••",
+        "bounds": {
+          "x": 941.84375,
+          "y": 80,
+          "width": 53.15625,
+          "height": 43,
+          "top": 80,
+          "right": 995,
+          "bottom": 123,
+          "left": 941.84375
+        }
+      },
+      {
+        "text": "Edit context",
+        "bounds": {
+          "x": 602.9375,
+          "y": 133,
+          "width": 79.265625,
+          "height": 28,
+          "top": 133,
+          "right": 682.203125,
+          "bottom": 161,
+          "left": 602.9375
+        }
+      },
+      {
+        "text": "Add to my practice",
+        "bounds": {
+          "x": 360,
+          "y": 582.6875,
+          "width": 159.375,
+          "height": 43,
+          "top": 582.6875,
+          "right": 519.375,
+          "bottom": 625.6875,
+          "left": 360
+        }
+      },
+      {
+        "text": "Copy",
+        "bounds": {
+          "x": 344,
+          "y": 657.6875,
+          "width": 65.015625,
+          "height": 41.5,
+          "top": 657.6875,
+          "right": 409.015625,
+          "bottom": 699.1875,
+          "left": 344
+        }
+      },
+      {
+        "text": "Useful ♡",
+        "bounds": {
+          "x": 421.015625,
+          "y": 657.6875,
+          "width": 84.984375,
+          "height": 41.5,
+          "top": 657.6875,
+          "right": 506,
+          "bottom": 699.1875,
+          "left": 421.015625
+        }
+      },
+      {
+        "text": "Send ↑",
+        "bounds": {
+          "x": 914.265625,
+          "y": 637.5,
+          "width": 67.734375,
+          "height": 32,
+          "top": 637.5,
+          "right": 982,
+          "bottom": 669.5,
+          "left": 914.265625
+        }
+      },
+      {
+        "text": "How this answer was built ⓘ",
+        "bounds": {
+          "x": 1030,
+          "y": 733.28125,
+          "width": 226.953125,
+          "height": 43,
+          "top": 733.28125,
+          "right": 1256.953125,
+          "bottom": 776.28125,
+          "left": 1030
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "progress",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/progress-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 995,
+    "mainBounds": {
+      "x": 148,
+      "y": 64,
+      "width": 1132,
+      "height": 931.078125,
+      "top": 64,
+      "right": 1280,
+      "bottom": 995.078125,
+      "left": 148
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1161.96875,
+          "y": 10,
+          "width": 94.03125,
+          "height": 43,
+          "top": 10,
+          "right": 1256,
+          "bottom": 53,
+          "left": 1161.96875
+        }
+      },
+      {
+        "text": "1v1",
+        "bounds": {
+          "x": 930.375,
+          "y": 110.09375,
+          "width": 41.296875,
+          "height": 32,
+          "top": 110.09375,
+          "right": 971.671875,
+          "bottom": 142.09375,
+          "left": 930.375
+        }
+      },
+      {
+        "text": "2v2",
+        "bounds": {
+          "x": 973.671875,
+          "y": 110.09375,
+          "width": 46,
+          "height": 32,
+          "top": 110.09375,
+          "right": 1019.671875,
+          "bottom": 142.09375,
+          "left": 973.671875
+        }
+      },
+      {
+        "text": "3v3",
+        "bounds": {
+          "x": 1021.671875,
+          "y": 110.09375,
+          "width": 46.3125,
+          "height": 32,
+          "top": 110.09375,
+          "right": 1067.984375,
+          "bottom": 142.09375,
+          "left": 1021.671875
+        }
+      },
+      {
+        "text": "10",
+        "bounds": {
+          "x": 1089.984375,
+          "y": 110.09375,
+          "width": 37,
+          "height": 32,
+          "top": 110.09375,
+          "right": 1126.984375,
+          "bottom": 142.09375,
+          "left": 1089.984375
+        }
+      },
+      {
+        "text": "25 games",
+        "bounds": {
+          "x": 1128.984375,
+          "y": 110.09375,
+          "width": 80.75,
+          "height": 32,
+          "top": 110.09375,
+          "right": 1209.734375,
+          "bottom": 142.09375,
+          "left": 1128.984375
+        }
+      },
+      {
+        "text": "50",
+        "bounds": {
+          "x": 1211.734375,
+          "y": 110.09375,
+          "width": 39.265625,
+          "height": 32,
+          "top": 110.09375,
+          "right": 1251,
+          "bottom": 142.09375,
+          "left": 1211.734375
+        }
+      },
+      {
+        "text": "Measurement details ⓘ",
+        "bounds": {
+          "x": 503.71875,
+          "y": 565.09375,
+          "width": 181.28125,
+          "height": 41.5,
+          "top": 565.09375,
+          "right": 685,
+          "bottom": 606.59375,
+          "left": 503.71875
+        }
+      },
+      {
+        "text": "Review follow-up moments",
+        "bounds": {
+          "x": 743,
+          "y": 646.578125,
+          "width": 215.671875,
+          "height": 43,
+          "top": 646.578125,
+          "right": 958.671875,
+          "bottom": 689.578125,
+          "left": 743
+        }
+      },
+      {
+        "text": "＋ Add a goal",
+        "bounds": {
+          "x": 1115.796875,
+          "y": 747.578125,
+          "width": 121.203125,
+          "height": 43,
+          "top": 747.578125,
+          "right": 1237,
+          "bottom": 790.578125,
+          "left": 1115.796875
+        }
+      },
+      {
+        "text": "View log ↗",
+        "bounds": {
+          "x": 1133.078125,
+          "y": 896.078125,
+          "width": 103.921875,
+          "height": 43,
+          "top": 896.078125,
+          "right": 1237,
+          "bottom": 939.078125,
+          "left": 1133.078125
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "onboarding",
+    "width": 1280,
+    "height": 720,
+    "file": "review/screenshots/mockups/onboarding-1280x720.png",
+    "scrollWidth": 1280,
+    "scrollHeight": 736,
+    "mainBounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 735.5,
+      "top": 0,
+      "right": 1280,
+      "bottom": 735.5,
+      "left": 0
+    },
+    "buttons": [
+      {
+        "text": "Change",
+        "bounds": {
+          "x": 1147.453125,
+          "y": 212.5,
+          "width": 72.53125,
+          "height": 33,
+          "top": 212.5,
+          "right": 1219.984375,
+          "bottom": 245.5,
+          "left": 1147.453125
+        }
+      },
+      {
+        "text": "1v1Duels",
+        "bounds": {
+          "x": 581.59375,
+          "y": 313,
+          "width": 211.453125,
+          "height": 74,
+          "top": 313,
+          "right": 793.046875,
+          "bottom": 387,
+          "left": 581.59375
+        }
+      },
+      {
+        "text": "2v2Doubles",
+        "bounds": {
+          "x": 803.046875,
+          "y": 313,
+          "width": 211.46875,
+          "height": 74,
+          "top": 313,
+          "right": 1014.515625,
+          "bottom": 387,
+          "left": 803.046875
+        }
+      },
+      {
+        "text": "3v3Standard",
+        "bounds": {
+          "x": 1024.515625,
+          "y": 313,
+          "width": 211.46875,
+          "height": 74,
+          "top": 313,
+          "right": 1235.984375,
+          "bottom": 387,
+          "left": 1024.515625
+        }
+      },
+      {
+        "text": "Browse",
+        "bounds": {
+          "x": 1134.46875,
+          "y": 542,
+          "width": 82.515625,
+          "height": 43,
+          "top": 542,
+          "right": 1216.984375,
+          "bottom": 585,
+          "left": 1134.46875
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "match-report",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/match-report-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 910,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1264,
+      "height": 838.0625,
+      "top": 72,
+      "right": 1440,
+      "bottom": 910.0625,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1313.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1408,
+          "bottom": 57,
+          "left": 1313.96875
+        }
+      },
+      {
+        "text": "← Previous",
+        "bounds": {
+          "x": 1160.234375,
+          "y": 122.890625,
+          "width": 106.578125,
+          "height": 43,
+          "top": 122.890625,
+          "right": 1266.8125,
+          "bottom": 165.890625,
+          "left": 1160.234375
+        }
+      },
+      {
+        "text": "Practise this · 10 min",
+        "bounds": {
+          "x": 227,
+          "y": 325.578125,
+          "width": 170.6875,
+          "height": 43,
+          "top": 325.578125,
+          "right": 397.6875,
+          "bottom": 368.578125,
+          "left": 227
+        }
+      },
+      {
+        "text": "How we measure ⓘ",
+        "bounds": {
+          "x": 1241.234375,
+          "y": 405.578125,
+          "width": 166.765625,
+          "height": 43,
+          "top": 405.578125,
+          "right": 1408,
+          "bottom": 448.578125,
+          "left": 1241.234375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "today",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/today-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 946,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1264,
+      "height": 874.28125,
+      "top": 72,
+      "right": 1440,
+      "bottom": 946.28125,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1313.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1408,
+          "bottom": 57,
+          "left": 1313.96875
+        }
+      },
+      {
+        "text": "Change mode ⌄",
+        "bounds": {
+          "x": 1270.234375,
+          "y": 122.890625,
+          "width": 137.765625,
+          "height": 43,
+          "top": 122.890625,
+          "right": 1408,
+          "bottom": 165.890625,
+          "left": 1270.234375
+        }
+      },
+      {
+        "text": "Start 10-minute drill ▷",
+        "bounds": {
+          "x": 237,
+          "y": 525.890625,
+          "width": 181.015625,
+          "height": 43,
+          "top": 525.890625,
+          "right": 418.015625,
+          "bottom": 568.890625,
+          "left": 237
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "replay-studio",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/replay-studio-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 900,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1264,
+      "height": 828,
+      "top": 72,
+      "right": 1440,
+      "bottom": 900,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1313.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1408,
+          "bottom": 57,
+          "left": 1313.96875
+        }
+      },
+      {
+        "text": "Top down ⌄",
+        "bounds": {
+          "x": 1189.109375,
+          "y": 94.5,
+          "width": 109.875,
+          "height": 43,
+          "top": 94.5,
+          "right": 1298.984375,
+          "bottom": 137.5,
+          "left": 1189.109375
+        }
+      },
+      {
+        "text": "↶",
+        "bounds": {
+          "x": 232,
+          "y": 678,
+          "width": 33,
+          "height": 32,
+          "top": 678,
+          "right": 265,
+          "bottom": 710,
+          "left": 232
+        }
+      },
+      {
+        "text": "▶",
+        "bounds": {
+          "x": 275,
+          "y": 678,
+          "width": 32.34375,
+          "height": 32,
+          "top": 678,
+          "right": 307.34375,
+          "bottom": 710,
+          "left": 275
+        }
+      },
+      {
+        "text": "↷",
+        "bounds": {
+          "x": 317.34375,
+          "y": 678,
+          "width": 33,
+          "height": 32,
+          "top": 678,
+          "right": 350.34375,
+          "bottom": 710,
+          "left": 317.34375
+        }
+      },
+      {
+        "text": "1×",
+        "bounds": {
+          "x": 934.671875,
+          "y": 678,
+          "width": 35.15625,
+          "height": 32,
+          "top": 678,
+          "right": 969.828125,
+          "bottom": 710,
+          "left": 934.671875
+        }
+      },
+      {
+        "text": "? Shortcuts",
+        "bounds": {
+          "x": 979.828125,
+          "y": 678,
+          "width": 88.171875,
+          "height": 32,
+          "top": 678,
+          "right": 1068,
+          "bottom": 710,
+          "left": 979.828125
+        }
+      },
+      {
+        "text": "Review",
+        "bounds": {
+          "x": 1117,
+          "y": 155,
+          "width": 63.71875,
+          "height": 42,
+          "top": 155,
+          "right": 1180.71875,
+          "bottom": 197,
+          "left": 1117
+        }
+      },
+      {
+        "text": "Events",
+        "bounds": {
+          "x": 1180.71875,
+          "y": 155,
+          "width": 61.265625,
+          "height": 42,
+          "top": 155,
+          "right": 1241.984375,
+          "bottom": 197,
+          "left": 1180.71875
+        }
+      },
+      {
+        "text": "Stats",
+        "bounds": {
+          "x": 1241.984375,
+          "y": 155,
+          "width": 51.71875,
+          "height": 42,
+          "top": 155,
+          "right": 1293.703125,
+          "bottom": 197,
+          "left": 1241.984375
+        }
+      },
+      {
+        "text": "Lab",
+        "bounds": {
+          "x": 1293.703125,
+          "y": 155,
+          "width": 43.171875,
+          "height": 42,
+          "top": 155,
+          "right": 1336.875,
+          "bottom": 197,
+          "left": 1293.703125
+        }
+      },
+      {
+        "text": "ⓘ Why this moment?",
+        "bounds": {
+          "x": 1219.84375,
+          "y": 365.28125,
+          "width": 176.46875,
+          "height": 43,
+          "top": 365.28125,
+          "right": 1396.3125,
+          "bottom": 408.28125,
+          "left": 1219.84375
+        }
+      },
+      {
+        "text": "Yes",
+        "bounds": {
+          "x": 1135,
+          "y": 680.375,
+          "width": 56.578125,
+          "height": 43,
+          "top": 680.375,
+          "right": 1191.578125,
+          "bottom": 723.375,
+          "left": 1135
+        }
+      },
+      {
+        "text": "No",
+        "bounds": {
+          "x": 1199.578125,
+          "y": 680.375,
+          "width": 51.15625,
+          "height": 43,
+          "top": 680.375,
+          "right": 1250.734375,
+          "bottom": 723.375,
+          "left": 1199.578125
+        }
+      },
+      {
+        "text": "Unsure",
+        "bounds": {
+          "x": 1258.734375,
+          "y": 680.375,
+          "width": 80.671875,
+          "height": 43,
+          "top": 680.375,
+          "right": 1339.40625,
+          "bottom": 723.375,
+          "left": 1258.734375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "coach",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/coach-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 900,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1264,
+      "height": 828,
+      "top": 72,
+      "right": 1440,
+      "bottom": 900,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1313.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1408,
+          "bottom": 57,
+          "left": 1313.96875
+        }
+      },
+      {
+        "text": "＋ New conversation",
+        "bounds": {
+          "x": 190,
+          "y": 92,
+          "width": 177,
+          "height": 43,
+          "top": 92,
+          "right": 367,
+          "bottom": 135,
+          "left": 190
+        }
+      },
+      {
+        "text": "•••",
+        "bounds": {
+          "x": 1062.84375,
+          "y": 92,
+          "width": 53.15625,
+          "height": 43,
+          "top": 92,
+          "right": 1116,
+          "bottom": 135,
+          "left": 1062.84375
+        }
+      },
+      {
+        "text": "Edit context",
+        "bounds": {
+          "x": 664.9375,
+          "y": 145,
+          "width": 79.265625,
+          "height": 28,
+          "top": 145,
+          "right": 744.203125,
+          "bottom": 173,
+          "left": 664.9375
+        }
+      },
+      {
+        "text": "Add to my practice",
+        "bounds": {
+          "x": 425,
+          "y": 626.921875,
+          "width": 159.375,
+          "height": 43,
+          "top": 626.921875,
+          "right": 584.375,
+          "bottom": 669.921875,
+          "left": 425
+        }
+      },
+      {
+        "text": "Copy",
+        "bounds": {
+          "x": 406,
+          "y": 708.921875,
+          "width": 65.015625,
+          "height": 41.5,
+          "top": 708.921875,
+          "right": 471.015625,
+          "bottom": 750.421875,
+          "left": 406
+        }
+      },
+      {
+        "text": "Useful ♡",
+        "bounds": {
+          "x": 483.015625,
+          "y": 708.921875,
+          "width": 84.984375,
+          "height": 41.5,
+          "top": 708.921875,
+          "right": 568,
+          "bottom": 750.421875,
+          "left": 483.015625
+        }
+      },
+      {
+        "text": "Send ↑",
+        "bounds": {
+          "x": 1035.265625,
+          "y": 813.5,
+          "width": 67.734375,
+          "height": 32,
+          "top": 813.5,
+          "right": 1103,
+          "bottom": 845.5,
+          "left": 1035.265625
+        }
+      },
+      {
+        "text": "How this answer was built ⓘ",
+        "bounds": {
+          "x": 1159,
+          "y": 770.28125,
+          "width": 226.953125,
+          "height": 43,
+          "top": 770.28125,
+          "right": 1385.953125,
+          "bottom": 813.28125,
+          "left": 1159
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "progress",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/progress-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 1051,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1264,
+      "height": 979.375,
+      "top": 72,
+      "right": 1440,
+      "bottom": 1051.375,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1313.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1408,
+          "bottom": 57,
+          "left": 1313.96875
+        }
+      },
+      {
+        "text": "1v1",
+        "bounds": {
+          "x": 1082.375,
+          "y": 128.890625,
+          "width": 41.296875,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1123.671875,
+          "bottom": 160.890625,
+          "left": 1082.375
+        }
+      },
+      {
+        "text": "2v2",
+        "bounds": {
+          "x": 1125.671875,
+          "y": 128.890625,
+          "width": 46,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1171.671875,
+          "bottom": 160.890625,
+          "left": 1125.671875
+        }
+      },
+      {
+        "text": "3v3",
+        "bounds": {
+          "x": 1173.671875,
+          "y": 128.890625,
+          "width": 46.3125,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1219.984375,
+          "bottom": 160.890625,
+          "left": 1173.671875
+        }
+      },
+      {
+        "text": "10",
+        "bounds": {
+          "x": 1241.984375,
+          "y": 128.890625,
+          "width": 37,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1278.984375,
+          "bottom": 160.890625,
+          "left": 1241.984375
+        }
+      },
+      {
+        "text": "25 games",
+        "bounds": {
+          "x": 1280.984375,
+          "y": 128.890625,
+          "width": 80.75,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1361.734375,
+          "bottom": 160.890625,
+          "left": 1280.984375
+        }
+      },
+      {
+        "text": "50",
+        "bounds": {
+          "x": 1363.734375,
+          "y": 128.890625,
+          "width": 39.265625,
+          "height": 32,
+          "top": 128.890625,
+          "right": 1403,
+          "bottom": 160.890625,
+          "left": 1363.734375
+        }
+      },
+      {
+        "text": "Measurement details ⓘ",
+        "bounds": {
+          "x": 593.71875,
+          "y": 642.390625,
+          "width": 181.28125,
+          "height": 41.5,
+          "top": 642.390625,
+          "right": 775,
+          "bottom": 683.890625,
+          "left": 593.71875
+        }
+      },
+      {
+        "text": "Review follow-up moments",
+        "bounds": {
+          "x": 841,
+          "y": 684.875,
+          "width": 215.671875,
+          "height": 43,
+          "top": 684.875,
+          "right": 1056.671875,
+          "bottom": 727.875,
+          "left": 841
+        }
+      },
+      {
+        "text": "＋ Add a goal",
+        "bounds": {
+          "x": 1263.796875,
+          "y": 793.875,
+          "width": 121.203125,
+          "height": 43,
+          "top": 793.875,
+          "right": 1385,
+          "bottom": 836.875,
+          "left": 1263.796875
+        }
+      },
+      {
+        "text": "View log ↗",
+        "bounds": {
+          "x": 1281.078125,
+          "y": 942.375,
+          "width": 103.921875,
+          "height": 43,
+          "top": 942.375,
+          "right": 1385,
+          "bottom": 985.375,
+          "left": 1281.078125
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "onboarding",
+    "width": 1440,
+    "height": 900,
+    "file": "review/screenshots/mockups/onboarding-1440x900.png",
+    "scrollWidth": 1440,
+    "scrollHeight": 900,
+    "mainBounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "top": 0,
+      "right": 1440,
+      "bottom": 900,
+      "left": 0
+    },
+    "buttons": [
+      {
+        "text": "Change",
+        "bounds": {
+          "x": 1249.859375,
+          "y": 237.5,
+          "width": 72.53125,
+          "height": 33,
+          "top": 237.5,
+          "right": 1322.390625,
+          "bottom": 270.5,
+          "left": 1249.859375
+        }
+      },
+      {
+        "text": "1v1Duels",
+        "bounds": {
+          "x": 706.390625,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 910.390625,
+          "bottom": 416,
+          "left": 706.390625
+        }
+      },
+      {
+        "text": "2v2Doubles",
+        "bounds": {
+          "x": 920.390625,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 1124.390625,
+          "bottom": 416,
+          "left": 920.390625
+        }
+      },
+      {
+        "text": "3v3Standard",
+        "bounds": {
+          "x": 1134.390625,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 1338.390625,
+          "bottom": 416,
+          "left": 1134.390625
+        }
+      },
+      {
+        "text": "Browse",
+        "bounds": {
+          "x": 1236.875,
+          "y": 579,
+          "width": 82.515625,
+          "height": 43,
+          "top": 579,
+          "right": 1319.390625,
+          "bottom": 622,
+          "left": 1236.875
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "match-report",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/match-report-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 268,
+      "y": 72,
+      "width": 1560,
+      "height": 850.0625,
+      "top": 72,
+      "right": 1828,
+      "bottom": 922.0625,
+      "left": 268
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1793.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1888,
+          "bottom": 57,
+          "left": 1793.96875
+        }
+      },
+      {
+        "text": "← Previous",
+        "bounds": {
+          "x": 1548.234375,
+          "y": 134.890625,
+          "width": 106.578125,
+          "height": 43,
+          "top": 134.890625,
+          "right": 1654.8125,
+          "bottom": 177.890625,
+          "left": 1548.234375
+        }
+      },
+      {
+        "text": "Practise this · 10 min",
+        "bounds": {
+          "x": 319,
+          "y": 337.578125,
+          "width": 170.6875,
+          "height": 43,
+          "top": 337.578125,
+          "right": 489.6875,
+          "bottom": 380.578125,
+          "left": 319
+        }
+      },
+      {
+        "text": "How we measure ⓘ",
+        "bounds": {
+          "x": 1629.234375,
+          "y": 417.578125,
+          "width": 166.765625,
+          "height": 43,
+          "top": 417.578125,
+          "right": 1796,
+          "bottom": 460.578125,
+          "left": 1629.234375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "today",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/today-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 268,
+      "y": 72,
+      "width": 1560,
+      "height": 886.28125,
+      "top": 72,
+      "right": 1828,
+      "bottom": 958.28125,
+      "left": 268
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1793.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1888,
+          "bottom": 57,
+          "left": 1793.96875
+        }
+      },
+      {
+        "text": "Change mode ⌄",
+        "bounds": {
+          "x": 1658.234375,
+          "y": 134.890625,
+          "width": 137.765625,
+          "height": 43,
+          "top": 134.890625,
+          "right": 1796,
+          "bottom": 177.890625,
+          "left": 1658.234375
+        }
+      },
+      {
+        "text": "Start 10-minute drill ▷",
+        "bounds": {
+          "x": 329,
+          "y": 537.890625,
+          "width": 181.015625,
+          "height": 43,
+          "top": 537.890625,
+          "right": 510.015625,
+          "bottom": 580.890625,
+          "left": 329
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "replay-studio",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/replay-studio-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1744,
+      "height": 1008,
+      "top": 72,
+      "right": 1920,
+      "bottom": 1080,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1793.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1888,
+          "bottom": 57,
+          "left": 1793.96875
+        }
+      },
+      {
+        "text": "Top down ⌄",
+        "bounds": {
+          "x": 1669.109375,
+          "y": 94.5,
+          "width": 109.875,
+          "height": 43,
+          "top": 94.5,
+          "right": 1778.984375,
+          "bottom": 137.5,
+          "left": 1669.109375
+        }
+      },
+      {
+        "text": "↶",
+        "bounds": {
+          "x": 232,
+          "y": 858,
+          "width": 33,
+          "height": 32,
+          "top": 858,
+          "right": 265,
+          "bottom": 890,
+          "left": 232
+        }
+      },
+      {
+        "text": "▶",
+        "bounds": {
+          "x": 275,
+          "y": 858,
+          "width": 32.34375,
+          "height": 32,
+          "top": 858,
+          "right": 307.34375,
+          "bottom": 890,
+          "left": 275
+        }
+      },
+      {
+        "text": "↷",
+        "bounds": {
+          "x": 317.34375,
+          "y": 858,
+          "width": 33,
+          "height": 32,
+          "top": 858,
+          "right": 350.34375,
+          "bottom": 890,
+          "left": 317.34375
+        }
+      },
+      {
+        "text": "1×",
+        "bounds": {
+          "x": 1374.671875,
+          "y": 858,
+          "width": 35.15625,
+          "height": 32,
+          "top": 858,
+          "right": 1409.828125,
+          "bottom": 890,
+          "left": 1374.671875
+        }
+      },
+      {
+        "text": "? Shortcuts",
+        "bounds": {
+          "x": 1419.828125,
+          "y": 858,
+          "width": 88.171875,
+          "height": 32,
+          "top": 858,
+          "right": 1508,
+          "bottom": 890,
+          "left": 1419.828125
+        }
+      },
+      {
+        "text": "Review",
+        "bounds": {
+          "x": 1557,
+          "y": 155,
+          "width": 63.71875,
+          "height": 42,
+          "top": 155,
+          "right": 1620.71875,
+          "bottom": 197,
+          "left": 1557
+        }
+      },
+      {
+        "text": "Events",
+        "bounds": {
+          "x": 1620.71875,
+          "y": 155,
+          "width": 61.265625,
+          "height": 42,
+          "top": 155,
+          "right": 1681.984375,
+          "bottom": 197,
+          "left": 1620.71875
+        }
+      },
+      {
+        "text": "Stats",
+        "bounds": {
+          "x": 1681.984375,
+          "y": 155,
+          "width": 51.71875,
+          "height": 42,
+          "top": 155,
+          "right": 1733.703125,
+          "bottom": 197,
+          "left": 1681.984375
+        }
+      },
+      {
+        "text": "Lab",
+        "bounds": {
+          "x": 1733.703125,
+          "y": 155,
+          "width": 43.171875,
+          "height": 42,
+          "top": 155,
+          "right": 1776.875,
+          "bottom": 197,
+          "left": 1733.703125
+        }
+      },
+      {
+        "text": "ⓘ Why this moment?",
+        "bounds": {
+          "x": 1659.84375,
+          "y": 365.28125,
+          "width": 176.46875,
+          "height": 43,
+          "top": 365.28125,
+          "right": 1836.3125,
+          "bottom": 408.28125,
+          "left": 1659.84375
+        }
+      },
+      {
+        "text": "Yes",
+        "bounds": {
+          "x": 1575,
+          "y": 680.375,
+          "width": 56.578125,
+          "height": 43,
+          "top": 680.375,
+          "right": 1631.578125,
+          "bottom": 723.375,
+          "left": 1575
+        }
+      },
+      {
+        "text": "No",
+        "bounds": {
+          "x": 1639.578125,
+          "y": 680.375,
+          "width": 51.15625,
+          "height": 43,
+          "top": 680.375,
+          "right": 1690.734375,
+          "bottom": 723.375,
+          "left": 1639.578125
+        }
+      },
+      {
+        "text": "Unsure",
+        "bounds": {
+          "x": 1698.734375,
+          "y": 680.375,
+          "width": 80.671875,
+          "height": 43,
+          "top": 680.375,
+          "right": 1779.40625,
+          "bottom": 723.375,
+          "left": 1698.734375
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "coach",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/coach-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 176,
+      "y": 72,
+      "width": 1744,
+      "height": 1008,
+      "top": 72,
+      "right": 1920,
+      "bottom": 1080,
+      "left": 176
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1793.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1888,
+          "bottom": 57,
+          "left": 1793.96875
+        }
+      },
+      {
+        "text": "＋ New conversation",
+        "bounds": {
+          "x": 262,
+          "y": 92,
+          "width": 211,
+          "height": 43,
+          "top": 92,
+          "right": 473,
+          "bottom": 135,
+          "left": 262
+        }
+      },
+      {
+        "text": "•••",
+        "bounds": {
+          "x": 1430.84375,
+          "y": 92,
+          "width": 53.15625,
+          "height": 43,
+          "top": 92,
+          "right": 1484,
+          "bottom": 135,
+          "left": 1430.84375
+        }
+      },
+      {
+        "text": "Edit context",
+        "bounds": {
+          "x": 770.9375,
+          "y": 145,
+          "width": 79.265625,
+          "height": 28,
+          "top": 145,
+          "right": 850.203125,
+          "bottom": 173,
+          "left": 770.9375
+        }
+      },
+      {
+        "text": "Add to my practice",
+        "bounds": {
+          "x": 547,
+          "y": 634.921875,
+          "width": 159.375,
+          "height": 43,
+          "top": 634.921875,
+          "right": 706.375,
+          "bottom": 677.921875,
+          "left": 547
+        }
+      },
+      {
+        "text": "Copy",
+        "bounds": {
+          "x": 528,
+          "y": 716.921875,
+          "width": 65.015625,
+          "height": 41.5,
+          "top": 716.921875,
+          "right": 593.015625,
+          "bottom": 758.421875,
+          "left": 528
+        }
+      },
+      {
+        "text": "Useful ♡",
+        "bounds": {
+          "x": 605.015625,
+          "y": 716.921875,
+          "width": 84.984375,
+          "height": 41.5,
+          "top": 716.921875,
+          "right": 690,
+          "bottom": 758.421875,
+          "left": 605.015625
+        }
+      },
+      {
+        "text": "Send ↑",
+        "bounds": {
+          "x": 1387.265625,
+          "y": 989.5,
+          "width": 67.734375,
+          "height": 32,
+          "top": 989.5,
+          "right": 1455,
+          "bottom": 1021.5,
+          "left": 1387.265625
+        }
+      },
+      {
+        "text": "How this answer was built ⓘ",
+        "bounds": {
+          "x": 1527,
+          "y": 770.28125,
+          "width": 226.953125,
+          "height": 43,
+          "top": 770.28125,
+          "right": 1753.953125,
+          "bottom": 813.28125,
+          "left": 1527
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "progress",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/progress-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 268,
+      "y": 72,
+      "width": 1560,
+      "height": 971.875,
+      "top": 72,
+      "right": 1828,
+      "bottom": 1043.875,
+      "left": 268
+    },
+    "buttons": [
+      {
+        "text": "＋ Import",
+        "bounds": {
+          "x": 1793.96875,
+          "y": 14,
+          "width": 94.03125,
+          "height": 43,
+          "top": 14,
+          "right": 1888,
+          "bottom": 57,
+          "left": 1793.96875
+        }
+      },
+      {
+        "text": "1v1",
+        "bounds": {
+          "x": 1470.375,
+          "y": 140.890625,
+          "width": 41.296875,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1511.671875,
+          "bottom": 172.890625,
+          "left": 1470.375
+        }
+      },
+      {
+        "text": "2v2",
+        "bounds": {
+          "x": 1513.671875,
+          "y": 140.890625,
+          "width": 46,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1559.671875,
+          "bottom": 172.890625,
+          "left": 1513.671875
+        }
+      },
+      {
+        "text": "3v3",
+        "bounds": {
+          "x": 1561.671875,
+          "y": 140.890625,
+          "width": 46.3125,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1607.984375,
+          "bottom": 172.890625,
+          "left": 1561.671875
+        }
+      },
+      {
+        "text": "10",
+        "bounds": {
+          "x": 1629.984375,
+          "y": 140.890625,
+          "width": 37,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1666.984375,
+          "bottom": 172.890625,
+          "left": 1629.984375
+        }
+      },
+      {
+        "text": "25 games",
+        "bounds": {
+          "x": 1668.984375,
+          "y": 140.890625,
+          "width": 80.75,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1749.734375,
+          "bottom": 172.890625,
+          "left": 1668.984375
+        }
+      },
+      {
+        "text": "50",
+        "bounds": {
+          "x": 1751.734375,
+          "y": 140.890625,
+          "width": 39.265625,
+          "height": 32,
+          "top": 140.890625,
+          "right": 1791,
+          "bottom": 172.890625,
+          "left": 1751.734375
+        }
+      },
+      {
+        "text": "Measurement details ⓘ",
+        "bounds": {
+          "x": 833.71875,
+          "y": 654.390625,
+          "width": 181.28125,
+          "height": 41.5,
+          "top": 654.390625,
+          "right": 1015,
+          "bottom": 695.890625,
+          "left": 833.71875
+        }
+      },
+      {
+        "text": "Review follow-up moments",
+        "bounds": {
+          "x": 1081,
+          "y": 677.375,
+          "width": 215.671875,
+          "height": 43,
+          "top": 677.375,
+          "right": 1296.671875,
+          "bottom": 720.375,
+          "left": 1081
+        }
+      },
+      {
+        "text": "＋ Add a goal",
+        "bounds": {
+          "x": 1651.796875,
+          "y": 786.375,
+          "width": 121.203125,
+          "height": 43,
+          "top": 786.375,
+          "right": 1773,
+          "bottom": 829.375,
+          "left": 1651.796875
+        }
+      },
+      {
+        "text": "View log ↗",
+        "bounds": {
+          "x": 1669.078125,
+          "y": 934.875,
+          "width": 103.921875,
+          "height": 43,
+          "top": 934.875,
+          "right": 1773,
+          "bottom": 977.875,
+          "left": 1669.078125
+        }
+      }
+    ],
+    "overflowed": []
+  },
+  {
+    "name": "onboarding",
+    "width": 1920,
+    "height": 1080,
+    "file": "review/screenshots/mockups/onboarding-1920x1080.png",
+    "scrollWidth": 1920,
+    "scrollHeight": 1080,
+    "mainBounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "top": 0,
+      "right": 1920,
+      "bottom": 1080,
+      "left": 0
+    },
+    "buttons": [
+      {
+        "text": "Change",
+        "bounds": {
+          "x": 1590.65625,
+          "y": 237.5,
+          "width": 72.53125,
+          "height": 33,
+          "top": 237.5,
+          "right": 1663.1875,
+          "bottom": 270.5,
+          "left": 1590.65625
+        }
+      },
+      {
+        "text": "1v1Duels",
+        "bounds": {
+          "x": 1047.1875,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 1251.1875,
+          "bottom": 416,
+          "left": 1047.1875
+        }
+      },
+      {
+        "text": "2v2Doubles",
+        "bounds": {
+          "x": 1261.1875,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 1465.1875,
+          "bottom": 416,
+          "left": 1261.1875
+        }
+      },
+      {
+        "text": "3v3Standard",
+        "bounds": {
+          "x": 1475.1875,
+          "y": 342,
+          "width": 204,
+          "height": 74,
+          "top": 342,
+          "right": 1679.1875,
+          "bottom": 416,
+          "left": 1475.1875
+        }
+      },
+      {
+        "text": "Browse",
+        "bounds": {
+          "x": 1577.671875,
+          "y": 579,
+          "width": 82.515625,
+          "height": 43,
+          "top": 579,
+          "right": 1660.1875,
+          "bottom": 622,
+          "left": 1577.671875
+        }
+      }
+    ],
+    "overflowed": []
+  }
+]

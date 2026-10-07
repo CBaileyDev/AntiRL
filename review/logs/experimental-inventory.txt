@@ -1,0 +1,551 @@
+crates/coach-services/src/xg.rs:13:pub const XG_VERSION: &str = "xg-1";
+crates/coach-services/src/xg.rs:14:const MIN_SHOTS: usize = 150;
+crates/coach-services/src/xg.rs:15:const MIN_MATCHES: usize = 15;
+crates/coach-services/src/xg.rs:16:const MIN_PER_CLASS: usize = 20;
+crates/coach-services/src/xg.rs:17:const FOLDS: usize = 5;
+crates/coach-services/src/xg.rs:18:const LAMBDA: f64 = 1.0;
+crates/coach-services/src/xg.rs:19:const GOAL_WINDOW: f64 = 8.0;
+crates/coach-services/src/xg.rs:20:const POST: f64 = 892.755;
+crates/coach-services/src/xg.rs:21:const GOAL_Y: f64 = 5120.0;
+crates/coach-services/src/xg.rs:22:const FEATURES: [&str; 5] = [
+crates/coach-services/src/xg.rs:29:const N: usize = FEATURES.len();
+crates/coach-services/src/xg.rs:32:struct ShotRow {
+crates/coach-services/src/xg.rs:42:struct Extraction {
+crates/coach-services/src/xg.rs:47:fn vec3(v: &Value) -> Option<[f64; 3]> {
+crates/coach-services/src/xg.rs:61:fn defenders(a: &Value, time: f64, team: u8, ball: [f64; 3]) -> Option<f64> {
+crates/coach-services/src/xg.rs:107:fn extract(a: &Value) -> Extraction {
+crates/coach-services/src/xg.rs:187:                dx.hypot(dy) / 1000.0,
+crates/coach-services/src/xg.rs:189:                speed / 1000.0,
+crates/coach-services/src/xg.rs:190:                ball[2] / 1000.0,
+crates/coach-services/src/xg.rs:203:struct Model {
+crates/coach-services/src/xg.rs:209:fn sigmoid(z: f64) -> f64 {
+crates/coach-services/src/xg.rs:213:fn solve(mut h: [[f64; N + 1]; N + 1], mut g: [f64; N + 1]) -> Option<[f64; N + 1]> {
+crates/coach-services/src/xg.rs:238:fn fit(data: &[([f64; N], bool)]) -> Option<Model> {
+crates/coach-services/src/xg.rs:290:impl Model {
+crates/coach-services/src/xg.rs:291:    fn predict(&self, x: &[f64; N]) -> f64 {
+crates/coach-services/src/xg.rs:300:fn fnv(s: &str) -> u64 {
+crates/coach-services/src/xg.rs:302:        (h ^ u64::from(b)).wrapping_mul(0x100000001b3)
+crates/coach-services/src/xg.rs:307:fn fold_assignment(matches: &BTreeSet<String>, k: usize) -> HashMap<String, usize> {
+crates/coach-services/src/xg.rs:317:fn split_indices(
+crates/coach-services/src/xg.rs:326:fn log_loss(p: &[f64], y: &[bool]) -> f64 {
+crates/coach-services/src/xg.rs:333:fn brier(p: &[f64], y: &[bool]) -> f64 {
+crates/coach-services/src/xg.rs:340:fn r4(v: f64) -> f64 {
+crates/coach-services/src/xg.rs:341:    (v * 10_000.0).round() / 10_000.0
+crates/coach-services/src/xg.rs:344:struct Assessment {
+crates/coach-services/src/xg.rs:351:fn gate_doc() -> Value {
+crates/coach-services/src/xg.rs:354:fn limitations() -> Value {
+crates/coach-services/src/xg.rs:364:fn unavailable(reason: String, n_shots: usize, n_matches: usize, ex: &Value) -> Assessment {
+crates/coach-services/src/xg.rs:374:fn assess(rows: &[ShotRow], ex: &Value) -> Assessment {
+crates/coach-services/src/xg.rs:398:            .map(|&i| (rows[i].feats.unwrap(), rows[i].goal))
+crates/coach-services/src/xg.rs:415:            oof.insert(i, m.predict(&rows[i].feats.unwrap()));
+crates/coach-services/src/xg.rs:477:impl CoachService {
+crates/coach-services/src/xg.rs:478:    fn xg_rows(&self) -> ServiceResult<(Vec<ShotRow>, Value)> {
+crates/coach-services/src/xg.rs:517:    pub fn xg_model_status(&self) -> ServiceResult<Value> {
+crates/coach-services/src/xg.rs:523:    pub fn xg_replay_shots(&self, replay_id: &str) -> ServiceResult<Value> {
+crates/coach-services/src/xg.rs:599:    pub fn xg_player_summary(&self) -> ServiceResult<Value> {
+crates/coach-services/src/xg.rs:649:    fn synthetic(n: usize, matches: usize) -> Vec<ShotRow> {
+crates/coach-services/src/xg.rs:674:    fn recovers_coefficient_directions() {
+crates/coach-services/src/xg.rs:676:        let data: Vec<_> = rows.iter().map(|r| (r.feats.unwrap(), r.goal)).collect();
+crates/coach-services/src/xg.rs:677:        let m = fit(&data).unwrap();
+crates/coach-services/src/xg.rs:686:    fn split_is_by_match_without_leakage() {
+crates/coach-services/src/xg.rs:687:        let rows = synthetic(300, 20);
+crates/coach-services/src/xg.rs:706:    fn gate_blocks_small_samples() {
+crates/coach-services/src/xg.rs:709:        assert!(a.doc["reason"].as_str().unwrap().contains("149"));
+crates/coach-services/src/xg.rs:711:        assert!(!a.available && a.doc["reason"].as_str().unwrap().contains("14 matches"));
+crates/coach-services/src/xg.rs:719:    fn labels_goals_and_marks_missing_position() {
+crates/coach-services/src/xg.rs:722:          "frames":[{"time":10.0,"cars":[{"player_id":"b","position":[0,4800,17]}]}],
+crates/coach-services/src/xg.rs:725:            {"time":10.0,"kind":"shot","player_id":"a","team":0,"shot":{"ball_position":[0,3000,100],"ball_speed":1500.0}},
+crates/coach-services/src/xg.rs:726:            {"time":20.0,"kind":"shot","player_id":"a","team":0,"shot":null},
+crates/coach-services/src/xg.rs:731:        assert_eq!(e.rows[0].feats.unwrap()[4], 1.0);
+crates/coach-services/src/intelligence.rs:6:const VERSION: &str = "situations-3";
+crates/coach-services/src/intelligence.rs:7:fn number(v: &Value) -> Option<f64> {
+crates/coach-services/src/intelligence.rs:10:fn context(a: &Value, player: &Value, frame: Option<&Value>, at: f64) -> Value {
+crates/coach-services/src/intelligence.rs:16:    let boost = car.and_then(|c| number(&c["boost"]).filter(|b| (0.0..=100.0).contains(b)));
+crates/coach-services/src/intelligence.rs:94:    json!({"zone":zone,"lane":lane,"boost":boost,"boost_bucket":boost.map(|b|if b<20.0{"low (<20)"}else if b<60.0{"medium (20–59)"}else{"high (60–100)"}).unwrap_or("unknown"),"score_state":score_state,"score_margin":margin,"clock_seconds":clock,"phase":phase,"overtime":overtime,"position":car.map(|c|c["position"].clone()),"ball_position":frame.map(|f|f["ball"]["position"].clone()),"observed_at":frame.and_then(|f|number(&f["time"]))})
+crates/coach-services/src/intelligence.rs:96:fn build_cache(a: &Value) -> Value {
+crates/coach-services/src/intelligence.rs:169:impl CoachService {
+crates/coach-services/src/intelligence.rs:170:    fn scoped_situations(&self, mode: &str) -> ServiceResult<(String, Vec<Value>, usize)> {
+crates/coach-services/src/intelligence.rs:301:    pub fn search_replay_events(&self, mode: &str, args: &Value) -> ServiceResult<Value> {
+crates/coach-services/src/intelligence.rs:323:        let cursor = args["cursor"].as_u64().unwrap_or(0).min(100000) as usize;
+crates/coach-services/src/intelligence.rs:324:        let limit = args["limit"].as_u64().unwrap_or(20).clamp(1, 40) as usize;
+crates/coach-services/src/intelligence.rs:346:    pub fn mistake_fingerprints(&self, mode: &str) -> ServiceResult<Value> {
+crates/coach-services/src/intelligence.rs:361:                let date=date.get(..10).and_then(|s|chrono::NaiveDate::parse_from_str(s,"%Y-%m-%d").ok());
+crates/coach-services/src/intelligence.rs:389:    pub fn review_situation(
+crates/coach-services/src/intelligence.rs:408:    pub fn drill_from_fingerprint(&self, mode: &str, id: &str) -> ServiceResult<Value> {
+crates/coach-services/src/intelligence.rs:419:        let low = cluster["context"]["boost_bucket"] == "low (<20)";
+crates/coach-services/src/intelligence.rs:421:            "Free Play: start in your own half with 20 boost. Follow a small-pad route, turn goal-side, and make one controlled clear. Reset and repeat 10 times; 3 sessions this week."
+crates/coach-services/src/intelligence.rs:423:            "Review the five linked lead-ins in Overhead. Write one available alternative for each. In Free Play rehearse that recovery and a controlled touch 10 times; 3 sessions this week."
+crates/coach-services/src/intelligence.rs:432:        self.save_practice_plan(mode,&json!({"title":format!("Weekly review: {}",cluster["kind"].as_str().unwrap_or("recurring situation")),"drill":format!("{drill} Source fingerprint: {id}. Coaching suggestion to test, not a validated optimal play."),"success_criterion":"Complete 8/10 controlled repetitions; then record whether the cue was used in later same-mode matches.","next_match_cue":cue,"intended_minutes":15}))
+crates/coach-services/src/intelligence.rs:434:    pub fn opponent_history(&self, mode: &str) -> ServiceResult<Value> {
+crates/coach-services/src/intelligence.rs:472:                    if list.len() < 10 {
+crates/coach-services/src/intelligence.rs:484:    pub fn save_detector_report(
+crates/coach-services/src/intelligence.rs:498:            .filter(|s| (0.0..=100.0).contains(s))
+crates/coach-services/src/intelligence.rs:499:            .ok_or("Score must be 0–100")?;
+crates/coach-services/src/intelligence.rs:512:        if reference.len() > 1000
+crates/coach-services/src/intelligence.rs:525:    pub fn detector_reports(&self) -> ServiceResult<Value> {
+crates/coach-services/src/intelligence.rs:536:fn tracker_url(id: &str) -> Option<String> {
+crates/coach-services/src/intelligence.rs:551:    fn fixture(id: &str, mode: &str, boost: Value) -> Value {
+crates/coach-services/src/intelligence.rs:552:        let mut a = json!({"summary":{"id":id,"mode":mode,"blue_score":0,"orange_score":1,"played_at":"2026-10-03 12-00-00"},"players":[{"id":"me","team":0},{"id":"them","team":1}],"coverage":{"goals":true},"frames":[{"time":10,"live_play":true,"discontinuity":false,"match_clock_seconds":15,"overtime":true,"cars":[{"player_id":"me","position":[0,-3000,17],"boost":boost,"discontinuity":false}]}],"events":[{"id":"goal","time":10,"category":"goal","team":1,"title":"Goal","severity":"strength"}]});
+crates/coach-services/src/intelligence.rs:555:        a["frames"].as_array_mut().unwrap().insert(0, lead);
+crates/coach-services/src/intelligence.rs:559:    fn context_uses_pre_goal_score_and_unknowns() {
+crates/coach-services/src/intelligence.rs:573:    fn queries_reviews_cache_and_drills_are_scoped() {
+crates/coach-services/src/intelligence.rs:575:        let service = CoachService::open(&dir).unwrap();
+crates/coach-services/src/intelligence.rs:576:        service.save_settings(json!({"player_id":"me"})).unwrap();
+crates/coach-services/src/intelligence.rs:578:            .save_replay(&fixture("a", "2v2", json!(10)))
+crates/coach-services/src/intelligence.rs:579:            .unwrap();
+crates/coach-services/src/intelligence.rs:581:            .save_replay(&fixture("b", "1v1", json!(10)))
+crates/coach-services/src/intelligence.rs:582:            .unwrap();
+crates/coach-services/src/intelligence.rs:586:                .unwrap()["total"],
+crates/coach-services/src/intelligence.rs:594:            .unwrap();
+crates/coach-services/src/intelligence.rs:595:        let report = service.mistake_fingerprints("2v2").unwrap();
+crates/coach-services/src/intelligence.rs:596:        let id = report["clusters"][0]["id"].as_str().unwrap();
+crates/coach-services/src/intelligence.rs:599:            .save_replay(&fixture("c", "2v2", json!(10)))
+crates/coach-services/src/intelligence.rs:600:            .unwrap();
+crates/coach-services/src/intelligence.rs:603:            .unwrap();
+crates/coach-services/src/intelligence.rs:606:        for f in a["frames"].as_array_mut().unwrap() {
+crates/coach-services/src/intelligence.rs:609:        service.save_replay(&a).unwrap();
+crates/coach-services/src/intelligence.rs:613:                .unwrap()["total"],
+crates/coach-services/src/intelligence.rs:618:            .unwrap();
+crates/coach-services/src/intelligence.rs:621:            .unwrap();
+crates/coach-services/src/intelligence.rs:624:            .unwrap();
+crates/coach-services/src/intelligence.rs:627:            .unwrap();
+crates/coach-services/src/intelligence.rs:628:        let duel = service.mistake_fingerprints("1v1").unwrap();
+crates/coach-services/src/intelligence.rs:629:        let duel_id = duel["clusters"][0]["id"].as_str().unwrap();
+crates/coach-services/src/intelligence.rs:630:        let plan = service.drill_from_fingerprint("1v1", duel_id).unwrap();
+crates/coach-services/src/intelligence.rs:633:            .unwrap()
+crates/coach-services/src/intelligence.rs:635:        service.save_settings(json!({"player_id":"them"})).unwrap();
+crates/coach-services/src/intelligence.rs:637:            service.mistake_fingerprints("2v2").unwrap()["clusters"]
+crates/coach-services/src/intelligence.rs:639:                .unwrap()
+crates/coach-services/src/intelligence.rs:647:    fn goal_phase_is_distinct_from_lead_in_and_reports_are_sourced() {
+crates/coach-services/src/intelligence.rs:648:        let mut a = fixture("ot", "2v2", json!(10));
+crates/coach-services/src/intelligence.rs:654:        let s = CoachService::open(&dir).unwrap();
+crates/coach-services/src/intelligence.rs:655:        s.save_replay(&a).unwrap();
+crates/coach-services/src/intelligence.rs:660:        s.save_detector_report("ot", "me", &report).unwrap();
+crates/coach-services/src/intelligence.rs:662:            s.detector_reports().unwrap()["records"][0]["report"]["score_percent"].as_f64(),
+crates/coach-services/src/intelligence.rs:665:        report["score_percent"] = json!(101);
+crates/coach-services/src/intelligence.rs:672:    fn scored_goals_and_team_flags_are_searchable_without_becoming_blame() {
+crates/coach-services/src/intelligence.rs:673:        let mut a = fixture("goals", "2v2", json!(10));
+crates/coach-services/src/intelligence.rs:678:            .unwrap()
+crates/coach-services/src/intelligence.rs:681:            .unwrap();
+crates/coach-services/src/intelligence.rs:684:        a["events"].as_array_mut().unwrap().push(json!({"id":"team-review","time":10,"category":"coverage","team":0,"severity":"review"}));
+crates/coach-services/src/intelligence.rs:688:            .unwrap()
+crates/coach-services/src/intelligence.rs:695:    fn all_mode_queries_keep_fingerprints_separate_and_duel_drills_have_no_teammates() {
+crates/coach-services/src/intelligence.rs:697:        let s = CoachService::open(&dir).unwrap();
+crates/coach-services/src/intelligence.rs:698:        s.save_settings(json!({"player_id":"me"})).unwrap();
+crates/coach-services/src/intelligence.rs:700:            s.save_replay(&fixture(id, mode, json!(90))).unwrap();
+crates/coach-services/src/intelligence.rs:703:            s.mistake_fingerprints("All").unwrap()["clusters"]
+crates/coach-services/src/intelligence.rs:705:                .unwrap()
+crates/coach-services/src/intelligence.rs:709:        s.review_situation("1v1", "b", "goal", "mistake").unwrap();
+crates/coach-services/src/intelligence.rs:710:        s.review_situation("1v1", "c", "goal", "mistake").unwrap();
+crates/coach-services/src/intelligence.rs:711:        let report = s.mistake_fingerprints("1v1").unwrap();
+crates/coach-services/src/intelligence.rs:712:        let id = report["clusters"][0]["id"].as_str().unwrap();
+crates/coach-services/src/intelligence.rs:713:        let plan = s.drill_from_fingerprint("1v1", id).unwrap();
+crates/coach-services/src/intelligence.rs:714:        let cue = plan["body"]["next_match_cue"].as_str().unwrap();
+crates/coach-services/src/intelligence.rs:721:    fn tracker_links_never_guess_epic_ids_as_names() {
+crates/coach-services/src/intelligence.rs:723:        assert!(tracker_url("steam:123").unwrap().contains("/steam/123/"));
+crates/coach-services/src/transfer.rs:7:const KEYS: &[&str] = &[
+crates/coach-services/src/transfer.rs:16:pub(crate) fn completion_time(input: Option<&str>) -> ServiceResult<String> {
+crates/coach-services/src/transfer.rs:28:fn replay_time(raw: &Value, offset: Option<i32>) -> Option<DateTime<Utc>> {
+crates/coach-services/src/transfer.rs:44:fn metric_catalog() -> Vec<Value> {
+crates/coach-services/src/transfer.rs:46:        serde_json::from_str(replay_core::METRIC_DICTIONARY).expect("embedded metric dictionary");
+crates/coach-services/src/transfer.rs:49:        .unwrap()
+crates/coach-services/src/transfer.rs:61:fn personal(a: &Value, player: &str, mode: &str) -> bool {
+crates/coach-services/src/transfer.rs:68:fn context(a: &Value) -> Option<Value> {
+crates/coach-services/src/transfer.rs:77:fn game_reason(a: &Value) -> Option<&'static str> {
+crates/coach-services/src/transfer.rs:96:fn read_replays(db: &Connection, player: &str, mode: &str) -> ServiceResult<Vec<Value>> {
+crates/coach-services/src/transfer.rs:111:fn match_row(a: &Value, offset: Option<i32>) -> Value {
+crates/coach-services/src/transfer.rs:114:fn window(rows: &[&Value], player: &str, metric: Option<&Value>, offset: Option<i32>) -> Value {
+crates/coach-services/src/transfer.rs:152:                    numerator += m["numerator"].as_f64().unwrap();
+crates/coach-services/src/transfer.rs:153:                    seconds += m["denominator"].as_f64().unwrap();
+crates/coach-services/src/transfer.rs:174:impl CoachService {
+crates/coach-services/src/transfer.rs:175:    pub fn start_transfer(
+crates/coach-services/src/transfer.rs:184:        if replay_offset_minutes.is_some_and(|v| !(-720..=840).contains(&v) || v % 15 != 0) {
+crates/coach-services/src/transfer.rs:238:    pub(crate) fn get_transfer(&self, mode: &str, player: &str) -> ServiceResult<Value> {
+crates/coach-services/src/transfer.rs:294:                            .filter(|d| d.is_finite() && *d > 0.0 && *d * 1000.0 < i64::MAX as f64)
+crates/coach-services/src/transfer.rs:297:                                    (d * 1000.0) as i64,
+crates/coach-services/src/transfer.rs:332:            let before: Vec<_> = before.iter().take(10).map(|r| r.1).collect();
+crates/coach-services/src/transfer.rs:333:            let after: Vec<_> = after.iter().take(10).map(|r| r.1).collect();
+crates/coach-services/src/transfer.rs:343:                        .entry(c["state"].as_str().unwrap().into())
+crates/coach-services/src/transfer.rs:357:            json!({"cycles":cycles,"metric_options":metric_catalog(),"match_options":options,"computed_at":now(),"privacy":"Transfer check-ins and notes stay local and are excluded from cloud Coach retrieval.","window_policy":"Closest 10 preceding and earliest 10 following matches; select before checking metric availability. Windows refresh when the replay library changes; saved reflections stay attached to their original replay."}),
+crates/coach-services/src/transfer.rs:360:    pub fn save_transfer_checkin(
+crates/coach-services/src/transfer.rs:372:        if notes.chars().count() > 2000 {
+crates/coach-services/src/transfer.rs:373:            return Err("Notes must be at most 2000 characters".into());
+crates/coach-services/src/transfer.rs:415:    fn service() -> (tempfile::TempDir, CoachService, String) {
+crates/coach-services/src/transfer.rs:416:        let dir = tempfile::tempdir().unwrap();
+crates/coach-services/src/transfer.rs:417:        let s = CoachService::open(dir.path()).unwrap();
+crates/coach-services/src/transfer.rs:418:        s.save_settings(json!({"player_id":"p"})).unwrap();
+crates/coach-services/src/transfer.rs:419:        let p=s.save_practice_plan("2v2",&json!({"title":"Pad route","drill":"Freeplay route","success_criterion":"Five attempts","next_match_cue":"Use small pads"})).unwrap();
+crates/coach-services/src/transfer.rs:420:        (dir, s, p["id"].as_str().unwrap().into())
+crates/coach-services/src/transfer.rs:422:    fn replay(s: &CoachService, id: &str, date: &str, v: Option<f64>, seconds: f64) {
+crates/coach-services/src/transfer.rs:423:        s.save_replay(&json!({"summary":{"id":id,"file_name":format!("{id}.replay"),"file_hash":id,"mode":"2v2","played_at":date,"playlist_id":2,"match_type":"Online","status":"ready","duration_seconds":300},"players":[{"id":"p","is_bot":false}],"metrics":[{"key":"avg_boost","player_id":"p","value":v,"numerator":v.map(|v|v*seconds),"denominator":seconds,"metric_version":"metrics-2"},{"key":"tracked_seconds","player_id":"p","value":300,"metric_version":"metrics-2"}]})).unwrap();
+crates/coach-services/src/transfer.rs:425:    fn start(s: &CoachService, p: &str, metric: bool) -> String {
+crates/coach-services/src/transfer.rs:432:            Some("2026-01-02T00:00:00Z"),
+crates/coach-services/src/transfer.rs:434:        .unwrap();
+crates/coach-services/src/transfer.rs:442:        .unwrap();
+crates/coach-services/src/transfer.rs:443:        s.get_practice("2v2").unwrap()["transfer"]["cycles"][0]["id"]
+crates/coach-services/src/transfer.rs:445:            .unwrap()
+crates/coach-services/src/transfer.rs:449:    fn windows_select_before_metric_filter_and_preserve_zero_weights() {
+crates/coach-services/src/transfer.rs:451:        replay(&s, "base", "2026-01-01T00:00:00Z", Some(10.0), 100.0);
+crates/coach-services/src/transfer.rs:452:        replay(&s, "older", "2025-12-31T00:00:00Z", Some(0.0), 300.0);
+crates/coach-services/src/transfer.rs:457:                &format!("2026-01-02T00:{:02}:00Z", i + 1),
+crates/coach-services/src/transfer.rs:459:                100.0,
+crates/coach-services/src/transfer.rs:463:        let d = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:467:        assert_eq!(c["after"]["selected_count"], 10);
+crates/coach-services/src/transfer.rs:476:    fn chronology_context_missing_version_and_overlaps_are_explicit() {
+crates/coach-services/src/transfer.rs:478:        replay(&s, "base", "2026-01-01T00:00:00Z", Some(10.0), 100.0);
+crates/coach-services/src/transfer.rs:479:        replay(&s, "naive", "2026-01-02 00-10-00", Some(20.0), 100.0);
+crates/coach-services/src/transfer.rs:480:        replay(&s, "tie", "2026-01-02T00:00:00Z", Some(20.0), 100.0);
+crates/coach-services/src/transfer.rs:481:        replay(&s, "overlap", "2026-01-01T23:59:00Z", Some(20.0), 100.0);
+crates/coach-services/src/transfer.rs:482:        replay(&s, "legacy", "2026-01-02T00:01:00Z", Some(20.0), 100.0);
+crates/coach-services/src/transfer.rs:483:        let mut a = s.get_coach_replay("legacy").unwrap();
+crates/coach-services/src/transfer.rs:485:        s.save_replay(&a).unwrap();
+crates/coach-services/src/transfer.rs:489:            "2026-01-02T00:02:00Z",
+crates/coach-services/src/transfer.rs:490:            Some(20.0),
+crates/coach-services/src/transfer.rs:491:            100.0,
+crates/coach-services/src/transfer.rs:493:        let mut a = s.get_coach_replay("casual_other").unwrap();
+crates/coach-services/src/transfer.rs:495:        s.save_replay(&a).unwrap();
+crates/coach-services/src/transfer.rs:497:        let d = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:499:        assert_eq!(c["manual_matches"].as_array().unwrap().len(), 1);
+crates/coach-services/src/transfer.rs:510:            .unwrap();
+crates/coach-services/src/transfer.rs:512:            replay_time(&json!("2026-01-02 00-10-00"), Some(-240))
+crates/coach-services/src/transfer.rs:513:                .unwrap()
+crates/coach-services/src/transfer.rs:515:            "2026-01-02T04:10:00+00:00"
+crates/coach-services/src/transfer.rs:517:        assert!(replay_time(&json!("2026-01-02"), Some(-240)).is_none());
+crates/coach-services/src/transfer.rs:518:        assert!(completion_time(Some("2026-01-02 00:00:00")).is_err());
+crates/coach-services/src/transfer.rs:522:    fn checkins_are_editable_durable_local_and_survive_replay_deletion() {
+crates/coach-services/src/transfer.rs:524:        replay(&s, "base", "2026-01-01T00:00:00Z", Some(0.0), 100.0);
+crates/coach-services/src/transfer.rs:525:        replay(&s, "after", "2026-01-02T01:00:00Z", None, 100.0);
+crates/coach-services/src/transfer.rs:534:        .unwrap();
+crates/coach-services/src/transfer.rs:536:            .unwrap();
+crates/coach-services/src/transfer.rs:537:        let d1 = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:541:                .unwrap()
+crates/coach-services/src/transfer.rs:553:        s.save_settings(json!({"player_id":"q"})).unwrap();
+crates/coach-services/src/transfer.rs:557:        assert!(s.get_practice("2v2").unwrap()["transfer"]["cycles"]
+crates/coach-services/src/transfer.rs:559:            .unwrap()
+crates/coach-services/src/transfer.rs:561:        s.save_settings(json!({"player_id":"p"})).unwrap();
+crates/coach-services/src/transfer.rs:562:        s.delete_replay("after").unwrap();
+crates/coach-services/src/transfer.rs:564:        let s = CoachService::open(d.path()).unwrap();
+crates/coach-services/src/transfer.rs:565:        let data = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:575:    fn switching_and_new_cycles_preserve_history_and_wait_for_new_practice() {
+crates/coach-services/src/transfer.rs:578:        s.start_transfer("2v2", &p, None, None, None).unwrap();
+crates/coach-services/src/transfer.rs:579:        let data = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:580:        let cs = data["transfer"]["cycles"].as_array().unwrap();
+crates/coach-services/src/transfer.rs:583:        assert!(cs.iter().find(|c| c["active"] == true).unwrap()["anchor_at"].is_null());
+crates/coach-services/src/transfer.rs:585:        s.record_training_at("2v2", &p, 5.0, "easy", "", Some("2026-01-03T00:00:00Z"))
+crates/coach-services/src/transfer.rs:586:            .unwrap();
+crates/coach-services/src/transfer.rs:587:        assert!(s.get_practice("2v2").unwrap()["transfer"]["cycles"][0]["anchor_at"].is_null());
+crates/coach-services/src/transfer.rs:588:        s.record_training("2v2", &p, 5.0, "easy", "").unwrap();
+crates/coach-services/src/transfer.rs:589:        assert!(s.get_practice("2v2").unwrap()["transfer"]["cycles"][0]["anchor_at"].is_string());
+crates/coach-services/src/transfer.rs:590:        s.archive_practice("2v2", &p).unwrap();
+crates/coach-services/src/transfer.rs:591:        assert!(s.get_practice("2v2").unwrap()["transfer"]["cycles"]
+crates/coach-services/src/transfer.rs:593:            .unwrap()
+crates/coach-services/src/transfer.rs:598:    fn migration_retains_old_plans_logs_and_does_not_invent_completion_time() {
+crates/coach-services/src/transfer.rs:601:            .unwrap();
+crates/coach-services/src/transfer.rs:603:        let db = Connection::open(d.path().join("coach.sqlite3")).unwrap();
+crates/coach-services/src/transfer.rs:604:        db.execute_batch("DROP TABLE situation_cache; DROP TABLE situation_reviews; DROP TABLE camera_profiles; DROP TABLE detector_reports; DROP TABLE IF EXISTS bot_labels; ALTER TABLE replays DROP COLUMN intelligence_revision; DROP TABLE transfer_checkins; DROP TABLE transfer_cycles; ALTER TABLE training_sessions DROP COLUMN logged_at; ALTER TABLE training_sessions DROP COLUMN completion_source; DELETE FROM schema_migrations WHERE version>=6; PRAGMA user_version=5;").unwrap();
+crates/coach-services/src/transfer.rs:606:        let s = CoachService::open(d.path()).unwrap();
+crates/coach-services/src/transfer.rs:607:        s.start_transfer("2v2", &p, None, None, None).unwrap();
+crates/coach-services/src/transfer.rs:608:        let data = s.get_practice("2v2").unwrap();
+crates/coach-services/src/transfer.rs:609:        assert_eq!(data["plans"].as_array().unwrap().len(), 1);
+crates/coach-services/src/transfer.rs:617:        let s = CoachService::open(d.path()).unwrap();
+crates/coach-services/src/transfer.rs:619:            s.get_practice("2v2").unwrap()["sessions"]
+crates/coach-services/src/transfer.rs:621:                .unwrap()
+crates/coach-services/src/detector.rs:13:pub const DETECTOR_VERSION: &str = "botlike-1";
+crates/coach-services/src/detector.rs:14:const PROVENANCE: &str = "local heuristic";
+crates/coach-services/src/detector.rs:15:/// 8 physics ticks at 120 Hz.
+crates/coach-services/src/detector.rs:16:const HOLD_SECONDS: f64 = 8.0 / 120.0;
+crates/coach-services/src/detector.rs:17:const MIN_SEGMENT_SECONDS: f64 = 1.0;
+crates/coach-services/src/detector.rs:18:const MIN_SEGMENT_SAMPLES: usize = 20;
+crates/coach-services/src/detector.rs:19:const MAX_GAP_SECONDS: f64 = 0.25;
+crates/coach-services/src/detector.rs:20:const MIN_SAMPLES: usize = 900;
+crates/coach-services/src/detector.rs:21:const MIN_CHANGE_EVENTS: usize = 60;
+crates/coach-services/src/detector.rs:22:const MIN_ONSET_EVENTS: usize = 30;
+crates/coach-services/src/detector.rs:23:pub const MIN_LABELS_PER_CLASS: usize = 10;
+crates/coach-services/src/detector.rs:25:struct Sample {
+crates/coach-services/src/detector.rs:33:fn num(v: &Value) -> Option<f64> {
+crates/coach-services/src/detector.rs:37:fn flush(cur: &mut Vec<Sample>, kept: &mut Vec<Vec<Sample>>, short: &mut usize) {
+crates/coach-services/src/detector.rs:41:    let secs = cur.last().unwrap().t - cur[0].t;
+crates/coach-services/src/detector.rs:52:fn segments(a: &Value, player: &str) -> (Vec<Vec<Sample>>, usize, usize) {
+crates/coach-services/src/detector.rs:98:fn clamp01(v: f64) -> f64 {
+crates/coach-services/src/detector.rs:104:fn cardinality(values: impl Iterator<Item = u8>) -> usize {
+crates/coach-services/src/detector.rs:118:fn snapped(b: u8) -> bool {
+crates/coach-services/src/detector.rs:122:fn card_value(k: usize) -> f64 {
+crates/coach-services/src/detector.rs:128:fn phase_lock(per_segment: &[Vec<f64>], period: f64) -> (f64, usize) {
+crates/coach-services/src/detector.rs:145:fn lock_value(r: f64, n: usize) -> f64 {
+crates/coach-services/src/detector.rs:150:fn percentile(sorted: &[f64], p: f64) -> f64 {
+crates/coach-services/src/detector.rs:155:fn change_autocorr(indicators: &[Vec<f64>], lag: usize) -> Option<f64> {
+crates/coach-services/src/detector.rs:174:fn signal(name: &str, value: Option<f64>, weight: f64, explanation: String) -> Value {
+crates/coach-services/src/detector.rs:175:    json!({"name":name,"value":value.map(|v|(v*1000.0).round()/1000.0),"weight":weight,"explanation":explanation})
+crates/coach-services/src/detector.rs:178:fn confounders(discrete: bool, cadence: bool) -> Vec<&'static str> {
+crates/coach-services/src/detector.rs:192:pub(crate) fn analyze_player(a: &Value, player: &str) -> Value {
+crates/coach-services/src/detector.rs:195:    let seconds: f64 = segs.iter().map(|s| s.last().unwrap().t - s[0].t).sum();
+crates/coach-services/src/detector.rs:202:        "seconds": (seconds*100.0).round()/100.0,
+crates/coach-services/src/detector.rs:237:        signal("steer_value_cardinality", Some(card_value(steer_k)), 0.20,
+crates/coach-services/src/detector.rs:239:        signal("throttle_value_cardinality", Some(card_value(throttle_k)), 0.10,
+crates/coach-services/src/detector.rs:242:            format!("{:.1}% of samples used a non-neutral, non-extreme steer or throttle value (analog stick/trigger range).", analog * 100.0)),
+crates/coach-services/src/detector.rs:261:        "median_update_interval_seconds": (median_dt*10000.0).round()/10000.0,
+crates/coach-services/src/detector.rs:262:        "p90_update_interval_seconds": (p90_dt*10000.0).round()/10000.0,
+crates/coach-services/src/detector.rs:263:        "target_hold_seconds": (HOLD_SECONDS*10000.0).round()/10000.0,
+crates/coach-services/src/detector.rs:317:                n + v * s["weight"].as_f64().unwrap(),
+crates/coach-services/src/detector.rs:318:                d + s["weight"].as_f64().unwrap(),
+crates/coach-services/src/detector.rs:322:    let index = (sum / weight * 1000.0).round() / 10.0;
+crates/coach-services/src/detector.rs:328:        "interpretation":"Heuristic bot-likeness index from 0 to 100. Not a probability, not calibrated, not a cheating verdict; do not infer identity or intent."})
+crates/coach-services/src/detector.rs:331:fn auc(pos: &[f64], neg: &[f64]) -> f64 {
+crates/coach-services/src/detector.rs:347:impl CoachService {
+crates/coach-services/src/detector.rs:350:    pub fn bot_likeness(&self, replay_id: &str) -> ServiceResult<Value> {
+crates/coach-services/src/detector.rs:372:    pub fn set_bot_label(
+crates/coach-services/src/detector.rs:396:    pub fn bot_labels(&self) -> ServiceResult<Value> {
+crates/coach-services/src/detector.rs:416:    pub fn bot_calibration_report(&self) -> ServiceResult<Value> {
+crates/coach-services/src/detector.rs:468:        for t in (0..=100).step_by(10) {
+crates/coach-services/src/detector.rs:481:                    .unwrap()
+crates/coach-services/src/detector.rs:482:                    .total_cmp(&b["youden_j"].as_f64().unwrap())
+crates/coach-services/src/detector.rs:508:    fn analysis(
+crates/coach-services/src/detector.rs:519:        json!({"summary":{"id":id,"mode":"1v1","blue_score":0,"orange_score":0,"played_at":"2026-10-03 12-00-00"},"players":[{"id":player,"team":0}],"coverage":{},"frames":frames,"events":[]})
+crates/coach-services/src/detector.rs:523:    /// Discrete bot: new action chosen only on every second 30 Hz frame (8 ticks at 120 Hz).
+crates/coach-services/src/detector.rs:524:    fn bot(rng: &mut Lcg) -> impl FnMut(usize) -> (u8, u8, bool) + '_ {
+crates/coach-services/src/detector.rs:539:    fn discrete_grid_stream_scores_above_keyboard_above_analog() {
+crates/coach-services/src/detector.rs:565:                let s = (128.0 + 100.0 * ((i as f64) / 17.0).sin() + (r3.next() % 9) as f64) as u8;
+crates/coach-services/src/detector.rs:566:                let t = (128.0 + 90.0 * ((i as f64) / 31.0).cos()) as u8;
+crates/coach-services/src/detector.rs:577:                .unwrap()
+crates/coach-services/src/detector.rs:579:                .any(|c| c.as_str().unwrap().contains("Keyboard")));
+crates/coach-services/src/detector.rs:582:            b["index"].as_f64().unwrap(),
+crates/coach-services/src/detector.rs:583:            k["index"].as_f64().unwrap(),
+crates/coach-services/src/detector.rs:584:            h["index"].as_f64().unwrap(),
+crates/coach-services/src/detector.rs:587:            bi > ki + 20.0 && ki > hi + 20.0,
+crates/coach-services/src/detector.rs:595:                .unwrap()
+crates/coach-services/src/detector.rs:598:                .unwrap()["value"]
+crates/coach-services/src/detector.rs:600:                .unwrap()
+crates/coach-services/src/detector.rs:611:    fn coarse_sampling_makes_cadence_unavailable_not_zero() {
+crates/coach-services/src/detector.rs:613:        let out = analyze_player(&analysis("c", "p", 1200, 0.1, bot(&mut r)), "p");
+crates/coach-services/src/detector.rs:615:        let s = out["signals"].as_array().unwrap();
+crates/coach-services/src/detector.rs:619:                let n = x["name"].as_str().unwrap();
+crates/coach-services/src/detector.rs:627:    fn missing_or_short_input_is_unavailable_never_neutral() {
+crates/coach-services/src/detector.rs:628:        let mut a = analysis("m", "p", 2000, 1.0 / 30.0, |_| (128, 128, false));
+crates/coach-services/src/detector.rs:629:        for f in a["frames"].as_array_mut().unwrap() {
+crates/coach-services/src/detector.rs:630:            f["cars"][0].as_object_mut().unwrap().remove("throttle");
+crates/coach-services/src/detector.rs:631:            f["cars"][0].as_object_mut().unwrap().remove("steer");
+crates/coach-services/src/detector.rs:635:        assert!(out["index"].is_null() && out["reason"].as_str().unwrap().contains("analysis-3"));
+crates/coach-services/src/detector.rs:637:            &analysis("s", "p", 100, 1.0 / 30.0, |_| (128, 128, false)),
+crates/coach-services/src/detector.rs:644:    fn discontinuities_and_non_live_frames_split_segments() {
+crates/coach-services/src/detector.rs:645:        let mut a = analysis("d", "p", 1000, 1.0 / 30.0, |_| (128, 128, false));
+crates/coach-services/src/detector.rs:646:        let f = a["frames"].as_array_mut().unwrap();
+crates/coach-services/src/detector.rs:648:        for fr in f.iter_mut().skip(700).take(20) {
+crates/coach-services/src/detector.rs:660:    fn labels_calibration_requires_both_classes_then_reports_auc() {
+crates/coach-services/src/detector.rs:662:        let s = CoachService::open(&dir).unwrap();
+crates/coach-services/src/detector.rs:664:            s.bot_calibration_report().unwrap()["status"],
+crates/coach-services/src/detector.rs:670:            let mut rng = Lcg(100 + i as u64);
+crates/coach-services/src/detector.rs:672:                analysis(&id, &player, 1500, 1.0 / 30.0, bot(&mut rng))
+crates/coach-services/src/detector.rs:674:                analysis(&id, &player, 1500, 1.0 / 30.0, |k| {
+crates/coach-services/src/detector.rs:675:                    (128 + (k % 50) as u8, 100 + (k % 37) as u8, false)
+crates/coach-services/src/detector.rs:678:            s.save_replay(&a).unwrap();
+crates/coach-services/src/detector.rs:679:            s.set_bot_label(&id, &player, Some(is_bot)).unwrap();
+crates/coach-services/src/detector.rs:682:                    s.bot_calibration_report().unwrap()["status"],
+crates/coach-services/src/detector.rs:687:        s.set_bot_label("r0", "pl0", None).unwrap();
+crates/coach-services/src/detector.rs:689:            s.bot_calibration_report().unwrap()["status"],
+crates/coach-services/src/detector.rs:692:        s.set_bot_label("r0", "pl0", Some(true)).unwrap();
+crates/coach-services/src/detector.rs:693:        let rep = s.bot_calibration_report().unwrap();
+crates/coach-services/src/detector.rs:699:                .unwrap()
+crates/coach-services/src/detector.rs:704:            s.bot_labels().unwrap()["labels"].as_array().unwrap().len(),
+crates/coach-services/src/detector.rs:707:        let live = s.bot_likeness("r1").unwrap();
+crates/coach-services/src/detector.rs:715:    fn real_replays_when_provided() {
+crates/coach-services/src/detector.rs:722:        for e in fs::read_dir(dir).unwrap().flatten().take(3) {
+crates/coach-services/src/detector.rs:727:            let bytes = replay_core::read_replay(&path).unwrap();
+crates/coach-services/src/detector.rs:728:            let a = replay_core::decode(&path, &bytes).unwrap();
+crates/coach-services/src/detector.rs:729:            let v = serde_json::to_value(&a).unwrap();
+crates/coach-services/src/detector.rs:730:            for p in v["players"].as_array().unwrap() {
+crates/coach-services/src/detector.rs:731:                let r = analyze_player(&v, p["id"].as_str().unwrap());
+crates/coach-services/src/detector.rs:734:                    path.file_name().unwrap().to_string_lossy(),
+crates/coach-services/src/sim.rs:21:pub const DEFAULT_RLTRAIN_PATH: &str = r"C:\Users\barke\Desktop\Projects\RLTRAIN_2";
+crates/coach-services/src/sim.rs:26:pub const BALL_MAX_ERROR_UU: f64 = 150.0;
+crates/coach-services/src/sim.rs:27:pub const BALL_MEAN_ERROR_UU: f64 = 60.0;
+crates/coach-services/src/sim.rs:28:const MIN_WINDOW_S: f64 = 0.75;
+crates/coach-services/src/sim.rs:29:const MAX_WINDOW_S: f64 = 2.0;
+crates/coach-services/src/sim.rs:31:const CONTACT_UU: f64 = 300.0;
+crates/coach-services/src/sim.rs:32:const MAX_FRAME_GAP_S: f64 = 0.25;
+crates/coach-services/src/sim.rs:33:const ENGINE_TIMEOUT: Duration = Duration::from_secs(60);
+crates/coach-services/src/sim.rs:34:const MAX_ENGINE_OUTPUT: usize = 8 * 1024 * 1024;
+crates/coach-services/src/sim.rs:35:const MAX_STEPS: u64 = 300;
+crates/coach-services/src/sim.rs:36:const REQUIRED_DLLS: [&str; 2] = ["c10.dll", "torch_cpu.dll"];
+crates/coach-services/src/sim.rs:37:pub const WHAT_IF_LABEL: &str = "A trained RLTRAIN_2 policy (unknown skill, not a model of any player). Simulation, not a prediction.";
+crates/coach-services/src/sim.rs:39:fn unavailable(reason: impl Into<String>) -> Value {
+crates/coach-services/src/sim.rs:42:fn refused(reasons: Vec<String>) -> Value {
+crates/coach-services/src/sim.rs:45:fn f(v: &Value) -> Option<f64> {
+crates/coach-services/src/sim.rs:48:fn vec3(v: &Value) -> Option<[f64; 3]> {
+crates/coach-services/src/sim.rs:52:fn quat(v: &Value) -> Option<[f64; 4]> {
+crates/coach-services/src/sim.rs:58:fn dist(a: [f64; 3], b: [f64; 3]) -> f64 {
+crates/coach-services/src/sim.rs:61:pub fn mode_team_size(mode: &str) -> Option<u64> {
+crates/coach-services/src/sim.rs:73:pub struct CheckpointInfo {
+crates/coach-services/src/sim.rs:86:impl CheckpointInfo {
+crates/coach-services/src/sim.rs:87:    pub fn compatible(&self) -> bool {
+crates/coach-services/src/sim.rs:90:    fn to_value(&self) -> Value {
+crates/coach-services/src/sim.rs:94:fn read_small_json(path: &Path) -> Option<Value> {
+crates/coach-services/src/sim.rs:97:        .filter(|m| m.is_file() && m.len() <= 1024 * 1024)?;
+crates/coach-services/src/sim.rs:101:pub fn parse_checkpoint(run_id: &str, dir: &Path) -> CheckpointInfo {
+crates/coach-services/src/sim.rs:173:pub fn discover_checkpoints(root: &Path) -> Vec<CheckpointInfo> {
+crates/coach-services/src/sim.rs:203:pub struct EngineInfo {
+crates/coach-services/src/sim.rs:207:fn engine_names() -> Vec<&'static str> {
+crates/coach-services/src/sim.rs:215:pub fn discover_engine(root: &Path) -> Option<EngineInfo> {
+crates/coach-services/src/sim.rs:238:pub fn select_checkpoint<'a>(
+crates/coach-services/src/sim.rs:282:pub fn validate_rltrain_root(path: &str) -> Result<PathBuf, String> {
+crates/coach-services/src/sim.rs:317:pub fn clean_sim_tmp(data_dir: &Path) {
+crates/coach-services/src/sim.rs:321:struct TempFile(PathBuf);
+crates/coach-services/src/sim.rs:322:impl Drop for TempFile {
+crates/coach-services/src/sim.rs:323:    fn drop(&mut self) {
+crates/coach-services/src/sim.rs:328:fn root_from_settings(settings: &Value) -> (PathBuf, &'static str) {
+crates/coach-services/src/sim.rs:340:fn up_z(q: [f64; 4]) -> f64 {
+crates/coach-services/src/sim.rs:345:fn grounded(pos: [f64; 3], rot: [f64; 4]) -> Option<bool> {
+crates/coach-services/src/sim.rs:348:    } else if pos[2] >= 150.0
+crates/coach-services/src/sim.rs:358:fn frame_car<'a>(frame: &'a Value, player: &str) -> Option<&'a Value> {
+crates/coach-services/src/sim.rs:365:pub struct Reconstruction {
+crates/coach-services/src/sim.rs:374:fn nearest_frame(frames: &[Value], time: f64) -> Option<usize> {
+crates/coach-services/src/sim.rs:385:pub fn reconstruct(a: &Value, team_size: u64, time: f64) -> Result<Reconstruction, Vec<String>> {
+crates/coach-services/src/sim.rs:452:        let boost = f(&c["boost"]).filter(|b| (0.0..=100.0).contains(b));
+crates/coach-services/src/sim.rs:470:            p.unwrap(),
+crates/coach-services/src/sim.rs:471:            q.unwrap(),
+crates/coach-services/src/sim.rs:472:            v.unwrap(),
+crates/coach-services/src/sim.rs:473:            w.unwrap(),
+crates/coach-services/src/sim.rs:474:            boost.unwrap(),
+crates/coach-services/src/sim.rs:514:fn air_time(frames: &[Value], idx: usize, player: &str) -> Result<f64, String> {
+crates/coach-services/src/sim.rs:561:fn free_frame(fr: &Value) -> bool {
+crates/coach-services/src/sim.rs:581:pub fn free_flight_window(frames: &[Value], idx: usize) -> Option<(usize, usize)> {
+crates/coach-services/src/sim.rs:605:pub fn compare_ball_path(
+crates/coach-services/src/sim.rs:641:pub struct EngineRun {
+crates/coach-services/src/sim.rs:648:pub fn run_engine(
+crates/coach-services/src/sim.rs:674:            let mut g = o.lock().unwrap();
+crates/coach-services/src/sim.rs:689:            let mut g = e.lock().unwrap();
+crates/coach-services/src/sim.rs:690:            if g.len() < 16 * 1024 {
+crates/coach-services/src/sim.rs:701:        if out.lock().unwrap().1 {
+crates/coach-services/src/sim.rs:717:        std::thread::sleep(Duration::from_millis(15));
+crates/coach-services/src/sim.rs:725:    if out.lock().unwrap().1 {
+crates/coach-services/src/sim.rs:731:    let stdout = std::mem::take(&mut out.lock().unwrap().0);
+crates/coach-services/src/sim.rs:732:    let stderr = String::from_utf8_lossy(&errs.lock().unwrap())
+crates/coach-services/src/sim.rs:734:        .take(2000)
+crates/coach-services/src/sim.rs:744:fn kill_tree(pid: u32) {
+crates/coach-services/src/sim.rs:758:pub enum EngineOutcome {
+crates/coach-services/src/sim.rs:763:pub fn parse_engine_output(run: &EngineRun) -> Result<EngineOutcome, String> {
+crates/coach-services/src/sim.rs:799:struct Setup {
+crates/coach-services/src/sim.rs:804:impl CoachService {
+crates/coach-services/src/sim.rs:806:    pub fn set_sim_path(&self, path: &str) -> ServiceResult<Value> {
+crates/coach-services/src/sim.rs:813:    pub fn sim_status(&self, probe: bool) -> ServiceResult<Value> {
+crates/coach-services/src/sim.rs:865:                    match run_engine(&e.path, &root, &[], Duration::from_secs(15), 64 * 1024) {
+crates/coach-services/src/sim.rs:883:    fn sim_setup(&self) -> Result<Setup, Value> {
+crates/coach-services/src/sim.rs:905:    fn sim_replay(&self, id: &str) -> Result<(Value, String), Value> {
+crates/coach-services/src/sim.rs:910:    fn run_state(
+crates/coach-services/src/sim.rs:939:    pub fn sim_reconstruct_state(&self, replay_id: &str, time: f64) -> ServiceResult<Value> {
+crates/coach-services/src/sim.rs:955:    pub fn sim_validate_ball(&self, replay_id: &str, time: f64) -> ServiceResult<Value> {
+crates/coach-services/src/sim.rs:966:    fn validate_ball(&self, setup: &Setup, a: &Value, time: f64) -> Result<Value, Value> {
+crates/coach-services/src/sim.rs:986:        let steps = ((span / (8.0 / 120.0)).ceil() as u64 + 1).min(60);
+crates/coach-services/src/sim.rs:1007:            .unwrap_or(8.0 / 120.0);
+crates/coach-services/src/sim.rs:1027:    pub fn sim_what_if(&self, replay_id: &str, time: f64, options: &Value) -> ServiceResult<Value> {
+crates/coach-services/src/sim.rs:1094:        let sps = f(&start["secondsPerStep"]).unwrap_or(8.0 / 120.0);
+crates/coach-services/src/sim.rs:1134:    fn write(p: &Path, s: &str) {
+crates/coach-services/src/sim.rs:1135:        fs::create_dir_all(p.parent().unwrap()).unwrap();
+crates/coach-services/src/sim.rs:1136:        fs::write(p, s).unwrap();
+crates/coach-services/src/sim.rs:1138:    fn checkpoint(root: &Path, run: &str, n: u32, team: u64, action: &str) {
+crates/coach-services/src/sim.rs:1156:        fs::create_dir_all(root.join("runs").join(run).join("metrics.jsonl")).unwrap();
+crates/coach-services/src/sim.rs:1158:    fn fake_root(dlls: bool) -> tempfile::TempDir {
+crates/coach-services/src/sim.rs:1159:        let t = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1167:        checkpoint(t.path(), "run-1v1", 10, 1, "discrete90_v1");
+crates/coach-services/src/sim.rs:1169:        checkpoint(t.path(), "run-3v3", 20, 3, "discrete90_v1");
+crates/coach-services/src/sim.rs:1175:    fn discovery_reads_newest_checkpoint_and_flags_problems() {
+crates/coach-services/src/sim.rs:1179:        let r3 = found.iter().find(|c| c.run_id == "run-3v3").unwrap();
+crates/coach-services/src/sim.rs:1182:            (20, Some(3), true)
+crates/coach-services/src/sim.rs:1184:        let old = found.iter().find(|c| c.run_id == "run-old").unwrap();
+crates/coach-services/src/sim.rs:1186:        assert!(discover_engine(t.path()).unwrap().missing_dlls.is_empty());
+crates/coach-services/src/sim.rs:1189:            discover_engine(no_dll.path()).unwrap().missing_dlls.len(),
+crates/coach-services/src/sim.rs:1192:        assert!(discover_engine(tempfile::tempdir().unwrap().path()).is_none());
+crates/coach-services/src/sim.rs:1196:    fn observation_layout_is_checked_before_the_engine_runs() {
+crates/coach-services/src/sim.rs:1203:                .unwrap()
+crates/coach-services/src/sim.rs:1211:                .unwrap()
+crates/coach-services/src/sim.rs:1213:            Some(108)
+crates/coach-services/src/sim.rs:1215:        let d = t.path().join("runs/run-1v1/checkpoints/10");
+crates/coach-services/src/sim.rs:1225:    fn mode_gate_requires_matching_team_size() {
+crates/coach-services/src/sim.rs:1229:            select_checkpoint(&found, "3v3", None).unwrap().run_id,
+crates/coach-services/src/sim.rs:1233:            select_checkpoint(&found, "1v1", None).unwrap().run_id,
+crates/coach-services/src/sim.rs:1245:    fn car(id: &str, x: f64, y: f64, z: f64, extra: Value) -> Value {
+crates/coach-services/src/sim.rs:1252:    fn analysis(frames: Vec<Value>) -> Value {
+crates/coach-services/src/sim.rs:1255:    fn frame(t: f64, ball: [f64; 3], cars: Vec<Value>) -> Value {
+crates/coach-services/src/sim.rs:1260:    fn reconstruction_refuses_unknowns_and_never_defaults() {
+crates/coach-services/src/sim.rs:1265:                car("a", -2000.0, -1000.0, 17.0, json!({})),
+crates/coach-services/src/sim.rs:1266:                car("b", 2000.0, 1000.0, 17.0, json!({})),
+crates/coach-services/src/sim.rs:1269:        let r = reconstruct(&ok, 1, 1.0).unwrap();
+crates/coach-services/src/sim.rs:1302:    fn airborne_flip_state_comes_from_history() {
+crates/coach-services/src/sim.rs:1309:                    car("b", 2000.0, 1000.0, 17.0, json!({})),
+crates/coach-services/src/sim.rs:1318:        let r = reconstruct(&a, 1, 0.6).unwrap();
+crates/coach-services/src/sim.rs:1319:        let t = r.state["cars"][0]["airTimeSinceJump"].as_f64().unwrap();
+crates/coach-services/src/sim.rs:1327:            reconstruct(&spent, 1, 0.6).unwrap().state["cars"][0]["airTimeSinceJump"],
+crates/coach-services/src/sim.rs:1343:    fn flight_frames(n: usize) -> Vec<Value> {
+crates/coach-services/src/sim.rs:1351:                        car("a", -2000.0, -3000.0, 17.0, json!({})),
+crates/coach-services/src/sim.rs:1352:                        car("b", 2000.0, 3000.0, 17.0, json!({})),
+crates/coach-services/src/sim.rs:1359:    fn ball_comparison_passes_matching_path_and_fails_offsets() {
+crates/coach-services/src/sim.rs:1361:        let (first, last) = free_flight_window(&frames, 80).unwrap();
+crates/coach-services/src/sim.rs:1368:                        300.0 * (frames[first]["time"].as_f64().unwrap() + k as f64 / 15.0),
+crates/coach-services/src/sim.rs:1375:        let (max, mean, _) = compare_ball_path(&on_path, &frames, first, last).unwrap();
+crates/coach-services/src/sim.rs:1381:        assert!(compare_ball_path(&off, &frames, first, last).unwrap().0 > BALL_MAX_ERROR_UU);
+crates/coach-services/src/sim.rs:1386:        assert!(free_flight_window(&frames[..10], 9).is_none());
+crates/coach-services/src/sim.rs:1391:        // a leg that ended 10 frames (0.33 s) before the state frame does not count
+crates/coach-services/src/sim.rs:1395:    fn stub(dir: &Path, ball: &str, policy: &str) {
+crates/coach-services/src/sim.rs:1405:                .unwrap();
+crates/coach-services/src/sim.rs:1408:    fn stub_path(dir: &Path) -> PathBuf {
+crates/coach-services/src/sim.rs:1415:    fn lines(v: &[Value]) -> String {
+crates/coach-services/src/sim.rs:1420:    fn runner_parses_output_enforces_limits_and_never_uses_a_shell() {
+crates/coach-services/src/sim.rs:1421:        let t = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1432:            Duration::from_secs(20),
+crates/coach-services/src/sim.rs:1433:            1 << 20,
+crates/coach-services/src/sim.rs:1435:        .unwrap();
+crates/coach-services/src/sim.rs:1436:        assert!(matches!(parse_engine_output(&run).unwrap(), EngineOutcome::Ok(l) if l.len() == 3));
+crates/coach-services/src/sim.rs:1438:        let big = "x".repeat(200_000);
+crates/coach-services/src/sim.rs:1444:            Duration::from_secs(20),
+crates/coach-services/src/sim.rs:1445:            10_000,
+crates/coach-services/src/sim.rs:1448:        .unwrap();
+crates/coach-services/src/sim.rs:1459:            Duration::from_secs(20),
+crates/coach-services/src/sim.rs:1460:            1 << 20,
+crates/coach-services/src/sim.rs:1462:        .unwrap();
+crates/coach-services/src/sim.rs:1464:            matches!(parse_engine_output(&run).unwrap(), EngineOutcome::Refused(c, true, _) if c == "gate_team_size")
+crates/coach-services/src/sim.rs:1472:            Duration::from_secs(20),
+crates/coach-services/src/sim.rs:1473:            1 << 20,
+crates/coach-services/src/sim.rs:1475:        .unwrap();
+crates/coach-services/src/sim.rs:1482:            1024
+crates/coach-services/src/sim.rs:1488:    fn runner_times_out() {
+crates/coach-services/src/sim.rs:1489:        let t = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1491:        let (name, body) = ("slow.cmd", "@echo off\r\nping -n 20 127.0.0.1 >nul\r\n");
+crates/coach-services/src/sim.rs:1493:        let (name, body) = ("slow.sh", "#!/bin/sh\nsleep 20\n");
+crates/coach-services/src/sim.rs:1498:            fs::set_permissions(t.path().join(name), fs::Permissions::from_mode(0o755)).unwrap();
+crates/coach-services/src/sim.rs:1506:            1024,
+crates/coach-services/src/sim.rs:1509:        .unwrap();
+crates/coach-services/src/sim.rs:1511:            e.contains("timed out") && start.elapsed() < Duration::from_secs(10),
+crates/coach-services/src/sim.rs:1516:    fn service_with_root(root: &Path) -> (tempfile::TempDir, CoachService) {
+crates/coach-services/src/sim.rs:1517:        let data = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1518:        let s = CoachService::open(data.path()).unwrap();
+crates/coach-services/src/sim.rs:1519:        s.set_sim_path(&root.to_string_lossy()).unwrap();
+crates/coach-services/src/sim.rs:1524:    fn status_degrades_to_unavailable_with_reasons() {
+crates/coach-services/src/sim.rs:1525:        let data = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1526:        let s = CoachService::open(data.path()).unwrap();
+crates/coach-services/src/sim.rs:1527:        let missing = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1542:        assert!(s.sim_status(false).unwrap()["reason"]
+crates/coach-services/src/sim.rs:1544:            .unwrap()
+crates/coach-services/src/sim.rs:1546:        let bare = tempfile::tempdir().unwrap();
+crates/coach-services/src/sim.rs:1547:        fs::create_dir_all(bare.path().join("engine/build/bin")).unwrap();
+crates/coach-services/src/sim.rs:1548:        fs::create_dir_all(bare.path().join("runs")).unwrap();
+crates/coach-services/src/sim.rs:1554:        assert!(s2.sim_status(false).unwrap()["reason"]
+crates/coach-services/src/sim.rs:1556:            .unwrap()
+crates/coach-services/src/sim.rs:1559:            s2.sim_what_if("x", 1.0, &json!({})).unwrap()["status"],
+crates/coach-services/src/sim.rs:1564:        let st = s3.sim_status(false).unwrap();
+crates/coach-services/src/sim.rs:1572:    fn what_if_end_to_end_with_stub_engine_and_validation_gate() {
+crates/coach-services/src/sim.rs:1574:        let mut frames = flight_frames(120);
+crates/coach-services/src/sim.rs:1580:        a["summary"] = json!({"id":"r1","file_hash":"","file_name":"x","mode":"1v1","played_at":"2026-01-01T00:00:00Z","blue_score":1,"orange_score":0});
+crates/coach-services/src/sim.rs:1583:        s.save_replay(&a).unwrap();
+crates/coach-services/src/sim.rs:1585:        let (wfirst, _) = free_flight_window(&frames, 90).unwrap();
+crates/coach-services/src/sim.rs:1586:        let t0 = frames[wfirst]["time"].as_f64().unwrap();
+crates/coach-services/src/sim.rs:1587:        let mut ball = vec![json!({"type":"rollout_start","secondsPerStep":8.0/120.0})];
+crates/coach-services/src/sim.rs:1589:            let dt = k as f64 * 8.0 / 120.0;
+crates/coach-services/src/sim.rs:1594:            json!({"type":"rollout_start","secondsPerStep":8.0/120.0,"assumptions":["pads"]}),
+crates/coach-services/src/sim.rs:1603:        let r = s.sim_what_if("r1", 3.0, &json!({"steps":5})).unwrap();
+crates/coach-services/src/sim.rs:1607:            .unwrap()
+crates/coach-services/src/sim.rs:1609:        assert!(r["label"].as_str().unwrap().contains("not a prediction"));
+crates/coach-services/src/sim.rs:1614:        assert!(r["limitations"].as_array().unwrap().len() >= 3);
+crates/coach-services/src/sim.rs:1631:        let r = s.sim_what_if("r1", 3.0, &json!({"steps":5})).unwrap();
+crates/coach-services/src/sim.rs:1635:            .unwrap()
+crates/coach-services/src/sim.rs:1643:        s.save_replay(&b).unwrap();
+crates/coach-services/src/sim.rs:1644:        let r = s.sim_what_if("r2", 3.0, &json!({})).unwrap();
+crates/coach-services/src/sim.rs:1646:        assert!(r["reason"].as_str().unwrap().contains("2v2"));

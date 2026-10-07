@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests\review_storage.rs (target\debug\deps\review_storage-90f83c367433b071.exe)
+
+running 1 test
+REVIEW_PAYLOAD frames=3803 players=6 duration_s=403.04815673828125 ipc_json_bytes=9323673 compact_body_bytes=160468 coach_body_bytes=160468 summary_bytes=1765 frame_json_bytes=12542191 zstd_bytes=2033274 inflate_value_ms=332 value_to_typed_ms=133 serialize_typed_ms=222
+test review_opened_replay_payload_measurement ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 45.46s
+

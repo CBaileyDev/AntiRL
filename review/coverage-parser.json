@@ -1,0 +1,77 @@
+[
+  {
+    "path": "crates/replay-core/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/lib.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/main.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/types.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/coach-services/src/analytics.rs",
+    "status": "reviewed",
+    "reason": "Full read: provenance projection, eligibility, windows, aggregation math, date normalization and committed tests. Storage agent independently executes public service proofs."
+  },
+  {
+    "path": "crates/coach-services/src/semantics.rs",
+    "status": "reviewed",
+    "reason": "Full read of legacy boost alias adapter and event metric-key conversion."
+  },
+  {
+    "path": "crates/coach-services/src/reenrich.rs",
+    "status": "reviewed",
+    "reason": "Full read capture-only re-enrichment and tests; no metric upgrade or registered IPC."
+  },
+  {
+    "path": "crates/coach-services/src/storage.rs",
+    "status": "skimmed",
+    "reason": "Date normalization and replays storage checked for lead15; storage agent owns full coverage."
+  },
+  {
+    "path": "crates/coach-services/src/transfer.rs",
+    "status": "skimmed",
+    "reason": "Date conversion, 10-match window, compatible-version requirement and tests inspected; experimental-model agent owns full coverage."
+  },
+  {
+    "path": "crates/coach-services/src/intelligence.rs",
+    "status": "skimmed",
+    "reason": "Context cache lookback3 and neutral event classification checked against supposed6-second fault attribution lead; experimental-model agent owns full coverage."
+  },
+  {
+    "path": "crates/coach-services/src/lib.rs",
+    "status": "skimmed",
+    "reason": "get_progress, template analysis and identity resolution output inspected; other agents cover full crate."
+  },
+  {
+    "path": "app/src/data/metrics.json",
+    "status": "reviewed",
+    "reason": "Complete dictionary read and compared against produced keys, numerator/denominator formulas, UI usage and research images."
+  },
+  {
+    "path": "app/src/pages/Overview.tsx",
+    "status": "reviewed",
+    "reason": "Full page read for metric labels, identity/mode/results/duration and literal fallback correctness. Design agent owns live screenshots."
+  },
+  {
+    "path": "app/src/pages/Progress.tsx",
+    "status": "skimmed",
+    "reason": "Mode defaults, headline metrics, result history and aggregate labels inspected."
+  },
+  {
+    "path": "app/src/pages/ReplayStudio.tsx",
+    "status": "skimmed",
+    "reason": "Headline key whitelist, sample tooltip and event/Ask Coach usage inspected."
+  }
+]

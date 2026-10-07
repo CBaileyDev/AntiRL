@@ -1,0 +1,2 @@
+$ node ../scripts/test-ranks-quality.mjs
+PASS: all 23 artwork checksums, Arabic/Roman rank mapping, highest playlist rank, high-DPI resolution and refresh-rate budgets.

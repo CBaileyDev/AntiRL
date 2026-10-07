@@ -1,0 +1,27 @@
+[
+  {
+    "lead": 33,
+    "status": "confirmed",
+    "evidence": "J-005/J-006/K-001:15Step2fields,Escape skip/discard,console-only error; focus trap absent."
+  },
+  {
+    "lead": 35,
+    "status": "confirmed",
+    "evidence": "K-001/I-004: inline static overlay and missing sr-only definition confirmed. Sorting/virtualization handled G audit."
+  },
+  {
+    "lead": 40,
+    "status": "confirmed",
+    "evidence": "I-001..007:census4042lines,48redefined literal selectors under documented lexical algorithm (prior57 not matched),25sizes,156styleopeners,55candidateunreferencedclasses,55outside-roothexoccurrences (prior88 not reproduced). Undefined--sage-line confirmed. Native controls and mono stats confirmed; GoalTracker unused."
+  },
+  {
+    "lead": 41,
+    "status": "confirmed",
+    "evidence": "K-001..010: contrast and7Settingscontrols without persistentassociatedlabels confirmed; independentARIAtree finds4trulyunnamed+3placeholderfallbacknames. No htmlFor does NOT imply everycontrol lackslabel: wrappinglabels exist. Input focus uses1pxborder so blanket absentfocus refuted. Nested interactive rows handled frontend. Reducedmotion Coachspinner actuallykeepsspinning; live screenreader not run."
+  },
+  {
+    "lead": 42,
+    "status": "confirmed",
+    "evidence": "J-007/J-014: expandedinventory137candidate lines and40unavailable occurrences acrossTSX/data, explicitly includes code/prompt tokens andselfreport/heuristic/estimate. Rendered disclaimers confirmed. Backend offline dumps handledAI D findings."
+  }
+]

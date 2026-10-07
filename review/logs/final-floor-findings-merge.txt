@@ -1,0 +1,1 @@
+{"findings": 186, "severities": {"P0": 7, "P1": 35, "P2": 129, "P3": 15}, "render": "findings only; edited test/coverage reports preserved"}

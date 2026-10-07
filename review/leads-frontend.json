@@ -1,0 +1,155 @@
+{
+  "29": {
+    "status": "confirmed",
+    "findings": [
+      "G-009",
+      "F-050"
+    ],
+    "detail": "State routing, implicit first replay, App state ownership and browser {} success confirmed. aria-current handled design reviewer."
+  },
+  "30-citation": {
+    "status": "confirmed",
+    "findings": [
+      "G-005"
+    ],
+    "detail": "Real-App chip84.6 -> actual0 reproduced."
+  },
+  "30-prefill": {
+    "status": "confirmed",
+    "findings": [
+      "G-008"
+    ],
+    "detail": "Real-App clear/navigate/return reintroduces old draft."
+  },
+  "30-cancel": {
+    "status": "confirmed",
+    "findings": [
+      "G-007"
+    ],
+    "detail": "Real-App navigate Progress during stream emits cancel_ai."
+  },
+  "30-full-replay": {
+    "status": "refuted",
+    "findings": [
+      "G-010"
+    ],
+    "detail": "It invokes get_coach_replay compact record, not full frame replay. Repeated per-bubble compact requests remain confirmed debt."
+  },
+  "30-export": {
+    "status": "confirmed",
+    "findings": [
+      "G-012"
+    ],
+    "detail": "TXT depends innerText of mounted DOM; canonical data used for other formats."
+  },
+  "30-input-live-height": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Single-line composer, aria-live off, calc height ignores native titlebar; design reviewer records findings."
+  },
+  "31": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Raw instructions/player IDs and Do not assume recorder text in Ask Coach draft; design reviewer owns copy finding."
+  },
+  "32-draft": {
+    "status": "confirmed",
+    "findings": [
+      "G-006"
+    ],
+    "detail": "Unsaved Draft overwritten Nova after simulated import refresh."
+  },
+  "32-save-style-status": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "One Save covers multiple cards, undefined sage-line, disabled pending live verification copy; design reviewer owns visual/copy detail."
+  },
+  "33": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Esc onClose marks skipped; finish save catch only console;15profile inputs. Design reviewer owns onboarding."
+  },
+  "34-mode": {
+    "status": "confirmed",
+    "findings": [
+      "G-002"
+    ],
+    "detail": "Hardcoded 2v2 Competitive/rank_2v2; whole-library win-rate confirmed."
+  },
+  "34-numbers": {
+    "status": "confirmed",
+    "findings": [
+      "G-001"
+    ],
+    "detail": "SSR proves absent identity becomes another player victory and unknown scores become0-0 defeat. UI raw Blue/Orange score, invented DFH/player count fallback confirmed; design copy finding owns fallback labels."
+  },
+  "35-dialog": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Fresh capture inline dialog; root runtime focusOutside/Escignored. Design reviewer owns accessibility."
+  },
+  "35-library": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "No sorting/virtualization/pagination; .sr-only missing. Design reviewer owns library/accessibility."
+  },
+  "36": {
+    "status": "confirmed",
+    "findings": [
+      "G-003",
+      "G-013"
+    ],
+    "detail": "SSR missing percentages0; all hardcoded goalsfalse; no trend chart."
+  },
+  "37-playhead": {
+    "status": "confirmed",
+    "findings": [
+      "G-018"
+    ],
+    "detail": "Parent seekTime does not track viewer clock/scrub."
+  },
+  "37-layout": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Five experimental panels before ReviewNext and small timeline targets; fresh screenshots confirm fold. Design reviewer owns layout/a11y."
+  },
+  "38-bundle": {
+    "status": "confirmed",
+    "findings": [
+      "H-001"
+    ],
+    "detail": "Static camera/viewerEngine graph defeats dynamic import; Vite warning and measured main chunk."
+  },
+  "38-ranks": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Root measured rank artwork size and design reviewer owns asset optimization finding."
+  },
+  "39-idle": {
+    "status": "confirmed",
+    "findings": [
+      "H-002"
+    ],
+    "detail": "Source target15paused; real headless paused25renders/4s proves ongoing submissions, noGPU-power claim."
+  },
+  "39-ray-percar": {
+    "status": "refuted",
+    "findings": [
+      "H-003"
+    ],
+    "detail": "Flat-turf fastpath skips per-car rays. Wall/cove car rays and near-ground chase collision repeat on paused renders."
+  },
+  "39-remount-storage": {
+    "status": "confirmed",
+    "findings": [
+      "H-004",
+      "H-005"
+    ],
+    "detail": "Object identity remount; throwinglocalStorage SSR proves preference failure escapes."
+  },
+  "39-shortcuts": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Wrapper focus required; CSS removes canvasoutline; design reviewer owns keyboard/focusfinding."
+  }
+}

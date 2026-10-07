@@ -1,0 +1,31 @@
+{
+  "commands": 61,
+  "bare_value_commands": [
+    "import_folder",
+    "import_single_file",
+    "retry_failed_imports",
+    "get_coach_replay",
+    "analyze_with_ai",
+    "start_chatgpt_sign_in",
+    "get_context_manifest",
+    "evidence_tool",
+    "camera_profile",
+    "reset_camera_profile",
+    "detector_reports",
+    "save_camera_profile",
+    "drill_from_fingerprint",
+    "bot_likeness",
+    "set_bot_label",
+    "bot_labels",
+    "bot_calibration_report",
+    "xg_model_status",
+    "xg_replay_shots",
+    "xg_player_summary",
+    "sim_status",
+    "set_sim_path",
+    "sim_reconstruct_state",
+    "sim_validate_ball",
+    "sim_what_if"
+  ],
+  "string_key_lookups_coach_services": 1305
+}

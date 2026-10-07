@@ -1,0 +1,112 @@
+[
+  {
+    "path": "crates/coach-services/src/detector.rs",
+    "status": "reviewed",
+    "reason": "Full segmentation/signals/label/calibration/tests; exact-source15Hz keyboard probe."
+  },
+  {
+    "path": "crates/coach-services/src/xg.rs",
+    "status": "reviewed",
+    "reason": "Full extraction/fit/folds/assessment/population/endpoint/tests; geometry,label,missingdefender and actualtemp-profile population probes."
+  },
+  {
+    "path": "crates/coach-services/src/sim.rs",
+    "status": "reviewed",
+    "reason": "Full checkpoint discovery/reconstruction/physics gate/process/output/rollout/tests; exact-source timeout,coverage,output probes with safe testchildren."
+  },
+  {
+    "path": "crates/coach-services/src/transfer.rs",
+    "status": "reviewed",
+    "reason": "Full timestamp/context/window/ownership/reflection/tests; metric version and weights gates, selection-before-coverage verified."
+  },
+  {
+    "path": "crates/coach-services/src/intelligence.rs",
+    "status": "reviewed",
+    "reason": "Full indexing/search/fingerprints/drills/opponent/externalreports/tests; cache revision and user-review guards inspected."
+  },
+  {
+    "path": "crates/coach-services/src/practice.rs",
+    "status": "reviewed",
+    "reason": "Full personal scope/plan/sessions/archive/tests; provenance and transfer anchoring checked."
+  },
+  {
+    "path": "app/src/components/BotLikenessPanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/XgPanels.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/CounterfactualPanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/ReferenceComparison.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/SimSettings.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/GhostOverlay.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/IntelligencePanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/PracticePanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/TransferPanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/components/DetectorPanel.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass."
+  },
+  {
+    "path": "app/src/pages/ReplayStudio.tsx",
+    "status": "skimmed",
+    "reason": "Experimental panel order, seektime props and component identity inspected; full page owned by frontend agent."
+  },
+  {
+    "path": "app/src/pages/Replays.tsx",
+    "status": "skimmed",
+    "reason": "Bot badges/stored score threshold and label-fetch handling inspected; full page owned by frontend agent."
+  },
+  {
+    "path": "app/src/pages/Progress.tsx",
+    "status": "skimmed",
+    "reason": "xG/intelligence/practice integration inspected; full page owned by frontend agent."
+  },
+  {
+    "path": "src-tauri/src/commands.rs",
+    "status": "skimmed",
+    "reason": "Experimental native IPC routes and blocking wrapper call paths inspected; entire file owned root/storage."
+  },
+  {
+    "path": "crates/coach-services/src/evidence_tools.rs",
+    "status": "reviewed",
+    "reason": "Fully read in D pass; xG scoping and synchronous sim invocation reviewed again for E."
+  },
+  {
+    "path": "crates/coach-services/tests/review_experimental.rs",
+    "status": "reviewed",
+    "reason": "Created exact-source and public-service probes;11passing,2internalignored helpers; independent positive/negative controls."
+  }
+]

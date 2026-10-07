@@ -1,0 +1,2 @@
+import { chromium } from '../app/node_modules/@playwright/test/index.mjs';
+const browser=await chromium.launch({channel:'chrome'});const page=await browser.newPage();page.on('pageerror',e=>console.log('PAGEERROR',e.message));page.on('console',e=>{if(e.type()==='error')console.log('CONSOLE',e.text())});await page.goto('http://127.0.0.1:1445/review/harness/index.html?state=heavy');await page.waitForTimeout(2000);console.log((await page.locator('body').innerText()).slice(0,2500));await page.screenshot({path:'review/probe.png'});await browser.close();

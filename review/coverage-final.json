@@ -1,0 +1,547 @@
+[
+  {
+    "path": "app/src/App.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/ReplayViewer.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/arenaMesh.ts",
+    "status": "skimmed",
+    "reason": "Generated quantized/base64 stadium geometry metadata and use in viewerScene checked; encoded vertex payload not hand-reviewed."
+  },
+  {
+    "path": "app/src/bindings.ts",
+    "status": "skimmed",
+    "reason": "Generated IPC request/response signatures, nullable frame/metric types and domain exports examined; generator output not manually reviewed line by line."
+  },
+  {
+    "path": "app/src/components/BoostRing.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/BotLikenessPanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Props and request lifetimes inspected; experimental reviewer owns scientific/scope/stale-result findings."
+  },
+  {
+    "path": "app/src/components/CameraSettings.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/CounterfactualPanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/DetectorPanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Component integration inspected; experimental reviewer owns model claim/verdict details."
+  },
+  {
+    "path": "app/src/components/EvidenceHistory.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/GhostOverlay.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/GoalTracker.tsx",
+    "status": "reviewed",
+    "reason": "Entire unused wrapper and prop/import census.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/IntelligencePanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/OnboardingModal.tsx",
+    "status": "reviewed",
+    "reason": "Complete4step form, save/escape/focus/selection semantics and all4 fresh screenshots.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/PracticePanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/RankBadge.tsx",
+    "status": "reviewed",
+    "reason": "Asset sizing/label integration in fresh views; full runtime audit by frontend.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/RankSelect.tsx",
+    "status": "reviewed",
+    "reason": "Complete native select/rank asset composition and accessible naming.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/ReferenceComparison.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/SimSettings.tsx",
+    "status": "reviewed",
+    "reason": "Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Settings and path IPC inspected; experimental reviewer owns simulator workflow/status validity."
+  },
+  {
+    "path": "app/src/components/TitleBar.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/TransferPanel.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/ViewerHud.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/components/XgPanels.tsx",
+    "status": "reviewed",
+    "reason": "Disclaimer/label/state copy and information hierarchy checked; model internals reviewed by experimental-model agent.; Full component/state/async guards/copy/fields/control flow reviewed; screenshot critique consolidated by root design pass.; Props and request lifetimes inspected; experimental reviewer owns scientific/scope/stale-result findings."
+  },
+  {
+    "path": "app/src/data/coach-prompts.json",
+    "status": "reviewed",
+    "reason": "Every system/common/mode/preset prompt and conflicts.; Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent.; Frontend prompt use traced; AI reviewer owns full policy/prompt review."
+  },
+  {
+    "path": "app/src/data/metrics.json",
+    "status": "reviewed",
+    "reason": "Authoritative prompt dictionary; unavailable research metric and semantics.; Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent.; Formatter/dictionary consumers checked; parser and AI reviewers own authoritative metric semantics.; Complete dictionary read and compared against produced keys, numerator/denominator formulas, UI usage and research images."
+  },
+  {
+    "path": "app/src/data/research-cards.json",
+    "status": "reviewed",
+    "reason": "All three reviewed cards, lineage, limitations and coaching usefulness.; Confidence dictionary and prompt/user-facing caveat inventory; AI correctness reviewed by AI agent.; Research UI/rendering path checked; experimental reviewer owns scientific claim/source review."
+  },
+  {
+    "path": "app/src/data/training-packs.json",
+    "status": "reviewed",
+    "reason": "20 records: source confirmation/untested gameplay labels; retrieval fit and taxonomy.; Frontend catalog/search/copy flow checked; AI reviewer owns codes/source validity."
+  },
+  {
+    "path": "app/src/download.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/errors.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/evidenceResponses.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/externalLinks.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/formatStat.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/ipc.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/main.tsx",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/metricDictionary.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Coach.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Overview.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable.; Full page read for metric labels, identity/mode/results/duration and literal fallback correctness. Design agent owns live screenshots."
+  },
+  {
+    "path": "app/src/pages/Progress.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; xG/intelligence/practice integration inspected; full page owned by frontend agent.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable.; Mode defaults, headline metrics, result history and aggregate labels inspected."
+  },
+  {
+    "path": "app/src/pages/ReplayStudio.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Experimental panel order, seektime props and component identity inspected; full page owned by frontend agent.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable.; Headline key whitelist, sample tooltip and event/Ask Coach usage inspected."
+  },
+  {
+    "path": "app/src/pages/Replays.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Bot badges/stored score threshold and label-fetch handling inspected; full page owned by frontend agent.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Settings.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/pages/Teammates.tsx",
+    "status": "reviewed",
+    "reason": "UX/copy/ARIA/state rendering source sections checked against fresh captures; deep state/runtime ownership belongs to frontend audit.; Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/rankMath.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/replayMath.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/styles.css",
+    "status": "reviewed",
+    "reason": "Token/color/type census, duplicate/dead-rule candidates, focus/control/dialog/motion/timeline rules and fresh browser renders.; Relevant layout, focus, timeline and palette selectors inspected. Design reviewer owns full selector/copy/accessibility audit."
+  },
+  {
+    "path": "app/src/surfaceTextures.ts",
+    "status": "skimmed",
+    "reason": "Seeded procedural texture algorithm and allocation/initialization use examined; no independent visual/material numerical oracle."
+  },
+  {
+    "path": "app/src/types.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerAssets.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerCameras.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerEngine.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerGeometry.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerQuality.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerRigs.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerScene.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "app/src/viewerTime.ts",
+    "status": "reviewed",
+    "reason": "Source read and call-site/contract/lifecycle checks; fresh real-App screenshots or original component characterizations used where applicable."
+  },
+  {
+    "path": "crates/coach-services/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Provider feature/dependency boundaries and test dependencies.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/ai.rs",
+    "status": "reviewed",
+    "reason": "Full context/provider/stream/grounding/offline code and embedded tests; source-extracted executable probes."
+  },
+  {
+    "path": "crates/coach-services/src/analytics.rs",
+    "status": "reviewed",
+    "reason": "Full read: provenance projection, eligibility, windows, aggregation math, date normalization and committed tests. Storage agent independently executes public service proofs.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/camera.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/chatgpt.rs",
+    "status": "reviewed",
+    "reason": "Entire adapter and synthetic tests read: disabled defaults, opt-in feature, PKCE/state/nonce/issuer/audience/subject, loopback limits, token rotation, vault chunking, pinned revocation and build fixture contract. Existing all-feature tests pass; no live sign-in or vault values inspected."
+  },
+  {
+    "path": "crates/coach-services/src/conversations.rs",
+    "status": "reviewed",
+    "reason": "Full scopes/history mutation/migration tests; persistent conversation metadata.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/detector.rs",
+    "status": "reviewed",
+    "reason": "Full segmentation/signals/label/calibration/tests; exact-source15Hz keyboard probe."
+  },
+  {
+    "path": "crates/coach-services/src/evidence_tools.rs",
+    "status": "reviewed",
+    "reason": "Full retrieval tool/scoping/budget code; real public timeline retrieval probe.; Fully read in D pass; xG scoping and synchronous sim invocation reviewed again for E."
+  },
+  {
+    "path": "crates/coach-services/src/intelligence.rs",
+    "status": "reviewed",
+    "reason": "Full indexing/search/fingerprints/drills/opponent/externalreports/tests; cache revision and user-review guards inspected.; Context cache lookback3 and neutral event classification checked against supposed6-second fault attribution lead; experimental-model agent owns full coverage."
+  },
+  {
+    "path": "crates/coach-services/src/lib.rs",
+    "status": "reviewed",
+    "reason": "Full AI-facing settings, model/key APIs, identity, memory, conversations and fallback; storage details jointly reviewed by storage agent.; get_progress, template analysis and identity resolution output inspected; other agents cover full crate.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/001_base.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/003_practice.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/004_replay_storage.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/005_deleted_match_ids.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/006_transfer.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/007_intelligence.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/008_detector.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/analytics_001_base.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/migrations/analytics_002_provenance.sql",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/practice.rs",
+    "status": "reviewed",
+    "reason": "Full personal scope/plan/sessions/archive/tests; provenance and transfer anchoring checked."
+  },
+  {
+    "path": "crates/coach-services/src/reenrich.rs",
+    "status": "reviewed",
+    "reason": "Full read capture-only re-enrichment and tests; no metric upgrade or registered IPC.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/research.rs",
+    "status": "reviewed",
+    "reason": "Complete tag/mode retrieval implementation."
+  },
+  {
+    "path": "crates/coach-services/src/retrieval.rs",
+    "status": "reviewed",
+    "reason": "Full strict plan validator and dispatcher; SQL/identity/path allowlist and limits."
+  },
+  {
+    "path": "crates/coach-services/src/semantics.rs",
+    "status": "reviewed",
+    "reason": "Full read of legacy boost alias adapter and event metric-key conversion.; Normalization boundary inspected; detailed metric semantics belongs parser/AI reviewer."
+  },
+  {
+    "path": "crates/coach-services/src/sim.rs",
+    "status": "reviewed",
+    "reason": "Full checkpoint discovery/reconstruction/physics gate/process/output/rollout/tests; exact-source timeout,coverage,output probes with safe testchildren."
+  },
+  {
+    "path": "crates/coach-services/src/storage.rs",
+    "status": "reviewed",
+    "reason": "Date normalization and replays storage checked for lead15; storage agent owns full coverage.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "crates/coach-services/src/transfer.rs",
+    "status": "reviewed",
+    "reason": "Full timestamp/context/window/ownership/reflection/tests; metric version and weights gates, selection-before-coverage verified.; Date conversion, 10-match window, compatible-version requirement and tests inspected; experimental-model agent owns full coverage."
+  },
+  {
+    "path": "crates/coach-services/src/xg.rs",
+    "status": "reviewed",
+    "reason": "Full extraction/fit/folds/assessment/population/endpoint/tests; geometry,label,missingdefender and actualtemp-profile population probes."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/README.md",
+    "status": "reviewed",
+    "reason": "Fixture inventory; only public synthetic JWKS tracked; real replay absent.; Fixture provenance read; pre-existing ignored private fixture not inspected."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/synthetic-oidc-jwks.json",
+    "status": "reviewed",
+    "reason": "Synthetic public JWKS; detailed sign-in security delegated storage agent.; Public synthetic RSA JWK fields compared with signed test contract; random generated private key does not match this public fixture."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/synthetic-oidc-test-key.pem",
+    "status": "not reviewed",
+    "reason": "Pre-existing ignored private-key fixture was deliberately not read, printed or copied under the no-credential-read constraint. Public fixture README marks it synthetic; cached test compilation uses it. Fresh-clone proof generated an independent throwaway key only inside review/snapshot."
+  },
+  {
+    "path": "crates/coach-services/tests/review_ai.rs",
+    "status": "reviewed",
+    "reason": "Added10 review probes; exact copied helper semantics plus real public APIs.; Review-generated source-extracted helper characterization and public service probes inspected; no provider calls."
+  },
+  {
+    "path": "crates/coach-services/tests/review_experimental.rs",
+    "status": "reviewed",
+    "reason": "Created exact-source and public-service probes;11passing,2internalignored helpers; independent positive/negative controls.; Review-generated synthetic model/scoping/deadline probes inspected; safe finite test child only."
+  },
+  {
+    "path": "crates/coach-services/tests/review_storage.rs",
+    "status": "reviewed",
+    "reason": "Review-generated disposable profile/migration/query/storage/payload characterizations inspected and executed by owner agent."
+  },
+  {
+    "path": "crates/replay-core/Cargo.toml",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/lib.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/main.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "crates/replay-core/src/types.rs",
+    "status": "reviewed",
+    "reason": "Full source read; decoding bounds, identity, phase/continuity, metrics/events, metadata helpers, CLI and six original tests inspected. Synthetic ProcessorView executes private collector in exact-source review wrapper."
+  },
+  {
+    "path": "integrations/discord/.env.example",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/README.md",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/core.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/package.json",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/register.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/render.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/server.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "integrations/discord/test.mjs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/auto_import.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/commands.rs",
+    "status": "reviewed",
+    "reason": "Experimental native IPC routes and blocking wrapper call paths inspected; entire file owned root/storage.; Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/dto.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/errors.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/ingest.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/main.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  },
+  {
+    "path": "src-tauri/src/worker_limits.rs",
+    "status": "reviewed",
+    "reason": "Full source/schema read; traced call sites and relevant regression tests. Runtime proof uses only temporary synthetic profiles."
+  }
+]

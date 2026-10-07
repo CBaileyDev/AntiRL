@@ -1,0 +1,89 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling rustversion v1.0.23
+   Compiling siphasher v1.0.4
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.229
+   Compiling windows-link v0.2.1
+   Compiling fastrand v2.5.0
+   Compiling typenum v1.20.1
+   Compiling thiserror v2.0.21
+   Compiling zmij v1.0.23
+   Compiling typeid v1.0.3
+   Compiling serde v1.0.229
+   Compiling linkme-impl v0.3.37
+   Compiling cfg-if v1.0.5
+   Compiling thiserror v1.0.69
+   Compiling erased-serde v0.4.10
+   Compiling anyhow v1.0.104
+   Compiling linkme v0.3.37
+   Compiling scopeguard v1.2.0
+   Compiling core_detect v1.0.0
+   Compiling multiversion_no_op v1.0.0
+   Compiling serde_json v1.0.151
+   Compiling rawpointer v0.2.1
+   Compiling simdutf8 v0.1.5
+   Compiling bitter v0.9.1
+   Compiling Inflector v0.11.4
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling fnv v1.0.7
+   Compiling windows-sys v0.61.2
+   Compiling pastey v0.2.3
+   Compiling phf_shared v0.13.1
+   Compiling float-ord v0.3.2
+   Compiling cpufeatures v0.2.17
+   Compiling glam v0.31.1
+   Compiling log v0.4.34
+   Compiling generic-array v0.14.7
+   Compiling phf_generator v0.13.1
+   Compiling num-traits v0.2.19
+   Compiling matrixmultiply v0.3.11
+   Compiling winapi-util v0.1.11
+   Compiling termcolor v1.4.1
+   Compiling encoding_rs v0.8.42
+   Compiling syn v2.0.119
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-complex v0.4.6
+   Compiling ndarray v0.17.2
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling phf_macros v0.13.1
+   Compiling thiserror-impl v1.0.69
+   Compiling ts-rs-macros v11.1.0
+   Compiling specta-macros v2.0.0-rc.18
+   Compiling derive-new v0.7.0
+   Compiling phf v0.13.1
+   Compiling specta v2.0.0-rc.22
+   Compiling ts-rs v11.1.0
+   Compiling boxcars v0.12.0
+   Compiling subtr-actor v1.4.0
+   Compiling review-metrics-probe v0.1.0 (C:\Users\barke\Documents\AntiRL\review\metrics-probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.54s
+     Running unittests src\lib.rs (review\metrics-probe\target\debug\deps\review_metrics_probe-196117b510572c97.exe)
+
+running 9 tests
+test review_characterization::review_partial_velocity_overstates_metric_sample_count ... ok
+test review_characterization::review_gap_is_excluded_without_quality_accounting ... ok
+exposure event 0..5 includes dropped gap 1.2..5.0; observed live seconds 1.2000000476837158
+test review_characterization::review_kickoff_time_not_in_active_play ... ok
+test review_characterization::review_exposure_event_spans_dropped_timing_gap ... ok
+overlapping boost events: [("m:boost:steam:1:0.000", "Extended low-boost window", 0.0, 6.099999904632568), ("m:boost:steam:1:0.000", "Review supersonic boost", 0.0, 6.099999904632568)]
+low-boost event 0..12; actual observed seconds test review_characterization::review_low_and_supersonic_boost_generate_duplicate_event_ids ... 6ok
+
+test review_characterization::review_validator_accepts_negative_counts_and_wrong_shot_team ... ok
+test review_characterization::review_validator_accepts_corrupt_sufficient_statistics_and_coverage ... ok
+test review_characterization::review_absent_player_extends_observed_low_boost_event ... ok
+validation low boost 0: Err("Analysis event references or time invalid")
+validation low boost 33: Ok(())
+test review_characterization::review_validate_duplicate_events_fails_but_control_is_valid ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+

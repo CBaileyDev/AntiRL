@@ -1,0 +1,19 @@
+   Compiling coach-services v0.1.0 (C:\Users\barke\Documents\AntiRL\crates\coach-services)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.85s
+     Running tests\review_storage.rs (target\debug\deps\review_storage-90f83c367433b071.exe)
+
+running 1 test
+
+thread 'review_opened_replay_payload_measurement' (70932) panicked at crates\coach-services\tests\review_storage.rs:182:78:
+called `Result::unwrap()` on an `Err` value: "Replay file could not be opened"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test review_opened_replay_payload_measurement ... FAILED
+
+failures:
+
+failures:
+    review_opened_replay_payload_measurement
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p coach-services --test review_storage`

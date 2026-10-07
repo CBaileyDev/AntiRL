@@ -1,0 +1,31 @@
+{
+  "findings": 186,
+  "severities": {
+    "P0": 7,
+    "P1": 35,
+    "P2": 129,
+    "P3": 15
+  },
+  "required_files": 109,
+  "coverage_statuses": {
+    "reviewed": 105,
+    "skimmed": 3,
+    "not reviewed": 1
+  },
+  "coverage_areas": 15,
+  "lead_groups": 48,
+  "validated_high_severity": 42,
+  "roadmap_epics": 15,
+  "screenshots": {
+    "before": 66,
+    "mockups": 18
+  },
+  "mockup_control_contrast_checks": 156,
+  "mockup_control_contrast_failures": 0,
+  "source_quotes_exact": true,
+  "explicit_evidence_paths_exist": true,
+  "tracked_diff_exit": 0,
+  "untracked_paths_only_authorized": true,
+  "temporary_snapshot_and_build_caches_removed": true,
+  "limits": "Artifact checks establish completeness and evidence links, not correct tactical metrics, live provider behavior or native GUI/installer proof."
+}

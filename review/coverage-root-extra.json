@@ -1,0 +1,12 @@
+[
+  {
+    "path": "crates/coach-services/src/chatgpt.rs",
+    "status": "reviewed",
+    "reason": "Entire adapter and synthetic tests read: disabled defaults, opt-in feature, PKCE/state/nonce/issuer/audience/subject, loopback limits, token rotation, vault chunking, pinned revocation and build fixture contract. Existing all-feature tests pass; no live sign-in or vault values inspected."
+  },
+  {
+    "path": "crates/coach-services/tests/fixtures/synthetic-oidc-test-key.pem",
+    "status": "not reviewed",
+    "reason": "Pre-existing ignored private-key fixture was deliberately not read, printed or copied under the no-credential-read constraint. Public fixture README marks it synthetic; cached test compilation uses it. Fresh-clone proof generated an independent throwaway key only inside review/snapshot."
+  }
+]

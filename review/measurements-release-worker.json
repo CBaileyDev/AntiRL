@@ -1,0 +1,47 @@
+[
+  {
+    "fixture": 1,
+    "source_bytes": 778674,
+    "exit_code": 0,
+    "duration_s": 0.981,
+    "stdout_bytes": 3229472,
+    "environment": "Release Windows parser-worker branch; no GUI, service, vault or provider initialized. Invoked directly, so job-object parent limits not measured.",
+    "frames": 1883,
+    "players": 4,
+    "events": 16,
+    "metric_count": 64,
+    "duration_seconds": 201.98040771484375,
+    "live_play_seconds": 135.14991188049316,
+    "mode": "2v2"
+  },
+  {
+    "fixture": 2,
+    "source_bytes": 2175975,
+    "exit_code": 0,
+    "duration_s": 3.641,
+    "stdout_bytes": 9323947,
+    "environment": "Release Windows parser-worker branch; no GUI, service, vault or provider initialized. Invoked directly, so job-object parent limits not measured.",
+    "frames": 3803,
+    "players": 6,
+    "events": 36,
+    "metric_count": 96,
+    "duration_seconds": 403.04815673828125,
+    "live_play_seconds": 303.46720123291016,
+    "mode": "3v3"
+  },
+  {
+    "fixture": 3,
+    "source_bytes": 1352884,
+    "exit_code": 0,
+    "duration_s": 1.793,
+    "stdout_bytes": 5780614,
+    "environment": "Release Windows parser-worker branch; no GUI, service, vault or provider initialized. Invoked directly, so job-object parent limits not measured.",
+    "frames": 2364,
+    "players": 6,
+    "events": 27,
+    "metric_count": 96,
+    "duration_seconds": 254.90016174316406,
+    "live_play_seconds": 170.15465545654297,
+    "mode": "3v3"
+  }
+]

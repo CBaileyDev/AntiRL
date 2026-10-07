@@ -1,0 +1,23 @@
+[
+  {
+    "fixture": 1,
+    "frames": 1883,
+    "null_ball_frames": 3,
+    "live_null_ball_frames": 0,
+    "positive_overtime_clock_frames": 0
+  },
+  {
+    "fixture": 2,
+    "frames": 3803,
+    "null_ball_frames": 5,
+    "live_null_ball_frames": 0,
+    "positive_overtime_clock_frames": 0
+  },
+  {
+    "fixture": 3,
+    "frames": 2364,
+    "null_ball_frames": 4,
+    "live_null_ball_frames": 0,
+    "positive_overtime_clock_frames": 0
+  }
+]

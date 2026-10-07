@@ -1,0 +1,131 @@
+[
+  {
+    "id": "J-001",
+    "challenge": "Look for any viable next action before declaring the home core flow broken.",
+    "reviewLastMatchVisible": true,
+    "reviewButton": {
+      "x": 1008.890625,
+      "y": 155,
+      "width": 198.109375,
+      "height": 45
+    },
+    "mainText": "Nova\n2V2 COMPETITIVE\nDiamond II\n\n40 local matches parsed from full replay telemetry. Zero guessed statistics.\n\nReview Last Match\nCalibrate Profile\nOVERALL WIN RATE\n65%\nAcross 40 tracked matches\nAVERAGE BOOST LEVEL\n42.6%\nContext dependent\nLegacy equal-match mean; weights unavailable\nBOOSTING AT SPEED\n12.4s\nBoost-active time at ≥2200 uu/s\nDEFENSIVE HALF SHARE\n54.2%\nActive play behind midfield line\nRecent Matches\n\nClick any match to launch the broadcast 3D Replay Studio\n\nView All (40)\n1v1\nDFH Stadium\nDuration: 5:17 • 2 Players\nDEFEAT\n2 - 3\n2v2\nMannfield\nDuration: 5:30 • 4 Players\nVICTORY\n3 - 1\n3v3\nDFH Stadium\nDuration: 5:43 • 6 Players\nVICTORY\n3 - 1\n1v1\nMannfield\nDuration: 5:56 • 2 Players\nDEFEAT\n2 - 3"
+  },
+  {
+    "id": "J-002",
+    "challenge": "Determine whether chat is actually usable at720p, then constrain claim to lost reading height.",
+    "thread": {
+      "x": 277,
+      "y": 393.75,
+      "width": 970,
+      "height": 191.25
+    },
+    "composer": {
+      "x": 295,
+      "y": 637,
+      "width": 878,
+      "height": 42
+    },
+    "composerTag": "INPUT",
+    "composerVisible": true
+  },
+  {
+    "id": "J-003",
+    "challenge": "Inspect canvas and keyboard alternative while remeasuring the mouse transport belowfold.",
+    "scrubber": {
+      "x": 301,
+      "y": 966,
+      "width": 922,
+      "height": 16
+    },
+    "canvas": {
+      "x": 285,
+      "y": 196,
+      "width": 954,
+      "height": 595.5
+    },
+    "canvasTabindex": "1"
+  },
+  {
+    "id": "J-004",
+    "challenge": "At1440x900, see whether Review is absent/blocked or merely subordinated to collapsed diagnostics.",
+    "review": {
+      "x": 1121,
+      "y": 529.5,
+      "width": 201.28125,
+      "height": 19.5
+    },
+    "diagnostics": 5,
+    "allCollapsed": true
+  },
+  {
+    "id": "K-001",
+    "challenge": "ARIA dialog attributes might be mitigated by actual focus/inert behavior; test rather than infer.",
+    "error": "locator.evaluate: Error: strict mode violation: locator('.side-nav') resolved to 3 elements:\n    1) <nav class=\"side-nav\">…</nav> aka getByText('OverviewReplay')\n    2) <nav class=\"side-nav\">…</nav> aka getByText('Coach ChatProgress &')\n    3) <nav class=\"side-nav\">…</nav> aka getByRole('navigation').filter({ hasText: 'Settings' })\n\nCall log:\n\u001b[2m  - waiting for locator('.side-nav')\u001b[22m\n"
+  },
+  {
+    "id": "K-002",
+    "challenge": "Unassociated visual labels do not necessarily mean an empty computed accessible name; inspect the ARIA tree.",
+    "error": "locator.ariaSnapshot: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.settings-pane')\u001b[22m\n"
+  },
+  {
+    "id": "K-003",
+    "challenge": "Check actual computed text uses and background rather than token ratios alone.",
+    "uses": [
+      {
+        "text": "40 local matches parsed from full replay telemetry. Zero guessed statistics.",
+        "color": "rgb(100, 116, 139)",
+        "size": "12.5px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "OVERALL WIN RATE",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Across 40 tracked matches",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "AVERAGE BOOST LEVEL",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Legacy equal-match mean; weights unavailable",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "BOOSTING AT SPEED",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Boost-active time at ≥2200 uu/s",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      },
+      {
+        "text": "DEFENSIVE HALF SHARE",
+        "color": "rgb(100, 116, 139)",
+        "size": "11px",
+        "parentBackground": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "text": "Active play behind midfield line",
+        "color": "rgb(100, 116, 139)",
+        "size": "11.5px",
+        "parentBackground": "rgb(18, 23, 34)"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+import original from '../app/playwright.config';
+export default {...original,testDir:'../app/tests',outputDir:'./playwright-results',reporter:[['list'],['html',{outputFolder:'./playwright-report',open:'never'}]],use:{...original.use,launchOptions:{channel:'chrome',args:process.env.REVIEW_SOFTWARE==='1'?['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']:[]}},webServer:{...original.webServer,cwd:new URL('../app',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1')}};

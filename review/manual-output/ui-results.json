@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic",
+  "checks": [
+    "ring percentages and unknown",
+    "safe Markdown tables and links",
+    "wheel and PageUp streaming pause",
+    "selection and resize anchor",
+    "late callback rejected after new chat",
+    "explicit bottom follow",
+    "cancelled partial retention",
+    "export visible snapshot",
+    "onboarding unknown and optional goals/hours"
+  ],
+  "errors": []
+}

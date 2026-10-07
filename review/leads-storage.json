@@ -1,0 +1,112 @@
+{
+  "6-opener": {
+    "status": "confirmed",
+    "findings": [
+      "M-001"
+    ],
+    "detail": "Blanket HTTP/HTTPS/mailto capability confirmed; no automatic exfiltration proven. Prompt injection assessed by AI reviewer."
+  },
+  "13-version": {
+    "status": "confirmed",
+    "findings": [
+      "B-005"
+    ],
+    "detail": "Executable weighted mixed-version proof; code ignores metric version."
+  },
+  "15": {
+    "status": "confirmed",
+    "findings": [
+      "B-006"
+    ],
+    "detail": "Executable date-only/ISO-local mismatch proof."
+  },
+  "20": {
+    "status": "confirmed",
+    "findings": [
+      "B-001"
+    ],
+    "detail": "Invalid JSON and NULL coach_body each prevent temp profile open. populate_db was inspected only, never run."
+  },
+  "21": {
+    "status": "confirmed",
+    "findings": [
+      "B-002"
+    ],
+    "detail": "Full parse/hash/query on every request; projection tables are written, source_matches.body used to aggregate instead. 400-match unchanged query ~1s."
+  },
+  "22": {
+    "status": "confirmed",
+    "findings": [
+      "F-004"
+    ],
+    "detail": "Direct async chat/analyze still run blocking context/storage/vault work before provider awaits."
+  },
+  "23": {
+    "status": "confirmed",
+    "findings": [
+      "B-003",
+      "B-004"
+    ],
+    "detail": "Identical body/coach_body plus projection copy, manifest per message, absent messages index proven."
+  },
+  "24": {
+    "status": "confirmed",
+    "findings": [
+      "F-005"
+    ],
+    "detail": "Storage zstd JSON -> Value; IPC Value -> ReplayAnalysis -> Tauri JSON; synthetic payload benchmark logged."
+  },
+  "25": {
+    "status": "confirmed",
+    "findings": [
+      "C-003"
+    ],
+    "detail": "Stat-only full-folder rescan with per-file unchanged events every 20s confirmed; no full hash/parse repeat on unchanged files."
+  },
+  "26-decode": {
+    "status": "confirmed",
+    "findings": [
+      "C-002"
+    ],
+    "detail": "In-process network decoding in camera/intelligence/reenrichment confirmed."
+  },
+  "26-validation": {
+    "status": "confirmed",
+    "findings": [
+      "C-001"
+    ],
+    "detail": "Parent lacks typed domain revalidation; worker itself validates and parent hash-checks."
+  },
+  "26-output-bound": {
+    "status": "refuted",
+    "findings": [],
+    "detail": "stdout take(MAX_OUTPUT_SIZE+1), oversize atomic flag, kill and final byte-size check enforce 128MiB bound. Output JSON materialization still high memory but not unbounded."
+  },
+  "27": {
+    "status": "confirmed",
+    "findings": [
+      "M-004",
+      "M-005"
+    ],
+    "detail": "execFile no memory sandbox/minimal env; Playwright devDependency path import confirmed."
+  },
+  "28": {
+    "status": "confirmed",
+    "findings": [
+      "F-001",
+      "F-002",
+      "F-003"
+    ],
+    "detail": "JSON domain, open merge, substring errors, string enums/version literals and unconditional SIWC dependencies confirmed. Detailed metric/app include concern covered parser reviewer."
+  },
+  "47-icons": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Only icon.ico/icon.png exist; config lists absent PNG sizes and icns. Root records actual build portability failure."
+  },
+  "47-schema": {
+    "status": "confirmed",
+    "findings": [],
+    "detail": "Linux schema not ignored; Linux generation not executed on Windows. Root tracks portability lead."
+  }
+}

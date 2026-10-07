@@ -1,0 +1,344 @@
+{
+  "styles_lines": 4042,
+  "selector_redefinitions": {
+    "button": 2,
+    ".nav-section": 2,
+    ".top-bar": 3,
+    ".top-title": 2,
+    ".content-pane": 3,
+    ".kpi-card": 3,
+    ".recent-matches-list": 2,
+    ".match-strip-item": 2,
+    ".onboarding-card": 2,
+    ".onboarding-header": 2,
+    ".onboarding-body": 2,
+    ".onboarding-footer": 2,
+    ".chat-messages": 2,
+    ".card-title": 2,
+    ".grid-2": 2,
+    ".grid-3": 2,
+    ".studio-sidebar": 2,
+    ".finding-desc": 2,
+    ".recent-matches-card": 2,
+    ".overview-hero-card": 2,
+    "select.chat-input": 2,
+    ".pg-grid": 2,
+    ".studio-page .studio-layout": 2,
+    ".studio-main .playback-right-controls": 2,
+    ".studio-main .camera-btn-group": 2,
+    ".studio-main .camera-toggle-btn": 2,
+    ".studio-page .studio-sidebar": 3,
+    ".studio-page .studio-sidebar .card": 2,
+    ".coach-markdown pre": 2,
+    ".legacy-advice": 2,
+    ".chat-message-list": 2,
+    ".practice-panel textarea": 2,
+    ".coach-title-input": 2,
+    ".coach-tools": 2,
+    ".coach-evidence-detail th": 2,
+    ".coach-page .chat-bubble": 2,
+    ".coach-markdown h1": 2,
+    ".coach-markdown h2": 2,
+    ".coach-markdown h3": 2,
+    ".coach-markdown h4": 2,
+    ".transfer-cycle": 2,
+    ".transfer-checkin": 2,
+    ".transfer-measurements": 2,
+    ".transfer-windows": 2,
+    ".camera-settings": 3,
+    ".reference-settings": 3,
+    ":is(.intelligence-panel": 2,
+    ".detector-panel)\n  :is(input": 2
+  },
+  "distinct_font_size_values": [
+    "1.35rem",
+    "10.5px",
+    "10px",
+    "11.5px",
+    "11px",
+    "12.5px",
+    "12px",
+    "13.5px",
+    "13px",
+    "14.5px",
+    "14px",
+    "15.5px",
+    "15px",
+    "16px",
+    "17px",
+    "18px",
+    "1rem",
+    "20px",
+    "24px",
+    "25px",
+    "26px",
+    "7px",
+    "8px",
+    "9.5px",
+    "9px"
+  ],
+  "inline_style_openers": 156,
+  "possible_unused_classes": [
+    "badge-preview",
+    "badge-review",
+    "badge-strength",
+    "boost-label",
+    "boost-mini-bar",
+    "boost-mini-fill",
+    "boost-val",
+    "brand",
+    "brand-badge",
+    "brand-glyph",
+    "brand-period",
+    "brand-word",
+    "coach-chat-toolbar",
+    "drill-label",
+    "finding-badge",
+    "finding-desc",
+    "finding-header",
+    "finding-item",
+    "finding-time",
+    "finding-title",
+    "goal-badge-row",
+    "goal-card",
+    "goal-card-top",
+    "goal-category-tag",
+    "goal-coach-btn",
+    "goal-drill-box",
+    "goal-grid",
+    "goal-header-actions",
+    "goal-icon-badge",
+    "goal-metrics-row",
+    "goal-name",
+    "goal-pct-badge",
+    "goal-progress-fill",
+    "goal-progress-track",
+    "goal-title-wrap",
+    "goal-tracker-card",
+    "goal-tracker-header",
+    "grid-4",
+    "metric-arrow",
+    "metric-col",
+    "metric-label",
+    "metric-val",
+    "mmr-row",
+    "mmr-tag",
+    "playlist-header",
+    "playlist-name",
+    "stat-box",
+    "stat-hint",
+    "stat-label",
+    "stat-value",
+    "telemetry-boost-dial",
+    "tier-chip",
+    "tier-scroller",
+    "titlebar-badge",
+    "titlebar-center-label"
+  ],
+  "literal_hex_colors_outside_root": 55,
+  "contrast": [
+    {
+      "fg": "#64748b",
+      "bg": "#080a0f",
+      "ratio": 4.161
+    },
+    {
+      "fg": "#64748b",
+      "bg": "#121722",
+      "ratio": 3.767
+    },
+    {
+      "fg": "#64748b",
+      "bg": "#182030",
+      "ratio": 3.426
+    },
+    {
+      "fg": "#64748b",
+      "bg": "#6366f1",
+      "ratio": 1.065
+    },
+    {
+      "fg": "#64748b",
+      "bg": "#4f46e5",
+      "ratio": 1.321
+    },
+    {
+      "fg": "#6366f1",
+      "bg": "#080a0f",
+      "ratio": 4.432
+    },
+    {
+      "fg": "#6366f1",
+      "bg": "#121722",
+      "ratio": 4.013
+    },
+    {
+      "fg": "#6366f1",
+      "bg": "#182030",
+      "ratio": 3.65
+    },
+    {
+      "fg": "#6366f1",
+      "bg": "#6366f1",
+      "ratio": 1.0
+    },
+    {
+      "fg": "#6366f1",
+      "bg": "#4f46e5",
+      "ratio": 1.408
+    },
+    {
+      "fg": "#818cf8",
+      "bg": "#080a0f",
+      "ratio": 6.638
+    },
+    {
+      "fg": "#818cf8",
+      "bg": "#121722",
+      "ratio": 6.01
+    },
+    {
+      "fg": "#818cf8",
+      "bg": "#182030",
+      "ratio": 5.465
+    },
+    {
+      "fg": "#818cf8",
+      "bg": "#6366f1",
+      "ratio": 1.497
+    },
+    {
+      "fg": "#818cf8",
+      "bg": "#4f46e5",
+      "ratio": 2.108
+    },
+    {
+      "fg": "#94a3b8",
+      "bg": "#080a0f",
+      "ratio": 7.722
+    },
+    {
+      "fg": "#94a3b8",
+      "bg": "#121722",
+      "ratio": 6.992
+    },
+    {
+      "fg": "#94a3b8",
+      "bg": "#182030",
+      "ratio": 6.358
+    },
+    {
+      "fg": "#94a3b8",
+      "bg": "#6366f1",
+      "ratio": 1.742
+    },
+    {
+      "fg": "#94a3b8",
+      "bg": "#4f46e5",
+      "ratio": 2.452
+    },
+    {
+      "fg": "#a8b4c8",
+      "bg": "#080a0f",
+      "ratio": 9.454
+    },
+    {
+      "fg": "#a8b4c8",
+      "bg": "#121722",
+      "ratio": 8.56
+    },
+    {
+      "fg": "#a8b4c8",
+      "bg": "#182030",
+      "ratio": 7.785
+    },
+    {
+      "fg": "#a8b4c8",
+      "bg": "#6366f1",
+      "ratio": 2.133
+    },
+    {
+      "fg": "#a8b4c8",
+      "bg": "#4f46e5",
+      "ratio": 3.002
+    },
+    {
+      "fg": "#a5b4fc",
+      "bg": "#080a0f",
+      "ratio": 9.932
+    },
+    {
+      "fg": "#a5b4fc",
+      "bg": "#121722",
+      "ratio": 8.993
+    },
+    {
+      "fg": "#a5b4fc",
+      "bg": "#182030",
+      "ratio": 8.178
+    },
+    {
+      "fg": "#a5b4fc",
+      "bg": "#6366f1",
+      "ratio": 2.241
+    },
+    {
+      "fg": "#a5b4fc",
+      "bg": "#4f46e5",
+      "ratio": 3.154
+    },
+    {
+      "fg": "#f8fafc",
+      "bg": "#080a0f",
+      "ratio": 18.924
+    },
+    {
+      "fg": "#f8fafc",
+      "bg": "#121722",
+      "ratio": 17.135
+    },
+    {
+      "fg": "#f8fafc",
+      "bg": "#182030",
+      "ratio": 15.582
+    },
+    {
+      "fg": "#f8fafc",
+      "bg": "#6366f1",
+      "ratio": 4.269
+    },
+    {
+      "fg": "#f8fafc",
+      "bg": "#4f46e5",
+      "ratio": 6.009
+    },
+    {
+      "fg": "#ffffff",
+      "bg": "#080a0f",
+      "ratio": 19.799
+    },
+    {
+      "fg": "#ffffff",
+      "bg": "#121722",
+      "ratio": 17.928
+    },
+    {
+      "fg": "#ffffff",
+      "bg": "#182030",
+      "ratio": 16.303
+    },
+    {
+      "fg": "#ffffff",
+      "bg": "#6366f1",
+      "ratio": 4.467
+    },
+    {
+      "fg": "#ffffff",
+      "bg": "#4f46e5",
+      "ratio": 6.288
+    }
+  ],
+  "htmlFor_occurrences": 1,
+  "wrapped_labels_exist": true,
+  "user_select_none_in_body": true
+}

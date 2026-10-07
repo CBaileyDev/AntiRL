@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "source": "one real local replay; no upload",
+  "clip_bytes": 242195,
+  "recorded_frames": 1883,
+  "player_count": 4,
+  "card_fields": 5,
+  "artifact": "schematic WebM from recorded positions; selected player highlighted; not game capture",
+  "live_delivery": "NOT RUN"
+}

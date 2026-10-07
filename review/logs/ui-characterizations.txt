@@ -1,0 +1,74 @@
+[
+  {
+    "name": "citation jump loses timestamp",
+    "expected": 84.6,
+    "actual": 0,
+    "confirmed": true
+  },
+  {
+    "name": "delete dialog focus and Escape",
+    "focusInside": false,
+    "remainsAfterEscape": 1,
+    "focused": {
+      "tag": "TR",
+      "text": "Ranked 2v2 · Evening session  2026-10-06T23:15:00.000Z · Mannfield2v25:303 - 1NovaOrbitKiteAtlas Studio"
+    },
+    "confirmed": true
+  },
+  {
+    "name": "Settings edits lost after import refresh",
+    "expected": "Unsaved Draft",
+    "actual": "Nova",
+    "confirmed": true
+  },
+  {
+    "name": "replay request ordering",
+    "expected": "Ranked 2v2 · Evening session",
+    "actual": "Ranked 1v1 · Overtime finish",
+    "confirmed": true
+  },
+  {
+    "name": "prefill resurrected after navigating away",
+    "initial": "Review match review-match-0 for Nova [player_id=review:you]. Find useful priorities from recorded metrics and cited events. Separate observations from interpretations.",
+    "actual": "Review match review-match-0 for Nova [player_id=review:you]. Find useful priorities from recorded metrics and cited events. Separate observations from interpretations.",
+    "confirmed": true
+  },
+  {
+    "name": "navigation cancels in-flight response",
+    "cancelCalls": 1,
+    "confirmed": true
+  },
+  {
+    "name": "viewer paused and playing performance",
+    "pausedRendersIn4s": 25,
+    "pausedCpu": {
+      "count": 25,
+      "mean": 2.4119999980926514,
+      "p50": 2.099999964237213,
+      "p95": 3.199999988079071,
+      "max": 7.899999976158142
+    },
+    "playingCpu": {
+      "count": 389,
+      "mean": 1.1768637527843366,
+      "p50": 1.0999999642372131,
+      "p95": 1.800000011920929,
+      "max": 7.899999976158142
+    },
+    "playingIntervals": {
+      "count": 388,
+      "mean": 14.278092783443707,
+      "p50": 10.5,
+      "p95": 66.59999996423721,
+      "max": 72.90000003576279
+    },
+    "renderSize": [
+      774,
+      483
+    ],
+    "meshCount": 110,
+    "renderer": "WebGL",
+    "quality": "high",
+    "environment": "Headless Chrome on current Windows machine, synthetic 15Hz four/six-car replay; CPU submissions, not GPU timestamps"
+  }
+]

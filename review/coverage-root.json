@@ -1,0 +1,19 @@
+[
+ {"path":".github/workflows/quality.yml","status":"reviewed","reason":"Every job/step read; local original-command matrix and anonymous GitHub job API verify all five failed at install."},
+ {"path":"app/package.json","status":"reviewed","reason":"All scripts/dependencies/package manager read; own build/lint/format/unit/test/audit/outdated commands executed."},
+ {"path":"app/pnpm-workspace.yaml","status":"reviewed","reason":"Placeholder inspected and clean git archive frozen install failure reproduced."},
+ {"path":"app/playwright.config.ts","status":"reviewed","reason":"Original browser/timeout/retry/server/report configuration read; original and review-owned wrapper runs executed."},
+ {"path":"app/vite.config.ts","status":"reviewed","reason":"Original root/dev server settings read; build output bytes and main chunk measured."},
+ {"path":"Cargo.toml","status":"reviewed","reason":"Workspace membership/lock and crate commands verified; duplicate graph checked."},
+ {"path":"src-tauri/tauri.conf.json","status":"reviewed","reason":"Build/CSP/window/icon configuration read; original Windows MSI and NSIS build executed without launch."},
+ {"path":"docs/PROGRESS.md","status":"reviewed","reason":"Status claims/test/build/provider verification compared with source, HARDENING and current results."},
+ {"path":"docs/HARDENING_CHECKLIST.md","status":"reviewed","reason":"Status/remaining gates and source limits compared with code and PROGRESS."},
+ {"path":"docs/validation/coaching-corpus.json","status":"reviewed","reason":"All declarative contract rows and absence of runner examined; AI characterization proves missing gates."},
+ {"path":"README.md","status":"reviewed","reason":"Build commands, architecture and release/validation claims compared with current source and outputs."},
+ {"path":"crates/coach-services/tests/fixtures/synthetic-oidc-jwks.json","status":"reviewed","reason":"Public synthetic RSA JWK fields compared with signed test contract; random generated private key does not match this public fixture."},
+ {"path":"crates/coach-services/tests/fixtures/README.md","status":"reviewed","reason":"Fixture provenance read; pre-existing ignored private fixture not inspected."},
+ {"path":"crates/coach-services/tests/review_ai.rs","status":"reviewed","reason":"Review-generated source-extracted helper characterization and public service probes inspected; no provider calls."},
+ {"path":"crates/coach-services/tests/review_storage.rs","status":"reviewed","reason":"Review-generated disposable profile/migration/query/storage/payload characterizations inspected and executed by owner agent."},
+ {"path":"crates/coach-services/tests/review_experimental.rs","status":"reviewed","reason":"Review-generated synthetic model/scoping/deadline probes inspected; safe finite test child only."},
+ {"path":"src-tauri/tests/review_contracts.rs","status":"reviewed","reason":"Actual error/DTO modules tested via review-only include wrapper; module source remains untouched."}
+]

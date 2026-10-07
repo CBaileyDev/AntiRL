@@ -1,0 +1,1 @@
+Studio mesh checks passed: Octane shape/materials, true tire radius, both goal transforms, lower cove/corner contacts, four tires within 7 mm.

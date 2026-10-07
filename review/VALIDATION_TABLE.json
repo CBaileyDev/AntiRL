@@ -1,0 +1,314 @@
+[
+  {
+    "id": "A-001",
+    "challenge": "Try a valid replay with only one boost flag; confirm rejection comes from duplicate IDs rather than fixture shape.",
+    "evidence": "review/logs/validation-metrics-independent.txt",
+    "outcome": "Control boost33 validates; boost0 creates two same m:boost:steam:1:0.000 IDs and fails validate_analysis. Direct collector copied verbatim; no real-file frequency claim.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "A-002",
+    "challenge": "Check whether missing-player time is actually weighted into metric, or only stretches event interval; distinguish absent actor from normal gap.",
+    "evidence": "review/logs/validation-metrics-independent.txt",
+    "outcome": "Observed low-boost seconds6 but event0..12 across absent player; no claim that weighted resource metric doubles. Wrong evidence interval survives collector output.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "A-003",
+    "challenge": "Check gap exclusion and exposure reset separately; rule out metric weighting as root cause.",
+    "evidence": "review/logs/validation-metrics-independent.txt",
+    "outcome": "0..5 exposure spans1.2..5 dropped gap while live measured seconds1.20000005; threshold accumulated before gap and start persists. Wrong event span confirmed.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "B-001",
+    "challenge": "Try healthy multi-row profile, then corrupt exactly one row; check transactional projection rollback as possible recovery.",
+    "evidence": "review/logs/validation-storage-independent.txt; analytics.rs projection tests",
+    "outcome": "Healthy profile opens; invalid JSON and NULL coach_body each abort entire open. Projection transaction retains old snapshot but unconditional startup reconcile still returns error.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "B-002",
+    "challenge": "Reconcile before timing and keep returned context nearly constant; rule out first-time insert cost.",
+    "evidence": "review/logs/validation-storage-independent.txt",
+    "outcome": "Second unchanged query40rows104ms vs400rows1053ms, ~7.6KB context; full source parse/hash under locks remains. Debug environment timing, no production10k latency asserted.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "B-005",
+    "challenge": "Check normalize_analysis compatibility aliases and whether aggregate records version exemptions; seed valid weighted legacy/current records.",
+    "evidence": "review/logs/validation-storage-independent.txt; analytics.rs:aggregate",
+    "outcome": "Both versions combine into avg_boost50 from0/100 and report metrics-2. Aliases do not gate incompatible measurement methods; wrongness depends mixed-version semantics, scope confirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "B-007",
+    "challenge": "Use one tied and one unknown-score shared match; check denominator selection instead of assuming ties lost.",
+    "evidence": "review/logs/validation-storage-independent.txt",
+    "outcome": "shared_matches2,wins0,losses2,win_rate0; source loss=matches-wins. Unknown outcome counted as loss confirmed, not just rounding.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "C-002",
+    "challenge": "Look for file caps/CRC/panic handling and spawn_blocking around native calls; try to refute absence of process containment.",
+    "evidence": "replay-core/lib.rs:57-83,1448-1456; camera.rs:107; intelligence.rs:213; commands.rs:483-491",
+    "outcome": "64MiB regular-file reads, CRC, frame caps and panic catch exist; native calls use blocking pool. None supplies worker job memory/process boundary for network decode. Containment bypass confirmed; OOM/exploit consequence untested. Keep P1 likely risk, not demonstrated resource crash.",
+    "severity": "P1",
+    "confidence": "likely"
+  },
+  {
+    "id": "F-002",
+    "challenge": "Check whether typed SettingsDto validates before persistence, and whether bad data survives returned error.",
+    "evidence": "review/logs/validation-ipc-independent.txt; review/logs/validation-storage-independent.txt",
+    "outcome": "Public save persists chat_model42; original DTO conversion fails Internal; wrong type remains. Native UI normally supplies strings, but IPC open Value can commit invalid settings.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "F-005",
+    "challenge": "Compare worker raw output, stored compact metadata, compressed frame blob and typed opened payload; rule out just debug pretty formatting.",
+    "evidence": "review/logs/review-real-replay-payload-absolute.txt; review/logs/release-worker-three-fixtures.txt",
+    "outcome": "Real six-player fixture typed JSON9,323,673B, compressedframes2,033,274B, compact160,468B; releaseworker9,323,947B. Repeated Value/typed/string conversions measured. IPC byte measurement uses serializer not native CDP network trace; scale confirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "M-004",
+    "challenge": "Check guild/request/CDN/download/time/output limits; inspect executable branch for an internal memory sandbox.",
+    "evidence": "integrations/discord/server.mjs:98-111; CLI parse branch; worker_limits.rs:69-76",
+    "outcome": "Signed allowlisted requests/download64MiB/45s/maxBuffer128MiB exist. Generic execFile has no job/cgroup/memory boundary or env allowlist; CLI does not self-attach worker limit. No malicious replay/OOM/exploit reproduced. P1 likely containment consequence.",
+    "severity": "P1",
+    "confidence": "likely"
+  },
+  {
+    "id": "D-001",
+    "challenge": "Use same fixture in one mode versus All; verify evidence IDs removed consistently and exact claim side-channel cannot restore match.",
+    "evidence": "review/logs/validation-ai-independent.txt",
+    "outcome": "Single mode retains selected match, All library72,361chars yields final47,801chars and no selected header/eventIDs. Evidence mapping prune is honest but removes core target; reproduced without provider.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "D-002",
+    "challenge": "Try wrong nonempty metric_claim to prove validator exists; then omit claims while retaining valid evidence and all text fields.",
+    "evidence": "review/logs/validation-ai-independent.txt",
+    "outcome": "Incorrect structured claim rejected, exact claim accepted, empty claims + invented prose99.9/87grade/4weeks passes. Gate defect reproduced; no real provider output claimed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "D-003",
+    "challenge": "Search both complete and partial branches for policy/number/citation repair; consider extraction filtering sufficient.",
+    "evidence": "ai.rs:952-983,1313-1338,1598-1611; review/logs/validation-ai-independent.txt",
+    "outcome": "cited_ids excludes nonexistent ID from metadata but preserves original text; only pack filter exists. Prompt forbids unsupported claims but code lacks enforcement. Structural gate absence confirmed; probability of cloud violation unmeasured.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "D-006",
+    "challenge": "Try canonical final code, spaced variant, longer token and streamed callback independently.",
+    "evidence": "review/logs/validation-ai-independent.txt",
+    "outcome": "Canonical final code withheld; spaced/extended forms unchanged; callback exposes unverified canonical code before final filter. No fake provider network; actual stream decoder callback tested.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "D-007",
+    "challenge": "Reproduce through public offline chat, not only extracted helper; use normal profile as control.",
+    "evidence": "review/logs/validation-ai-independent.txt",
+    "outcome": "Real CoachService saved synthetic1match and player_name containing Library:999; public offline chat reports999. Typed manifest remains1. Wrong deterministic number confirmed.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "D-008",
+    "challenge": "Inspect role placement, limits, data-never-instructions policy and fixed tool scope; separate injection surface from successful takeover.",
+    "evidence": "ai.rs:303-347,401-415,548-552,902-905; review/logs/validation-ai-independent.txt",
+    "outcome": "Untrusted data is system content; prose reminder and field lengths reduce risk but no role boundary. Only deterministic delimiter corruption proven; no model instruction takeover/exfiltration tested. Downgrade to P2 likely boundary risk.",
+    "severity": "P2",
+    "confidence": "likely"
+  },
+  {
+    "id": "D-012",
+    "challenge": "Request a supported30s span with450real public-service frame rows; use short window control and inspect continuation.",
+    "evidence": "review/logs/validation-ai-independent.txt",
+    "outcome": "120rows0..7.933s,11,367B for30s request; no next_cursor/actualspan. Short8s fits. Separate16KB result drop is source-verified; do not imply full multi-car payload measured.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "L-001",
+    "challenge": "Run cached developer install and fresh archived source using same unmodified command; rule out network/lockfile causes.",
+    "evidence": "review/logs/install-original.txt; review/logs/fresh-install-original.txt; review/logs/fresh-install-workaround.txt",
+    "outcome": "Cached install passes; fresh install exits1 ERR_PNPM_IGNORED_BUILDS esbuild. strict-dep-builds=false completes. Placeholder build-policy root cause confirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "L-002",
+    "challenge": "Check pre-existing ignored key masking; try fresh archive then newly generated key alone then matching synthetic JWKS pair.",
+    "evidence": "review/logs/fresh-all-features-original.txt; review/logs/fresh-all-features-workaround.txt; review/logs/fresh-all-features-paired-workaround.txt",
+    "outcome": "Fresh compile missing PEM101; key alone compiles but78pass1fails because checked-inJWKS matches differentkey. Paired throwawaykey+JWKS under review snapshot yields79pass2ignored. This is test fixture, not real credential.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "O-001",
+    "challenge": "Look for existing practice/fingerprint/drill pathways that would falsify no coaching loop.",
+    "evidence": "PracticePanel.tsx:111-178; IntelligencePanel; fresh Overview/Studio/Progress1440x900",
+    "outcome": "Practice saving, transfer and fingerprint drill creation exist. Defect is fragmented default path: user must choose/author focus; hero provides no player-relative moment verdict and cue. Keep P1 product judgment, not claim absence of all practice features.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-001",
+    "challenge": "Supply explicit absent identity and unknown scores separately; compare Progress correct membership check.",
+    "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; Overview.tsx:31-36",
+    "outcome": "Absent identity becomes100%VICTORY first player; unknown scores0-0DEFEAT. Progress excludes absent identity, so no intentional shared-result contract. P0 wrong personalized numbers retained.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-002",
+    "challenge": "Use primary_mode1v1 and distinct per-mode ranks; consider intentional universal2v2 overview.",
+    "evidence": "review/screenshots/before/overview-1440x900.png; Progress.tsx:25; Overview.tsx:27,43,58",
+    "outcome": "Fresh1s primary still2v2/DiamondII; headline win rate allmodes and metric sample2s. No UI indicates intentional fixed2s scope. P1 core coaching scope mismatch retained.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-003",
+    "challenge": "Distinguish actual zero from null and missing-report state; check formatter conditional.",
+    "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; review/screenshots/before/empty-progress-goals-1280x720.png",
+    "outcome": "Real component null report displays0%both. clampPct(n||0) also coerces explicitnull. P0 wrong numbers retained; absence should not be0.",
+    "severity": "P0",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-004",
+    "challenge": "Make later request resolve first and earlier resolve last; check route ID/generation ownership.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt",
+    "outcome": "Fast second2v2 selection overwritten by slow first1v1; deterministic deferred mock IPC reproduces. No real provider or appprofile needed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-005",
+    "challenge": "Click timestamp chip rather than generic OpenReplay; inspect requested time and final scrubber.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt",
+    "outcome": "Chip84.6 ends slider0. Callback drops time at Coach boundary. Parent accepts optionaltime; failure is not parser/frame rounding.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-006",
+    "challenge": "Refresh library/settings with unchanged backend profile while edit is dirty; verify automatic reset event.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt",
+    "outcome": "UnsavedDraft becomesNova after mockimport refresh. Reset effect depends objectidentity; actual field values unchanged. Draft-loss confirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-007",
+    "challenge": "Navigate normally during generation; distinguish explicit Stop cancellation and per-conversation state.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt",
+    "outcome": "Progress navigation invokes cancel_ai1; onUnmount alwayscancels, requestRefdropslate completion. Expected continuation is product judgment aligned full-heightcoach/replayreview; source/runtime action confirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-018",
+    "challenge": "Use viewer internal slider, then open Lab; challenge assumption parent gets scrub updates.",
+    "evidence": "review/PLAYHEAD_VALIDATION.json; review/logs/validation-playhead.txt; review/screenshots/validation/stale-lab-playhead.png",
+    "outcome": "Real-App slider320s vs simulationStart0. Eventexternal seek can update it, but internal scrubbing/playback cannot. Runtime proven.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "G-019",
+    "challenge": "Validate good start then nullable future gap; inspect backend gate and copiedrealframes to rule out actual common fixture crash.",
+    "evidence": "review/logs/review-frontend-probes-storage.txt; review/frontend-probe-results.json; review/FIXTURE_FRAME_VALIDATION.json; sim.rs:954-982",
+    "outcome": "Originalcomponent crashes contract-allowed live nullable futureball; preceding gate does not validatefuture actualplot. All3realfixtures nullballs are non-live and excluded; native successfulsim flow unverified. Downgrade toP1 confirmedcomponentcrash, explicitscope.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "H-001",
+    "challenge": "Inspect built dynamic viewerEngine chunk rather than assuming import syntax alone defeats all splitting.",
+    "evidence": "app/dist/assets/viewerEngine-Dk3gCjH9.js first imports; review/logs/frontend-build.txt; review/logs/measured-bundle.txt",
+    "outcome": "20.19KB dynamicwrapper imports Babylon constructors from1,767,683Bmain chunk. Some PBR/shader chunks are lazy; claim is core engine startup graph, not every Babylon asset eager. Fix wording Vite warning is Babylon scene dependency, not viewerEngine-specific.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "H-002",
+    "challenge": "Pause after settling; inspect document.hidden and low-quality mitigations; compare render counter over4s.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt; viewerScene.ts:798-820",
+    "outcome": "25renders/4s while foregroundpaused, highquality110meshes; intendedcap15fps. Hiddenearlyreturn/pixelcap exist. CPUsubmissionp953.2ms measured; noGPUtimestamps/energyclaim. P1 idle-render defect retained.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "J-001",
+    "challenge": "Look for callable next-action surface on Overview and compare sample/new-user states.",
+    "evidence": "review/screenshots/before/overview-1440x900.png; empty-overview-1280x720.png; Overview source",
+    "outcome": "Profilecalibration/KPIs dominate; recentmatchopen exists but no selected coachingfocus/drillloop. P1 prioritization judgment, consistent O001 not a codecrash.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "J-002",
+    "challenge": "Check whether administration collapses or height expands enough at1920x1080; inspect at720target.",
+    "evidence": "review/screenshots/before/coach-chat-1280x720.png; coach-chat-1920x1080.png; Coach source",
+    "outcome": "Controls remain prominent across widths; thread/composer constrained at720. Some drawers collapse, but conversation admin/context abovefold persists. P1 coreworkspace hierarchy judgment retained.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "J-003",
+    "challenge": "Check full-page capture versus actual viewport and whether transport is sticky.",
+    "evidence": "review/DESIGN_VALIDATION.json; review/screenshots/before/replay-studio-1280x720.png",
+    "outcome": "Computed scrubbar y966 at viewport720; canvas dominatesand controlnotsticky. Full-page image contains transport but actualwindowrequires scroll. P1 coreplayback usability retained.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "J-004",
+    "challenge": "Look for collapsedLab state or orderingconditional that moves review ahead of experiments.",
+    "evidence": "ReplayStudio.tsx:169-186; review/screenshots/before/replay-studio-1440x900.png",
+    "outcome": "Panels are collapsed details but fiveprecede ReviewNext, competingfornavigation and prime rail. ProposedLabtabsolvesIA. P1 core reviewhierarchy judgment, notmodelscientificverdict.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "K-001",
+    "challenge": "Use declared aria-modal then actually Tab/Escape/onboarding; check whether native dialog or root trap supplies behavior.",
+    "evidence": "review/UI_VALIDATION.json; review/logs/ui-characterizations.txt; review/DESIGN_VALIDATION.json",
+    "outcome": "Deleteinitialfocusoutside/Escapeignored/TabTRoutside; onboarding38Tabsreachesnav/titlebar/background. aria-modaldoesnotimplementinert/focus. P1keyboardblockerconfirmed.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "K-002",
+    "challenge": "Check implicit label nesting, aria-label/title/placeholder names rather than simply searching htmlFor.",
+    "evidence": "review/DESIGN_VALIDATION.json labelsandnavsemantics; Settings source",
+    "outcome": "Sevencontrols labels.length0, noaria-label. Threehaveplaceholderfallbacknamepossible, but visiblelabelnotprogrammaticallyassociated; replayfolder/provider/model/notetext nofallback. P1 realcorecontrols inaccessible; exactclaim is missingprogrammaticlabels, not sevenemptycomputednames.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  },
+  {
+    "id": "K-003",
+    "challenge": "Check text versus nontext contrast and font-size exemptions; measure against several actualpalette surfaces.",
+    "evidence": "review/VALIDATION_CONTRAST.json; styles.css smalltext; Coach citation inlineaccent",
+    "outcome": "Small faint/accenttext below4.5:1 onnavy surfaces; badges/statusnormalfont sizes lack large-text exemption. Do notapplytext4.5 criterionto decorativelines or nontextcontrols. P1textcontrast finding retained.",
+    "severity": "P1",
+    "confidence": "confirmed"
+  }
+]

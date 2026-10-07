@@ -1,0 +1,1 @@
+{"findings": 183, "severities": {"P0": 7, "P1": 35, "P2": 129, "P3": 12}, "required_files": 109, "commands": 119, "leads": 48}

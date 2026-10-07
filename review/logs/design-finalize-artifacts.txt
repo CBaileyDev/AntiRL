@@ -1,0 +1,39 @@
+{
+  "areas": {
+    "I": "needs work",
+    "J": "needs work",
+    "K": "broken",
+    "O": "needs work"
+  },
+  "findings": 31,
+  "before_captures": 66,
+  "mockup_captures": 18,
+  "mockup_console_errors": 0,
+  "horizontal_overflow": 0,
+  "control_contrast_checks": 156,
+  "control_contrast_failures": 0,
+  "nested_interactive": 0,
+  "mockup_fixture": {
+    "library": 86,
+    "2v2": 56,
+    "1v1": 15,
+    "3v3": 15,
+    "real_app_harness_library": 40
+  },
+  "disclaimer_candidate_lines": 137,
+  "unavailable_occurrences": 40,
+  "source_changes": false,
+  "prohibited_calls": false,
+  "not_run": [
+    "NVDA/JAWS speech",
+    "native DPI/touch matrix",
+    "real-provider/pricing validation",
+    "causal drill effectiveness",
+    "production redesign implementation"
+  ],
+  "independent_validation": "review/DESIGN_INDEPENDENT_VALIDATION.json",
+  "adjustments": [
+    "review/validation-design-adjustments.json",
+    "review/validation-design-contrast-adjustments.json"
+  ]
+}

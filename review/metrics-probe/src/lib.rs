@@ -1,0 +1,1924 @@
+//! Local-only replay decoding and evidence extraction. Coordinates are Rocket League
+//! Unreal units, Z-up, with Blue defending negative Y. No game process access is used.
+#[path = "C:/Users/barke/Documents/AntiRL/crates/replay-core/src/types.rs"]
+mod types;
+pub use types::*;
+pub const METRIC_DICTIONARY: &str = include_str!("C:/Users/barke/Documents/AntiRL/app/src/data/metrics.json");
+
+use boxcars::{HeaderProp, ParserBuilder, RemoteId};
+use sha2::{Digest, Sha256};
+use std::{
+    collections::HashMap,
+    fs,
+    io::Read,
+    path::{Path, PathBuf},
+};
+use subtr_actor::{
+    Collector, ProcessorView, ReplayProcessor, StatsCollector, SubtrActorResult, TimeAdvance,
+};
+
+pub const MAX_FILE_BYTES: u64 = 64 * 1024 * 1024;
+pub const MAX_FRAMES: usize = 180_000;
+pub const RENDER_INTERVAL: f64 = 1.0 / 15.0;
+
+fn prop<'a>(props: &'a [(String, HeaderProp)], key: &str) -> Option<&'a HeaderProp> {
+    props
+        .iter()
+        .find(|(name, _)| name == key)
+        .map(|(_, value)| value)
+}
+
+fn string(props: &[(String, HeaderProp)], key: &str) -> Option<String> {
+    match prop(props, key)? {
+        HeaderProp::Str(v) | HeaderProp::Name(v) => Some(v.clone()),
+        _ => None,
+    }
+}
+
+fn int(props: &[(String, HeaderProp)], key: &str) -> Option<i32> {
+    prop(props, key).and_then(HeaderProp::as_i32)
+}
+
+/// Stable IDs retain platform namespaces and all 64-bit bits as strings.
+pub fn player_id(id: &RemoteId, match_id: &str) -> (String, String) {
+    match id {
+        RemoteId::Steam(n) => (format!("steam:{n}"), "Steam".into()),
+        RemoteId::Epic(n) => (format!("epic:{n}"), "Epic".into()),
+        RemoteId::Xbox(n) => (format!("xbox:{n}"), "Xbox".into()),
+        RemoteId::PlayStation(n) => (format!("psn:{}", n.online_id), "PlayStation".into()),
+        RemoteId::PsyNet(n) => (format!("psynet:{}", n.online_id), "PsyNet".into()),
+        RemoteId::Switch(n) => (format!("switch:{}", n.online_id), "Switch".into()),
+        RemoteId::QQ(n) => (format!("qq:{n}"), "QQ".into()),
+        RemoteId::SplitScreen(n) => (format!("local:{match_id}:{n}"), "Local".into()),
+    }
+}
+
+pub fn read_replay(path: &Path) -> Result<Vec<u8>, String> {
+    if !path
+        .extension()
+        .is_some_and(|e| e.eq_ignore_ascii_case("replay"))
+    {
+        return Err("Select a .replay file".into());
+    }
+    let mut file =
+        fs::File::open(path).map_err(|_| "Replay file could not be opened".to_string())?;
+    let metadata = file
+        .metadata()
+        .map_err(|_| "Replay metadata could not be read".to_string())?;
+    if !metadata.is_file() || metadata.len() == 0 || metadata.len() > MAX_FILE_BYTES {
+        return Err("Replay must be a regular nonempty file no larger than 64 MiB".into());
+    }
+    let mut bytes = Vec::with_capacity(metadata.len() as usize);
+    (&mut file)
+        .take(MAX_FILE_BYTES + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|_| "Replay read failed".to_string())?;
+    if bytes.len() as u64 != metadata.len() {
+        return Err("Replay changed during import; retry once the game finishes saving it".into());
+    }
+    Ok(bytes)
+}
+
+/// Decode an immutable in-memory snapshot and compute native-rate metrics before
+/// sampling playback. Call from a bounded worker process, never the UI thread.
+pub fn parse_replay(path: &Path) -> Result<ReplayAnalysis, String> {
+    let bytes = read_replay(path)?;
+    std::panic::catch_unwind(|| decode(path, &bytes)).map_err(|_| {
+        "Replay decoder failed safely; this file may be malformed or unsupported".to_string()
+    })?
+}
+
+pub fn decode(path: &Path, bytes: &[u8]) -> Result<ReplayAnalysis, String> {
+    let replay = ParserBuilder::new(bytes)
+        .must_parse_network_data()
+        .always_check_crc()
+        .parse()
+        .map_err(|_| {
+            "Replay decoding failed: corrupt file or unsupported replay version".to_string()
+        })?;
+    let net = replay
+        .network_frames
+        .as_ref()
+        .ok_or("No gameplay network frames available")?;
+    if net.frames.is_empty() || net.frames.len() > MAX_FRAMES {
+        return Err("Replay frame count exceeds supported limits or contains no frames".into());
+    }
+    let mut last = -1.0f32;
+    for frame in &net.frames {
+        if !frame.time.is_finite() || frame.time < 0.0 || frame.time < last || frame.time > 7_200.0
+        {
+            return Err("Replay contains invalid or unsupported timing".into());
+        }
+        last = frame.time;
+    }
+    let hash = format!("{:x}", Sha256::digest(bytes));
+    let id = ["MatchGUID", "MatchGuid", "Id"]
+        .into_iter()
+        .find_map(|key| string(&replay.properties, key))
+        .filter(|v| {
+            !v.is_empty()
+                && v.len() <= 160
+                && v.bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+        })
+        .unwrap_or_else(|| hash.clone());
+    let mut processor = ReplayProcessor::new(&replay)
+        .map_err(|_| "World reconstruction failed: unsupported actor metadata".to_string())?;
+    let mut collector = EvidenceCollector::new(&id);
+    let mut contact_collector = StatsCollector::with_builtin_module_names(["touch"])
+        .map_err(|_| "Contact analysis graph unavailable".to_string())?;
+    processor
+        .process_all(&mut [&mut collector, &mut contact_collector])
+        .map_err(|_| "World reconstruction failed: unsupported actor state".to_string())?;
+    let contact_stats = contact_collector
+        .into_stats()
+        .ok()
+        .and_then(|s| serde_json::to_value(s).ok());
+    let contact_entries = contact_stats
+        .as_ref()
+        .and_then(|s| s["modules"]["touch"]["player_stats"].as_array());
+    let contacts_available = contact_entries.is_some_and(|entries| {
+        entries
+            .iter()
+            .any(|p| p["stats"]["touch_count"].as_u64().is_some_and(|n| n > 0))
+    });
+    let meta = processor
+        .get_replay_meta()
+        .map_err(|_| "Player metadata unavailable".to_string())?;
+    let mut players = Vec::new();
+    let mut metrics = Vec::new();
+    for (team, infos) in [(0u8, &meta.team_zero), (1u8, &meta.team_one)] {
+        for info in infos {
+            let (pid, platform) = player_id(&info.remote_id, &id);
+            let is_bot = info
+                .stats
+                .as_ref()
+                .and_then(|s| s.get("bBot"))
+                .and_then(HeaderProp::as_bool)
+                .unwrap_or(false);
+            players.push(Player {
+                id: pid.clone(),
+                name: info.name.clone(),
+                team,
+                platform: Some(platform),
+                is_bot,
+                camera: info
+                    .camera_settings
+                    .as_ref()
+                    .and_then(|c| {
+                        let profile = CameraProfile {
+                            fov: c.fov,
+                            distance: c.distance,
+                            height: c.height,
+                            angle: c.angle,
+                            stiffness: c.stiffness,
+                        };
+                        profile.is_valid().then_some(profile)
+                    })
+                    .or_else(|| info.stats.as_ref().and_then(camera_from_stats)),
+            });
+            if let Some(stats) = &info.stats {
+                for (key, label) in [
+                    ("Score", "Scoreboard points"),
+                    ("Goals", "Goals"),
+                    ("Assists", "Assists"),
+                    ("Saves", "Saves"),
+                    ("Shots", "Shots"),
+                ] {
+                    metrics.push(Metric {
+                numerator: None, denominator: None, metric_version: Some("metrics-2".into()),
+                        player_id: pid.clone(),
+                        key: key.to_lowercase(),
+                        label: label.into(),
+                        value: stats.get(key).and_then(HeaderProp::as_i32).map(f64::from),
+                        unit: "count".into(),
+                        sample_count: 1,
+                        confidence: if stats.contains_key(key) {
+                            "measured"
+                        } else {
+                            "unavailable"
+                        }
+                        .into(),
+                        description:
+                            "Replay-reported scoreboard value; points are not a measure of responsibility."
+                                .into(),
+                    });
+                }
+            }
+            metrics.extend(collector.metrics(&pid));
+        }
+    }
+    if players.len() > 16 {
+        return Err("Replay has more participants than supported".into());
+    }
+    let recorder_name = string(&replay.properties, "PlayerName");
+    let recorder_team = int(&replay.properties, "PrimaryPlayerTeam");
+    let candidates: Vec<_> = players
+        .iter()
+        .filter(|p| {
+            Some(&p.name) == recorder_name.as_ref()
+                && recorder_team.is_none_or(|t| t == i32::from(p.team))
+        })
+        .collect();
+    let recorder_player_id = if candidates.len() == 1 {
+        Some(candidates[0].id.clone())
+    } else {
+        None
+    };
+    let playlist = meta.game_type.playlist_id;
+    let standard_playlist = playlist.is_none_or(|id| matches!(id, 1 | 2 | 3 | 10 | 11 | 13));
+    let mode = if standard_playlist {
+        match int(&replay.properties, "TeamSize") {
+            Some(1) => "1v1",
+            Some(2) => "2v2",
+            Some(3) => "3v3",
+            _ => "unknown",
+        }
+    } else {
+        "unknown"
+    }
+    .to_string();
+    let mut notes = vec![
+        "Positions are reconstructed from replay actor updates. Playback is sampled at approximately 15 Hz; metrics use native network frames.".into(),
+        "No whiff, hesitation, blame percentage or MMR estimate is asserted. Tactical review markers are uncalibrated positional heuristics.".into(),
+    ];
+    if !contacts_available {
+        notes.push(
+            "Per-player ball contact attribution is unavailable; zero contacts is not asserted."
+                .into(),
+        );
+    }
+    if mode == "unknown" {
+        notes.push(
+            "Unsupported team size; competitive tactical detectors may be unavailable.".into(),
+        );
+    }
+    let mut events = collector.events;
+    if mode == "unknown" {
+        events.retain(|e| e.category != "rotation");
+    }
+    let mut goal_count = 0usize;
+    if let Some(HeaderProp::Array(goals)) = prop(&replay.properties, "Goals") {
+        for (idx, goal) in goals.iter().enumerate() {
+            let Some(frame_idx) = int(goal, "frame").and_then(|v| usize::try_from(v).ok()) else {
+                continue;
+            };
+            let Some(frame) = net.frames.get(frame_idx) else {
+                notes.push("A header goal references an unavailable frame.".into());
+                continue;
+            };
+            let name = string(goal, "PlayerName");
+            let team = int(goal, "PlayerTeam");
+            let scorers: Vec<_> = players
+                .iter()
+                .filter(|p| {
+                    Some(&p.name) == name.as_ref() && team.is_none_or(|t| t == i32::from(p.team))
+                })
+                .collect();
+            let scorer = if scorers.len() == 1 {
+                Some(scorers[0].id.clone())
+            } else {
+                None
+            };
+            events.push(Event {
+                id: format!("{id}:goal:{idx}"),
+                player_id: scorer,
+                team: team
+                    .and_then(|t| u8::try_from(t).ok())
+                    .filter(|t| *t <= 1),
+                time: f64::from(frame.time),
+                end_time: f64::from(frame.time),
+                category: "goal".into(),
+                title: format!("Goal · {}", name.as_deref().unwrap_or("Unknown scorer")),
+                description:
+                    "Goal recorded in the replay header, anchored to its native network frame. Review the preceding play before assigning responsibility."
+                        .into(),
+                severity: "strength".into(),
+                confidence: "measured".into(),
+                metric_keys: vec!["goals".into()],
+            });
+            goal_count += 1;
+        }
+    }
+    for (idx, demo) in processor.demolishes().iter().enumerate() {
+        let attacker_pid = player_id(&demo.attacker, &id).0;
+        let attacker_team = players
+            .iter()
+            .find(|p| p.id == attacker_pid)
+            .map(|p| p.team);
+        events.push(Event {
+            id: format!("{id}:demo:{idx}"),
+            player_id: Some(attacker_pid),
+            team: attacker_team,
+            time: demo.time.into(),
+            end_time: demo.time.into(),
+            category: "demo".into(),
+            title: "Demolition".into(),
+            description:
+                "Explicit replay demolition event. Its tactical value depends on the surrounding play."
+                    .into(),
+            severity: "review".into(),
+            confidence: "measured".into(),
+            metric_keys: vec![],
+        });
+    }
+    for player in &players {
+        let count = if contacts_available {
+            contact_entries
+                .and_then(|entries| {
+                    entries.iter().find(|entry| {
+                        serde_json::from_value::<RemoteId>(entry["player_id"].clone())
+                            .ok()
+                            .is_some_and(|remote| player_id(&remote, &id).0 == player.id)
+                    })
+                })
+                .and_then(|entry| entry["stats"]["touch_count"].as_u64())
+        } else {
+            None
+        };
+        metrics.push(Metric {
+                numerator: None, denominator: None, metric_version: Some("metrics-2".into()),
+            player_id: player.id.clone(),
+            key: "touches".into(),
+            label: "Estimated ball contacts".into(),
+            value: count.map(|n| n as f64),
+            unit: "count".into(),
+            sample_count: count.unwrap_or(0) as usize,
+            confidence: if count.is_some() {
+                "heuristic"
+            } else {
+                "unavailable"
+            }
+            .into(),
+            description:
+                "subtr-actor's contact graph attributes ball trajectory changes using car/hitbox proximity and native team-touch signals. Contacts can be missed or misattributed; this is not a contact accuracy or whiff score."
+                    .into(),
+        });
+    }
+    events.sort_by(|a, b| a.time.total_cmp(&b.time).then(a.id.cmp(&b.id)));
+    // Read the named replicated flag; never infer overtime from replay duration.
+    let ot = overtime_samples(&replay);
+    let mut oi = 0;
+    let mut current = None;
+    for frame in &mut collector.frames {
+        while oi < ot.len() && ot[oi].0 <= frame.time {
+            current = ot[oi].1;
+            oi += 1;
+        }
+        frame.overtime = current;
+    }
+    let positions = collector
+        .frames
+        .iter()
+        .any(|f| f.ball.is_some() && !f.cars.is_empty());
+    let boost = collector
+        .frames
+        .iter()
+        .any(|f| f.cars.iter().any(|c| c.boost.is_some()));
+    let observed_scores = processor.get_team_scores().ok();
+    // Rocket League omits Team{0,1}Score when a team scored zero goals.
+    let raw_blue = int(&replay.properties, "Team0Score").or(observed_scores.map(|s| s.0));
+    let raw_orange = int(&replay.properties, "Team1Score").or(observed_scores.map(|s| s.1));
+    let (blue_score, orange_score) = match (raw_blue, raw_orange) {
+        (None, None) => (None, None),
+        (b, o) => (Some(b.unwrap_or(0)), Some(o.unwrap_or(0))),
+    };
+    let summary = ReplaySummary {
+        id: id.clone(),
+        file_hash: hash.clone(),
+        file_name: path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .into_owned(),
+        replay_name: string(&replay.properties, "ReplayName")
+            .unwrap_or_else(|| "Untitled replay".into()),
+        played_at: string(&replay.properties, "Date"),
+        mode,
+        duration_seconds: f64::from(last),
+        blue_score,
+        orange_score,
+        players: players.clone(),
+        status: "ready".into(),
+        error: None,
+        source_path: path.to_string_lossy().into_owned(),
+        match_type: meta.game_type.header_match_type,
+        playlist_id: meta.game_type.playlist_id,
+        recorder_name,
+        recorder_player_id,
+        content_hash: hash,
+        map_name: string(&replay.properties, "MapName"),
+    };
+    let render_frames = collector.frames.len();
+    let pad_events = std::mem::take(&mut collector.pad_events);
+    let shots = std::mem::take(&mut collector.shots);
+    let analysis = ReplayAnalysis {
+        analysis_version: Some(ANALYSIS_VERSION.into()),
+        pad_events,
+        shots,
+        summary,
+        players,
+        frames: collector.frames,
+        metrics,
+        events,
+        coverage: Coverage {
+            metadata: true,
+            positions,
+            boost,
+            goals: goal_count > 0
+                || int(&replay.properties, "Team0Score")
+                    .zip(int(&replay.properties, "Team1Score"))
+                    .is_some_and(|(a, b)| a + b == 0),
+            touches: contacts_available,
+            decoded_frames: net.frames.len(),
+            render_frames,
+            live_play_seconds: collector.live_seconds,
+            notes,
+        },
+    };
+    validate_analysis(&analysis)?;
+    Ok(analysis)
+}
+
+/// Re-check typed worker output in the parent process before storing or rendering.
+pub fn validate_analysis(a: &ReplayAnalysis) -> Result<(), String> {
+    use std::collections::HashSet;
+    let ids: HashSet<_> = a.players.iter().map(|p| p.id.as_str()).collect();
+    if a.summary.id.is_empty()
+        || a.summary.id.len() > 512
+        || a.players.is_empty()
+        || a.players.len() > 16
+        || ids.len() != a.players.len()
+        || a.frames.is_empty()
+        || a.frames.len() > MAX_FRAMES
+    {
+        return Err("Analysis identity or collection limits invalid".into());
+    }
+    if !a.summary.duration_seconds.is_finite()
+        || !(0.0..=7200.0).contains(&a.summary.duration_seconds)
+    {
+        return Err("Analysis duration invalid".into());
+    }
+    if a.players.iter().any(|p| {
+        p.id.len() > 512
+            || p.name.len() > 2048
+            || p.team > 1
+            || p.camera.as_ref().is_some_and(|c| !c.is_valid())
+    }) {
+        return Err("Analysis player metadata invalid".into());
+    }
+    let valid_body = |b: &Body| {
+        b.position
+            .iter()
+            .all(|v| v.is_finite() && v.abs() < 200_000.0)
+            && b.rotation.iter().all(|v| v.is_finite())
+            && b.rotation.iter().map(|v| v * v).sum::<f32>() > 0.8
+            && b.rotation.iter().map(|v| v * v).sum::<f32>() < 1.2
+            && b.velocity
+                .is_none_or(|v| v.iter().all(|n| n.is_finite() && n.abs() < 200_000.0))
+            && b.angular_velocity.is_none_or(|v| {
+                v.iter()
+                    .all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY)
+            })
+    };
+    let valid_pos = |p: &[f32; 3]| p.iter().all(|v| v.is_finite() && v.abs() < 200_000.0);
+    let mut previous = -1.0;
+    for f in &a.frames {
+        if !f.time.is_finite()
+            || f.time < previous
+            || f.time < 0.0
+            || f.time > a.summary.duration_seconds + 0.1
+            || f.cars.len() > 16
+            || f.ball.as_ref().is_some_and(|b| !valid_body(b))
+        {
+            return Err("Analysis timeline or body invalid".into());
+        }
+        let mut seen = HashSet::new();
+        for c in &f.cars {
+            if !ids.contains(c.player_id.as_str())
+                || !seen.insert(&c.player_id)
+                || !valid_body(&c.body)
+                || c.boost
+                    .is_some_and(|b| !b.is_finite() || !(0.0..=100.0).contains(&b))
+            {
+                return Err("Analysis car state invalid".into());
+            }
+            if c.dodge_torque
+                .is_some_and(|t| t.iter().any(|n| !n.is_finite() || n.abs() > 10.0))
+                || (c.dodge_torque.is_some() && c.dodge_active != Some(true))
+            {
+                return Err("Analysis car controller state invalid".into());
+            }
+        }
+        previous = f.time;
+    }
+    let mut events = HashSet::new();
+    for e in &a.events {
+        if !events.insert(&e.id)
+            || e.team.is_some_and(|t| t > 1)
+            || e.id.len() > 2048
+            || e.player_id
+                .as_ref()
+                .is_some_and(|p| !ids.contains(p.as_str()))
+            || !e.time.is_finite()
+            || !e.end_time.is_finite()
+            || e.time < 0.0
+            || e.end_time < e.time
+            || e.end_time > a.summary.duration_seconds + 0.1
+        {
+            return Err("Analysis event references or time invalid".into());
+        }
+    }
+    if a.pad_events.len() > 100_000 || a.shots.len() > 10_000 {
+        return Err("Analysis pad/shot collection limits invalid".into());
+    }
+    let time_ok = |t: f64| t.is_finite() && (0.0..=a.summary.duration_seconds + 0.1).contains(&t);
+    for e in &a.pad_events {
+        if !time_ok(e.time)
+            || e.pad_id.is_empty()
+            || e.pad_id.len() > 64
+            || e.player_id
+                .as_ref()
+                .is_some_and(|p| !ids.contains(p.as_str()))
+            || e.player_position.as_ref().is_some_and(|p| !valid_pos(p))
+        {
+            return Err("Analysis pad event invalid".into());
+        }
+    }
+    for e in &a.shots {
+        let finite_opt = |v: Option<f32>| v.is_none_or(|n| n.is_finite());
+        if !time_ok(e.time)
+            || !["shot", "save", "assist"].contains(&e.kind.as_str())
+            || e.team > 1
+            || !ids.contains(e.player_id.as_str())
+            || e.player_position.as_ref().is_some_and(|p| !valid_pos(p))
+            || e.shot.as_ref().is_some_and(|s| {
+                !valid_pos(&s.touch_position)
+                    || !valid_pos(&s.ball_position)
+                    || s.ball_velocity.as_ref().is_some_and(|p| !valid_pos(p))
+                    || s.player_velocity.as_ref().is_some_and(|p| !valid_pos(p))
+                    || !s.distance_to_goal_center.is_finite()
+                    || !s.distance_to_goal_line.is_finite()
+                    || ![
+                        s.ball_speed,
+                        s.player_speed,
+                        s.player_distance_to_ball,
+                        s.ball_goal_alignment,
+                        s.ball_speed_toward_goal,
+                    ]
+                    .into_iter()
+                    .all(finite_opt)
+            })
+        {
+            return Err("Analysis shot sample invalid".into());
+        }
+    }
+    for m in &a.metrics {
+        if !ids.contains(m.player_id.as_str()) || m.value.is_some_and(|v| !v.is_finite()) {
+            return Err("Analysis metric invalid".into());
+        }
+    }
+    Ok(())
+}
+
+/// Capture-schema version stored in `ReplayAnalysis.analysis_version`. analysis-3 adds
+/// angular velocity, controller/component state, pad pickups and shot samples. Metric
+/// formulas are unchanged, so `metrics-2` is intentionally retained.
+pub const ANALYSIS_VERSION: &str = "analysis-3";
+
+/// Rocket League caps car angular speed at 5.5 rad/s; allow margin for ball/rounding.
+const MAX_ANGULAR_VELOCITY: f32 = 10.0;
+
+fn quantize(v: f32) -> f32 {
+    (v * 100.0).round() / 100.0
+}
+
+fn vec3(v: &boxcars::Vector3f) -> [f32; 3] {
+    [v.x, v.y, v.z]
+}
+
+fn body(r: boxcars::RigidBody) -> Option<Body> {
+    let position = [r.location.x, r.location.y, r.location.z];
+    let rotation = [r.rotation.x, r.rotation.y, r.rotation.z, r.rotation.w];
+    if !position
+        .iter()
+        .chain(rotation.iter())
+        .all(|v| v.is_finite())
+    {
+        return None;
+    }
+    let velocity = r
+        .linear_velocity
+        .map(|v| [v.x, v.y, v.z])
+        .filter(|v| v.iter().all(|n| n.is_finite()));
+    let angular_velocity = r
+        .angular_velocity
+        // subtr-actor reports the replicated angular velocity in 1/100 rad/s (observed
+        // maximum 549.97, matching Rocket League's 5.5 rad/s cap). Convert to rad/s. A value
+        // beyond the physical cap means an unrecognised scale: treat as unavailable.
+        .map(|v| {
+            [
+                quantize(v.x / 100.0),
+                quantize(v.y / 100.0),
+                quantize(v.z / 100.0),
+            ]
+        })
+        .filter(|v| {
+            v.iter()
+                .all(|n| n.is_finite() && n.abs() <= MAX_ANGULAR_VELOCITY)
+        });
+    Some(Body {
+        position,
+        rotation,
+        velocity,
+        angular_velocity,
+    })
+}
+
+#[derive(Default)]
+struct Accumulator {
+    seconds: f64,
+    samples: usize,
+    boost_seconds: f64,
+    boost_samples: usize,
+    boost_integral: f64,
+    low_seconds: f64,
+    speed_seconds: f64,
+    speed_integral: f64,
+    supersonic_boost_seconds: f64,
+    threshold_seconds: f64,
+    joint_seconds: f64,
+    defending_seconds: f64,
+    ahead_seconds: f64,
+    ball_distance_integral: f64,
+    position_seconds: f64,
+    waste_samples: usize,
+    waste_start: Option<f64>,
+    waste_duration: f64,
+    low_start: Option<f64>,
+    low_duration: f64,
+}
+impl Accumulator {
+    fn observe_resources(
+        &mut self,
+        dt: f64,
+        boost: Option<f32>,
+        velocity: Option<f64>,
+        active: Option<bool>,
+    ) -> bool {
+        if !(0.0..=0.25).contains(&dt) || dt == 0.0 {
+            return false;
+        }
+        if let Some(boost) = boost {
+            self.boost_integral += f64::from(boost) * dt;
+            self.boost_seconds += dt;
+            self.boost_samples += 1;
+            if boost < 10.0 {
+                self.low_seconds += dt;
+            }
+        }
+        if let Some(v) = velocity {
+            self.speed_integral += v * dt;
+            self.speed_seconds += dt;
+            if v >= 2200.0 {
+                self.threshold_seconds += dt;
+            }
+        }
+        if velocity.is_some() && active.is_some() {
+            self.waste_samples += 1;
+            self.joint_seconds += dt;
+        }
+        let observed = velocity.is_some_and(|v| v >= 2200.0) && active == Some(true);
+        if observed {
+            self.supersonic_boost_seconds += dt;
+        }
+        observed
+    }
+}
+
+struct EvidenceCollector {
+    match_id: String,
+    frames: Vec<Frame>,
+    events: Vec<Event>,
+    pad_events: Vec<PadEvent>,
+    shots: Vec<StatSample>,
+    acc: HashMap<String, Accumulator>,
+    previous: Option<Frame>,
+    last_render_time: f64,
+    pending_discontinuity: bool,
+    post_goal: bool,
+    previous_score: Option<(i32, i32)>,
+    live_seconds: f64,
+    exposure_start: Option<f64>,
+    exposure_duration: f64,
+    exposure_team: Option<u8>,
+}
+
+impl EvidenceCollector {
+    fn new(match_id: &str) -> Self {
+        Self {
+            match_id: match_id.into(),
+            frames: vec![],
+            events: vec![],
+            pad_events: vec![],
+            shots: vec![],
+            acc: HashMap::new(),
+            previous: None,
+            last_render_time: -1.0,
+            pending_discontinuity: true,
+            post_goal: false,
+            previous_score: None,
+            live_seconds: 0.0,
+            exposure_start: None,
+            exposure_duration: 0.0,
+            exposure_team: None,
+        }
+    }
+    fn metrics(&self, pid: &str) -> Vec<Metric> {
+        let Some(a) = self.acc.get(pid) else {
+            return vec![];
+        };
+        let ratio = |sum: f64, seconds: f64| {
+            if seconds > 0.0 {
+                Some(sum / seconds)
+            } else {
+                None
+            }
+        };
+        [
+            (
+                "tracked_seconds",
+                "Measured active play",
+                Some(a.seconds),
+                "s",
+                a.samples,
+                "measured",
+                "Observed active-play duration with available car state; excludes countdown and goal celebration.",
+            ),
+            (
+                "avg_boost",
+                "Average boost",
+                ratio(a.boost_integral, a.boost_seconds),
+                "%",
+                a.boost_samples,
+                "measured",
+                "Time-weighted observed boost during active play; unavailable boost is excluded.",
+            ),
+            (
+                "low_boost_pct",
+                "Time below 10 boost",
+                ratio(a.low_seconds * 100.0, a.boost_seconds),
+                "%",
+                a.boost_samples,
+                "measured",
+                "A resource-state measurement, not proof of poor play. Consider pressure, recovery and small-pad routes.",
+            ),
+            (
+                "avg_speed",
+                "Average speed",
+                ratio(a.speed_integral, a.speed_seconds),
+                "uu/s",
+                a.samples,
+                "measured",
+                "Time-weighted replicated linear velocity during active play. Speed alone does not measure good decisions.",
+            ),
+            (
+                "boost_active_at_supersonic_speed_s",
+                "Boosting at supersonic speed",
+                if a.waste_samples > 0 {
+                    Some(a.supersonic_boost_seconds)
+                } else {
+                    None
+                },
+                "s",
+                a.waste_samples,
+                "measured",
+                "Observed active boost at >=2200 uu/s. Aerial control and speed maintenance can justify some use.",
+            ),
+            ("time_at_or_above_supersonic_threshold_s", "Time at supersonic threshold", if a.speed_seconds > 0.0 { Some(a.threshold_seconds) } else { None }, "s", a.samples, "measured", "Speed >=2200 uu/s, not boost-active time."),
+            ("time_at_or_above_supersonic_threshold_pct", "Supersonic threshold share", ratio(a.threshold_seconds * 100.0, a.speed_seconds), "%", a.samples, "measured", "Threshold duration divided by valid velocity duration."),
+            (
+                "defensive_half_pct",
+                "Time in defensive half",
+                ratio(a.defending_seconds * 100.0, a.position_seconds),
+                "%",
+                a.samples,
+                "measured",
+                "Time-weighted Y position relative to team orientation, not a rotation quality score.",
+            ),
+            (
+                "ahead_ball_pct",
+                "Time ahead of ball",
+                ratio(a.ahead_seconds * 100.0, a.position_seconds),
+                "%",
+                a.samples,
+                "measured",
+                "More than 200 uu farther upfield than the ball; can be correct when supporting or receiving a pass.",
+            ),
+            (
+                "avg_ball_distance",
+                "Average distance to ball",
+                ratio(a.ball_distance_integral, a.position_seconds),
+                "uu",
+                a.samples,
+                "measured",
+                "Measured separation while car and ball are available; there is no universal ideal distance.",
+            ),
+        ]
+        .into_iter()
+        .map(
+            |(key, label, value, unit, sample_count, confidence, description)| Metric {
+                numerator: match key { "avg_boost" => Some(a.boost_integral), "low_boost_pct" => Some(a.low_seconds * 100.0), "avg_speed" => Some(a.speed_integral), "defensive_half_pct" => Some(a.defending_seconds * 100.0), "ahead_ball_pct" => Some(a.ahead_seconds * 100.0), "avg_ball_distance" => Some(a.ball_distance_integral), "time_at_or_above_supersonic_threshold_pct" => Some(a.threshold_seconds * 100.0), _ => None },
+                denominator: match key { "avg_boost" | "low_boost_pct" => Some(a.boost_seconds), "avg_speed" | "time_at_or_above_supersonic_threshold_pct" => Some(a.speed_seconds), "defensive_half_pct" | "ahead_ball_pct" | "avg_ball_distance" => Some(a.position_seconds), "boost_active_at_supersonic_speed_s" => Some(a.joint_seconds), _ => None },
+                metric_version: Some("metrics-2".into()),
+                player_id: pid.into(),
+                key: key.into(),
+                label: label.into(),
+                value,
+                unit: unit.into(),
+                sample_count,
+                confidence: if value.is_some() {
+                    confidence
+                } else {
+                    "unavailable"
+                }
+                .into(),
+                description: description.into(),
+            },
+        )
+        .collect()
+    }
+}
+
+fn distance(a: [f32; 3], b: [f32; 3]) -> f64 {
+    a.into_iter()
+        .zip(b)
+        .map(|(x, y)| f64::from(x - y).powi(2))
+        .sum::<f64>()
+        .sqrt()
+}
+
+fn speed(velocity: Option<[f32; 3]>) -> Option<f64> {
+    velocity.map(|v| {
+        v.into_iter()
+            .map(|n| f64::from(n).powi(2))
+            .sum::<f64>()
+            .sqrt()
+    })
+}
+
+impl Collector for EvidenceCollector {
+    fn process_frame(
+        &mut self,
+        p: &dyn ProcessorView,
+        _frame: &boxcars::Frame,
+        _number: usize,
+        time: f32,
+    ) -> SubtrActorResult<TimeAdvance> {
+        let time = f64::from(time);
+        let scores = p.get_team_scores().ok();
+        let countdown = p
+            .get_replicated_game_state_time_remaining()
+            .ok()
+            .is_some_and(|t| (1..=3).contains(&t))
+            || p.get_game_state() == Some(53);
+        let hit = p.get_ball_has_been_hit().ok();
+        if !p.current_frame_goal_events().is_empty()
+            || scores
+                .zip(self.previous_score)
+                .is_some_and(|((a, b), (x, y))| a > x || b > y)
+        {
+            self.post_goal = true;
+        }
+        if countdown || hit == Some(false) {
+            self.post_goal = false;
+        }
+        if scores.is_some() {
+            self.previous_score = scores;
+        }
+        let live =
+            hit == Some(true) && !countdown && !self.post_goal && p.get_game_state() != Some(67);
+        let ball = if p.get_ignore_ball_syncing().ok() == Some(true) {
+            None
+        } else {
+            p.get_normalized_ball_rigid_body().ok().and_then(body)
+        };
+        let mut cars = Vec::new();
+        let mut flags = HashMap::new();
+        let mut teams = HashMap::new();
+        for id in p.iter_player_ids_in_order() {
+            let pid = player_id(id, &self.match_id).0;
+            let Some(b) = p.get_normalized_player_rigid_body(id).ok().and_then(body) else {
+                continue;
+            };
+            let boost = p
+                .get_player_boost_level(id)
+                .ok()
+                .filter(|b| b.is_finite() && *b >= 0.0 && *b <= 255.1)
+                .map(|b| (b / 2.55).clamp(0.0, 100.0));
+            let boost_active = p.get_boost_active(id).ok().map(|b| b % 2 == 1);
+            flags.insert(pid.clone(), boost_active);
+            teams.insert(pid.clone(), p.get_player_is_team_0(id).ok());
+            let dodge_active = p.get_dodge_active(id).ok().map(|b| b % 2 == 1);
+            cars.push(Car {
+                player_id: pid,
+                body: b,
+                boost,
+                discontinuity: false,
+                throttle: p.get_throttle(id).ok(),
+                steer: p.get_steer(id).ok(),
+                boost_active,
+                jump_active: p.get_jump_active(id).ok().map(|b| b % 2 == 1),
+                double_jump_active: p.get_double_jump_active(id).ok().map(|b| b % 2 == 1),
+                dodge_active,
+                handbrake: p.get_powerslide_active(id).ok(),
+                dodge_torque: if dodge_active == Some(true) {
+                    p.get_dodge_torque(id)
+                        .ok()
+                        .map(|t| [quantize(t.0), quantize(t.1), quantize(t.2)])
+                        .filter(|t| t.iter().all(|n| n.is_finite()))
+                } else {
+                    None
+                },
+            });
+        }
+        for e in p.current_frame_boost_pad_events() {
+            if let subtr_actor::BoostPadEventKind::PickedUp { sequence } = e.kind {
+                self.pad_events.push(PadEvent {
+                    time: f64::from(e.time),
+                    frame: e.frame,
+                    pad_id: e.pad_id.clone(),
+                    player_id: e.player.as_ref().map(|r| player_id(r, &self.match_id).0),
+                    player_position: e.player_position.as_ref().map(vec3),
+                    sequence,
+                });
+            }
+        }
+        for e in p.current_frame_player_stat_events() {
+            self.shots.push(StatSample {
+                time: f64::from(e.time),
+                frame: e.frame,
+                kind: match e.kind {
+                    subtr_actor::PlayerStatEventKind::Shot => "shot",
+                    subtr_actor::PlayerStatEventKind::Save => "save",
+                    subtr_actor::PlayerStatEventKind::Assist => "assist",
+                }
+                .into(),
+                player_id: player_id(&e.player, &self.match_id).0,
+                team: if e.is_team_0 { 0 } else { 1 },
+                player_position: e.player_position.as_ref().map(vec3),
+                shot: e.shot.as_ref().map(|m| ShotSample {
+                    touch_position: vec3(&m.shot_touch_position),
+                    ball_position: vec3(&m.ball_position),
+                    ball_velocity: m.ball_velocity.as_ref().map(vec3),
+                    ball_speed: m.ball_speed,
+                    player_velocity: m.player_velocity.as_ref().map(vec3),
+                    player_speed: m.player_speed,
+                    player_distance_to_ball: m.player_distance_to_ball,
+                    distance_to_goal_center: m.distance_to_goal_center,
+                    distance_to_goal_line: m.distance_to_goal_line,
+                    ball_goal_alignment: m.ball_goal_alignment,
+                    ball_speed_toward_goal: m.ball_speed_toward_goal,
+                }),
+            });
+        }
+        let dt = self.previous.as_ref().map(|f| time - f.time).unwrap_or(0.0);
+        let gap = !(0.0..=0.25).contains(&dt);
+        let phase_change = self.previous.as_ref().is_some_and(|f| f.live_play != live);
+        let ball_jump = self
+            .previous
+            .as_ref()
+            .is_some_and(|f| match (&f.ball, &ball) {
+                (Some(a), Some(b)) => distance(a.position, b.position) > 1500.0,
+                (None, None) => false,
+                _ => true,
+            });
+        let discontinuity = self.previous.is_none()
+            || gap
+            || phase_change
+            || ball_jump
+            || !p.current_frame_goal_events().is_empty();
+        self.pending_discontinuity |= discontinuity;
+        for car in &mut cars {
+            let prev = self
+                .previous
+                .as_ref()
+                .and_then(|f| f.cars.iter().find(|c| c.player_id == car.player_id));
+            car.discontinuity = discontinuity
+                || prev.is_none_or(|c| distance(c.body.position, car.body.position) > 700.0);
+        }
+        let continuity =
+            live && !discontinuity && self.previous.as_ref().is_some_and(|f| f.live_play);
+        if continuity {
+            self.live_seconds += dt;
+        }
+        for car in &cars {
+            let a = self.acc.entry(car.player_id.clone()).or_default();
+            if !continuity || car.discontinuity {
+                flush_segments(
+                    &mut self.events,
+                    &self.match_id,
+                    &car.player_id,
+                    a,
+                    self.previous.as_ref().map(|f| f.time).unwrap_or(time),
+                );
+                continue;
+            }
+            a.seconds += dt;
+            a.samples += 1;
+            let velocity = speed(car.body.velocity);
+            let wasting = a.observe_resources(
+                dt,
+                car.boost,
+                velocity,
+                flags.get(&car.player_id).copied().flatten(),
+            );
+            if wasting {
+                a.waste_duration += dt;
+                a.waste_start.get_or_insert(time - dt);
+            } else {
+                if a.waste_duration >= 1.0 {
+                    self.events.push(segment_event(
+                        &self.match_id,
+                        &car.player_id,
+                        "boost",
+                        "Review supersonic boost",
+                        (a.waste_start.unwrap_or(time), time),
+                        "Boost remained active while the car was already supersonic for at least one second. Check whether aerial control or speed maintenance justified it; otherwise release boost and conserve it.",
+                        "boost_active_at_supersonic_speed_s",
+                    ));
+                }
+                a.waste_start = None;
+                a.waste_duration = 0.0;
+            }
+            if car.boost.is_some_and(|b| b < 10.0) {
+                a.low_duration += dt;
+                a.low_start.get_or_insert(time - dt);
+            } else {
+                if a.low_duration >= 5.0 {
+                    self.events.push(segment_event(
+                        &self.match_id,
+                        &car.player_id,
+                        "boost",
+                        "Extended low-boost window",
+                        (a.low_start.unwrap_or(time), time),
+                        "Observed boost stayed below 10 for at least five seconds. Review available small-pad routes and team pressure; low boost by itself is not a mistake.",
+                        "low_boost_pct",
+                    ));
+                }
+                a.low_duration = 0.0;
+                a.low_start = None;
+            }
+            if let (Some(ball), Some(Some(blue))) = (&ball, teams.get(&car.player_id)) {
+                let sign = if *blue { 1.0 } else { -1.0 };
+                a.position_seconds += dt;
+                if car.body.position[1] * sign < 0.0 {
+                    a.defending_seconds += dt;
+                }
+                if car.body.position[1] * sign > ball.position[1] * sign + 200.0 {
+                    a.ahead_seconds += dt;
+                }
+                a.ball_distance_integral += distance(car.body.position, ball.position) * dt;
+            }
+        }
+        let exposed = if continuity {
+            ball.as_ref().and_then(|b| {
+                [true, false].into_iter().find_map(|blue| {
+                    let team: Vec<_> = cars
+                        .iter()
+                        .filter(|c| teams.get(&c.player_id) == Some(&Some(blue)))
+                        .collect();
+                    let expected = p.current_in_game_team_player_counts()[usize::from(!blue)];
+                    let sign = if blue { 1.0 } else { -1.0 };
+                    if expected >= 2
+                        && team.len() == expected
+                        && b.position[1] * sign < -500.0
+                        && team
+                            .iter()
+                            .all(|c| c.body.position[1] * sign > b.position[1] * sign + 400.0)
+                    {
+                        Some(if blue { 0u8 } else { 1u8 })
+                    } else {
+                        None
+                    }
+                })
+            })
+        } else {
+            None
+        };
+        if exposed != self.exposure_team {
+            if let Some(team) = self.exposure_team.filter(|_| self.exposure_duration >= 1.0) {
+                self.events.push(coverage_event(
+                    &self.match_id,
+                    team,
+                    self.exposure_start.unwrap_or(time),
+                    time,
+                ));
+            }
+            self.exposure_start = None;
+            self.exposure_duration = 0.0;
+            self.exposure_team = exposed;
+        }
+        if exposed.is_some() {
+            self.exposure_duration += dt;
+            self.exposure_start.get_or_insert(time - dt);
+        }
+        let frame = Frame {
+            time,
+            ball,
+            cars,
+            match_clock_seconds: p.get_seconds_remaining().ok(),
+            overtime: None,
+            live_play: live,
+            discontinuity,
+        };
+        let car_change = frame.cars.iter().any(|c| c.discontinuity)
+            || self
+                .previous
+                .as_ref()
+                .is_some_and(|f| f.cars.len() != frame.cars.len());
+        if time - self.last_render_time >= RENDER_INTERVAL || discontinuity || car_change {
+            let mut sampled = frame.clone();
+            sampled.discontinuity |= self.pending_discontinuity;
+            self.frames.push(sampled);
+            self.last_render_time = time;
+            self.pending_discontinuity = false;
+        }
+        self.previous = Some(frame);
+        Ok(TimeAdvance::NextFrame)
+    }
+    fn finish_replay(&mut self, _processor: &dyn ProcessorView) -> SubtrActorResult<()> {
+        if let Some(last) = &self.previous {
+            if let Some(team) = self.exposure_team.filter(|_| self.exposure_duration >= 1.0) {
+                self.events.push(coverage_event(
+                    &self.match_id,
+                    team,
+                    self.exposure_start.unwrap_or(last.time),
+                    last.time,
+                ));
+            }
+            for (pid, a) in &mut self.acc {
+                flush_segments(&mut self.events, &self.match_id, pid, a, last.time);
+            }
+            if self.frames.last().is_none_or(|f| f.time < last.time) {
+                self.frames.push(last.clone());
+            }
+        }
+        Ok(())
+    }
+}
+
+fn coverage_event(match_id: &str, team: u8, start: f64, end: f64) -> Event {
+    let name = if team == 0 { "Blue" } else { "Orange" };
+    Event {
+        id: format!("{match_id}:coverage:{team}:{start:.3}"),
+        player_id: None,
+        team: Some(team),
+        time: start,
+        end_time: end,
+        category: "rotation".into(),
+        title: format!("{name} defensive exposure"),
+        description: format!(
+            "Observed {name} players were all further upfield than the ball while defending deep in their half. Verify individual recovery paths and challenging opportunities."
+        ),
+        severity: "review".into(),
+        confidence: "heuristic".into(),
+        metric_keys: vec!["ahead_ball_pct".into(), "defensive_half_pct".into()],
+    }
+}
+
+fn segment_event(
+    match_id: &str,
+    player_id: &str,
+    category: &str,
+    title: &str,
+    (start, end): (f64, f64),
+    description: &str,
+    metric_key: &str,
+) -> Event {
+    Event {
+        id: format!("{match_id}:{category}:{player_id}:{start:.3}"),
+        player_id: Some(player_id.to_string()),
+        team: None,
+        time: start,
+        end_time: end,
+        category: category.into(),
+        title: title.into(),
+        description: description.into(),
+        severity: "review".into(),
+        confidence: "heuristic".into(),
+        metric_keys: vec![metric_key.into()],
+    }
+}
+
+fn flush_segments(
+    events: &mut Vec<Event>,
+    match_id: &str,
+    pid: &str,
+    a: &mut Accumulator,
+    time: f64,
+) {
+    if a.waste_duration >= 1.0 {
+        events.push(segment_event(
+            match_id,
+            pid,
+            "boost",
+            "Review supersonic boost",
+            (a.waste_start.unwrap_or(time), time),
+            "Boost remained active while the car was already supersonic for at least one second. Check whether aerial control or speed maintenance justified it; otherwise release boost and conserve it.",
+            "boost_active_at_supersonic_speed_s",
+        ));
+    }
+    if a.low_duration >= 5.0 {
+        events.push(segment_event(
+            match_id,
+            pid,
+            "boost",
+            "Extended low-boost window",
+            (a.low_start.unwrap_or(time), time),
+            "Observed boost stayed below 10 for at least five seconds. Review available small-pad routes and team pressure; low boost by itself is not a mistake.",
+            "low_boost_pct",
+        ));
+    }
+    a.waste_start = None;
+    a.waste_duration = 0.0;
+    a.low_start = None;
+    a.low_duration = 0.0;
+}
+
+pub fn replay_paths(folder: &Path) -> Result<Vec<PathBuf>, String> {
+    let entries = fs::read_dir(folder).map_err(|_| "Folder could not be read".to_string())?;
+    let mut paths = vec![];
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path
+            .extension()
+            .is_some_and(|e| e.eq_ignore_ascii_case("replay"))
+            && path.is_file()
+        {
+            paths.push(path);
+        }
+    }
+    paths.sort();
+    Ok(paths)
+}
+
+pub fn discover_replays(folder: &Path) -> Result<serde_json::Value, String> {
+    let paths = replay_paths(folder)?;
+    let mut summaries = vec![];
+    for path in &paths {
+        let Ok(bytes) = read_replay(path) else {
+            continue;
+        };
+        let hash = format!("{:x}", Sha256::digest(&bytes));
+        let Ok(replay) = ParserBuilder::new(&bytes).parse() else {
+            continue;
+        };
+        let id = ["MatchGUID", "MatchGuid", "Id"]
+            .into_iter()
+            .find_map(|key| string(&replay.properties, key))
+            .unwrap_or_else(|| hash.clone());
+        let mode = match int(&replay.properties, "TeamSize") {
+            Some(1) => "1v1",
+            Some(2) => "2v2",
+            Some(3) => "3v3",
+            _ => "unknown",
+        };
+        summaries.push(serde_json::json!({
+            "id": id,
+            "file_name": path.file_name().unwrap_or_default().to_string_lossy(),
+            "replay_name": string(&replay.properties, "ReplayName").unwrap_or_else(|| "Untitled".into()),
+            "played_at": string(&replay.properties, "Date"),
+            "mode": mode,
+            "content_hash": hash,
+            "source_path": path.to_string_lossy(),
+            "blue_score": int(&replay.properties, "Team0Score"),
+            "orange_score": int(&replay.properties, "Team1Score"),
+        }));
+    }
+    Ok(serde_json::json!({
+        "folder": folder.to_string_lossy(),
+        "count": summaries.len(),
+        "replays": summaries,
+    }))
+}
+
+pub fn verify_corpus(folder: &Path) -> Result<serde_json::Value, String> {
+    let paths = replay_paths(folder)?;
+    let mut rows = vec![];
+    for (index, path) in paths.iter().enumerate() {
+        let started = std::time::Instant::now();
+        rows.push(match parse_replay(path) {
+            Ok(a) => serde_json::json!({
+                "index": index,
+                "file": path.file_name().unwrap_or_default().to_string_lossy(),
+                "status": "pass",
+                "mode": a.summary.mode,
+                "players": a.players.len(),
+                "decoded_frames": a.coverage.decoded_frames,
+                "render_frames": a.frames.len(),
+                "positions": a.coverage.positions,
+                "boost": a.coverage.boost,
+                "goal_events": a.events.iter().filter(|e| e.category == "goal").count(),
+                "reported_goals": a.summary.blue_score.zip(a.summary.orange_score).map(|(x, y)| x + y),
+                "live_seconds": a.coverage.live_play_seconds,
+                "milliseconds": started.elapsed().as_millis(),
+            }),
+            Err(e) => serde_json::json!({
+                "index": index,
+                "file": path.file_name().unwrap_or_default().to_string_lossy(),
+                "status": "fail",
+                "error": e,
+                "milliseconds": started.elapsed().as_millis(),
+            }),
+        });
+    }
+    Ok(serde_json::json!({
+        "files": paths.len(),
+        "passed": rows.iter().filter(|r| r["status"] == "pass").count(),
+        "results": rows,
+    }))
+}
+
+fn camera_from_stats(stats: &HashMap<String, HeaderProp>) -> Option<CameraProfile> {
+    let number = |key: &str| match stats.get(key)? {
+        HeaderProp::Float(v) => Some(*v),
+        HeaderProp::Int(v) => Some(*v as f32),
+        _ => None,
+    };
+    let camera = CameraProfile {
+        fov: number("CameraFOV")?,
+        distance: number("CameraDistance")?,
+        height: number("CameraHeight")?,
+        angle: number("CameraPitch")?,
+        stiffness: number("CameraStiffness")?,
+    };
+    camera.is_valid().then_some(camera)
+}
+fn overtime_samples(replay: &boxcars::Replay) -> Vec<(f64, Option<bool>)> {
+    let mut samples = vec![];
+    let mut owner = None;
+    for frame in replay
+        .network_frames
+        .as_ref()
+        .into_iter()
+        .flat_map(|n| &n.frames)
+    {
+        if owner.is_some_and(|a| frame.deleted_actors.contains(&a)) {
+            samples.push((f64::from(frame.time), None));
+            owner = None;
+        }
+        for update in &frame.updated_actors {
+            if replay
+                .objects
+                .get(update.object_id.0 as usize)
+                .is_some_and(|n| n == "TAGame.GameEvent_Soccar_TA:bOverTime")
+                && let boxcars::Attribute::Boolean(value) = update.attribute
+            {
+                owner = Some(update.actor_id);
+                samples.push((f64::from(frame.time), Some(value)));
+            }
+        }
+    }
+    samples
+}
+fn network_cameras(replay: &boxcars::Replay, match_id: &str) -> serde_json::Value {
+    let mut identities = HashMap::new();
+    let mut links = HashMap::new();
+    let mut profiles = HashMap::new();
+    let mut cameras = serde_json::Map::new();
+    for frame in replay
+        .network_frames
+        .as_ref()
+        .into_iter()
+        .flat_map(|n| &n.frames)
+    {
+        for actor in &frame.deleted_actors {
+            identities.remove(actor);
+            links.remove(actor);
+            profiles.remove(actor);
+            links.retain(|_, v| v != actor);
+        }
+        for update in &frame.updated_actors {
+            let key = replay
+                .objects
+                .get(update.object_id.0 as usize)
+                .map(String::as_str)
+                .unwrap_or("");
+            match (key, &update.attribute) {
+                ("Engine.PlayerReplicationInfo:UniqueId", boxcars::Attribute::UniqueId(id)) => {
+                    identities.insert(update.actor_id, player_id(&id.remote_id, match_id).0);
+                }
+                ("TAGame.CameraSettingsActor_TA:PRI", boxcars::Attribute::ActiveActor(owner)) => {
+                    if owner.actor.0 >= 0 {
+                        links.insert(update.actor_id, owner.actor);
+                    } else {
+                        links.remove(&update.actor_id);
+                    }
+                }
+                (
+                    "TAGame.CameraSettingsActor_TA:ProfileSettings",
+                    boxcars::Attribute::CamSettings(c),
+                ) => {
+                    let p = CameraProfile {
+                        fov: c.fov,
+                        distance: c.distance,
+                        height: c.height,
+                        angle: c.angle,
+                        stiffness: c.stiffness,
+                    };
+                    if p.is_valid() {
+                        profiles.insert(update.actor_id, p);
+                    }
+                }
+                _ => {}
+            }
+        }
+        for (actor, owner) in &links {
+            if let (Some(id), Some(profile)) = (identities.get(owner), profiles.get(actor)) {
+                cameras.insert(
+                    id.clone(),
+                    serde_json::to_value(profile).unwrap_or(serde_json::Value::Null),
+                );
+            }
+        }
+    }
+    serde_json::Value::Object(cameras)
+}
+/// Bounded metadata enrichment for previously imported replays. Does not alter stored analytics.
+pub fn read_profile_metadata(
+    path: &Path,
+    include_network: bool,
+) -> Result<serde_json::Value, String> {
+    let bytes = read_replay(path)?;
+    std::panic::catch_unwind(|| {
+        let builder=ParserBuilder::new(&bytes).always_check_crc();
+        let replay=if include_network {builder.must_parse_network_data()} else {builder.never_parse_network_data()}.parse().map_err(|_| "Unsupported replay metadata")?;
+        if replay.network_frames.as_ref().is_some_and(|n|n.frames.len()>MAX_FRAMES || n.frames.iter().any(|f|!f.time.is_finite() || !(0.0..=7200.0).contains(&f.time))) {return Err("Unsupported metadata timeline".to_string());}
+        let id=string(&replay.properties,"MatchGUID").unwrap_or_default();
+        let mut cameras=serde_json::Map::new();
+        let mut names=std::collections::HashSet::new();
+        if let Some(HeaderProp::Array(entries))=prop(&replay.properties,"PlayerStats") {
+            for entry in entries {
+                let stats:HashMap<_,_>=entry.iter().cloned().collect();
+
+                // Camera source is joined by exact unique player name in the caller,
+                // never by the recorder guess or an arbitrary binary substring.
+                if let (Some(name),Some(camera))=(string(entry,"Name"),camera_from_stats(&stats)) {
+                    if names.insert(name.clone()) {cameras.insert(name,serde_json::to_value(camera).map_err(|_| "Invalid camera metadata")?);} else {cameras.insert(name,serde_json::Value::Null);}
+                }
+            }
+        }
+        Ok(serde_json::json!({"match_id":id,"file_hash":format!("{:x}",Sha256::digest(&bytes)),"cameras_by_name":cameras,"cameras_by_id":network_cameras(&replay,&id),"overtime":overtime_samples(&replay),"overtime_properties":replay.objects.iter().filter(|n|n.to_ascii_lowercase().contains("overtime")).collect::<Vec<_>>()}))
+    }).map_err(|_| "Replay metadata failed safely".to_string())?
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn threshold_and_active_boost_are_independent_and_missing_is_not_zero() {
+        let mut a = Accumulator::default();
+        assert!(!a.observe_resources(0.1, Some(50.0), Some(2250.0), Some(false)));
+        assert!(a.observe_resources(0.1, None, Some(2250.0), Some(true)));
+        assert_eq!(a.threshold_seconds, 0.2);
+        assert_eq!(a.supersonic_boost_seconds, 0.1);
+        assert_eq!(a.joint_seconds, 0.2);
+        let mut b = Accumulator::default();
+        b.observe_resources(0.1, None, Some(2250.0), None);
+        assert_eq!(b.joint_seconds, 0.0);
+        assert_eq!(b.waste_samples, 0);
+        assert!(!b.observe_resources(0.3, Some(0.0), Some(2300.0), Some(true)));
+        assert_eq!(b.boost_seconds, 0.0);
+    }
+    #[test]
+    fn resource_integrals_preserve_real_zero_and_observation_weights() {
+        let mut a = Accumulator::default();
+        for _ in 0..40 {
+            a.observe_resources(0.25, Some(20.0), None, None);
+        }
+        for _ in 0..360 {
+            a.observe_resources(0.25, Some(80.0), None, None);
+        }
+        assert!((a.boost_integral / a.boost_seconds - 74.0).abs() < 1e-9);
+        let mut b = Accumulator::default();
+        b.observe_resources(0.25, Some(0.0), Some(0.0), Some(false));
+        assert_eq!(b.boost_seconds, 0.25);
+        assert_eq!(b.boost_integral, 0.0);
+        assert_eq!(b.joint_seconds, 0.25);
+    }
+
+    #[test]
+    fn test_validation_rejects_empty_players() {
+        let analysis = ReplayAnalysis {
+            summary: ReplaySummary {
+                file_hash: String::new(),
+                id: "test".into(),
+                file_name: "test.replay".into(),
+                replay_name: "Test".into(),
+                played_at: None,
+                mode: "2v2".into(),
+                duration_seconds: 300.0,
+                blue_score: Some(1),
+                orange_score: Some(0),
+                players: vec![],
+                status: "ready".into(),
+                error: None,
+                source_path: "test.replay".into(),
+                match_type: None,
+                playlist_id: Some(2),
+                recorder_name: None,
+                recorder_player_id: None,
+                content_hash: "hash".into(),
+                map_name: None,
+            },
+            players: vec![],
+            frames: vec![],
+            metrics: vec![],
+            events: vec![],
+            coverage: Coverage {
+                metadata: true,
+                positions: true,
+                boost: true,
+                goals: true,
+                touches: true,
+                decoded_frames: 100,
+                render_frames: 10,
+                live_play_seconds: 50.0,
+                notes: vec![],
+            },
+            analysis_version: None,
+            pad_events: vec![],
+            shots: vec![],
+        };
+        assert!(validate_analysis(&analysis).is_err());
+    }
+
+    #[test]
+    fn test_validation_validates_good_analysis() {
+        let player = Player {
+            id: "steam:123".into(),
+            name: "Tester".into(),
+            team: 0,
+            platform: Some("Steam".into()),
+            is_bot: false,
+            camera: None,
+        };
+        let frame = Frame {
+            time: 0.0,
+            ball: Some(Body {
+                position: [0.0, 0.0, 100.0],
+                rotation: [0.0, 0.0, 0.0, 1.0],
+                velocity: Some([0.0, 0.0, 0.0]),
+                angular_velocity: None,
+            }),
+            cars: vec![Car {
+                player_id: "steam:123".into(),
+                body: Body {
+                    position: [100.0, 200.0, 17.0],
+                    rotation: [0.0, 0.0, 0.0, 1.0],
+                    velocity: Some([0.0, 0.0, 0.0]),
+                    angular_velocity: None,
+                },
+                boost: Some(33.0),
+                discontinuity: false,
+                ..Default::default()
+            }],
+            match_clock_seconds: Some(300),
+            overtime: None,
+            live_play: true,
+            discontinuity: false,
+        };
+        let analysis = ReplayAnalysis {
+            summary: ReplaySummary {
+                file_hash: String::new(),
+                id: "test-match".into(),
+                file_name: "test.replay".into(),
+                replay_name: "Test Match".into(),
+                played_at: Some("2026-10-05".into()),
+                mode: "1v1".into(),
+                duration_seconds: 300.0,
+                blue_score: Some(1),
+                orange_score: Some(0),
+                players: vec![player.clone()],
+                status: "ready".into(),
+                error: None,
+                source_path: "test.replay".into(),
+                match_type: None,
+                playlist_id: Some(1),
+                recorder_name: Some("Tester".into()),
+                recorder_player_id: Some("steam:123".into()),
+                content_hash: "abcd1234".into(),
+                map_name: Some("dfh_stadium".into()),
+            },
+            players: vec![player],
+            frames: vec![frame],
+            metrics: vec![Metric {
+                numerator: None,
+                denominator: None,
+                metric_version: Some("metrics-2".into()),
+                player_id: "steam:123".into(),
+                key: "avg_boost".into(),
+                label: "Average boost".into(),
+                value: Some(33.0),
+                unit: "%".into(),
+                sample_count: 1,
+                confidence: "measured".into(),
+                description: "Test metric".into(),
+            }],
+            events: vec![Event {
+                id: "test-match:goal:0".into(),
+                player_id: Some("steam:123".into()),
+                team: Some(0),
+                time: 10.0,
+                end_time: 10.0,
+                category: "goal".into(),
+                title: "Goal".into(),
+                description: "Test goal".into(),
+                severity: "strength".into(),
+                confidence: "measured".into(),
+                metric_keys: vec!["goals".into()],
+            }],
+            coverage: Coverage {
+                metadata: true,
+                positions: true,
+                boost: true,
+                goals: true,
+                touches: true,
+                decoded_frames: 1,
+                render_frames: 1,
+                live_play_seconds: 1.0,
+                notes: vec![],
+            },
+            analysis_version: Some(ANALYSIS_VERSION.into()),
+            pad_events: vec![],
+            shots: vec![],
+        };
+        assert!(validate_analysis(&analysis).is_ok());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].body.angular_velocity = Some([0.0, f32::NAN, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].body.angular_velocity = Some([0.0, 50.0, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = analysis.clone();
+        bad.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
+        assert!(
+            validate_analysis(&bad).is_err(),
+            "torque without dodge_active"
+        );
+        let mut ok = analysis.clone();
+        ok.frames[0].cars[0].dodge_active = Some(true);
+        ok.frames[0].cars[0].dodge_torque = Some([0.0, 1.0, 0.0]);
+        assert!(validate_analysis(&ok).is_ok());
+        let shot = StatSample {
+            time: 5.0,
+            frame: 10,
+            kind: "shot".into(),
+            player_id: "steam:123".into(),
+            team: 0,
+            player_position: Some([0.0, 3000.0, 17.0]),
+            shot: None,
+        };
+        let mut ok = analysis.clone();
+        ok.shots = vec![shot.clone()];
+        ok.pad_events = vec![PadEvent {
+            time: 2.0,
+            frame: 4,
+            pad_id: "pad-1".into(),
+            player_id: None,
+            player_position: None,
+            sequence: 1,
+        }];
+        assert!(validate_analysis(&ok).is_ok());
+        let mut bad = ok.clone();
+        bad.shots[0].player_id = "steam:unknown".into();
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok.clone();
+        bad.shots[0].kind = "xg".into();
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok.clone();
+        bad.shots[0].player_position = Some([f32::INFINITY, 0.0, 0.0]);
+        assert!(validate_analysis(&bad).is_err());
+        let mut bad = ok;
+        bad.pad_events[0].time = f64::NAN;
+        assert!(validate_analysis(&bad).is_err());
+    }
+
+    #[test]
+    fn old_stored_frames_without_analysis_3_fields_still_deserialize() {
+        let old = r#"{"time":1.5,"ball":{"position":[0,0,93],"rotation":[0,0,0,1],"velocity":[1,2,3]},
+            "cars":[{"player_id":"steam:1","position":[1,2,3],"rotation":[0,0,0,1],"velocity":null,"boost":50.0,"discontinuity":false}],
+            "match_clock_seconds":120,"live_play":true,"discontinuity":false}"#;
+        let f: Frame = serde_json::from_str(old).unwrap();
+        assert_eq!(f.cars[0].throttle, None);
+        assert_eq!(f.cars[0].handbrake, None);
+        assert_eq!(f.cars[0].dodge_torque, None);
+        assert_eq!(f.ball.as_ref().unwrap().angular_velocity, None);
+        // Unavailable fields are omitted again on re-serialization (no fabricated neutral values).
+        let out = serde_json::to_string(&f).unwrap();
+        assert!(!out.contains("throttle") && !out.contains("angular_velocity"));
+        // Old whole-analysis JSON lacking the new lists.
+        let a: ReplayAnalysis = serde_json::from_str(
+            r#"{"summary":{"id":"x","file_hash":"","file_name":"","replay_name":"","played_at":null,"mode":"2v2","duration_seconds":1.0,"blue_score":null,"orange_score":null,"players":[],"status":"ready","error":null,"source_path":"","match_type":null,"playlist_id":null,"recorder_name":null,"recorder_player_id":null,"content_hash":"","map_name":null},
+            "players":[],"frames":[],"metrics":[],"events":[],"coverage":{"metadata":true,"positions":true,"boost":true,"goals":true,"touches":true,"decoded_frames":0,"render_frames":0,"live_play_seconds":0.0,"notes":[]}}"#,
+        )
+        .unwrap();
+        assert!(a.analysis_version.is_none() && a.pad_events.is_empty() && a.shots.is_empty());
+    }
+
+    #[test]
+    fn angular_velocity_is_quantized_and_nonfinite_dropped() {
+        let rb = |w: boxcars::Vector3f| boxcars::RigidBody {
+            sleeping: false,
+            location: boxcars::Vector3f {
+                x: 0.0,
+                y: 0.0,
+                z: 17.0,
+            },
+            rotation: boxcars::Quaternion {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 1.0,
+            },
+            linear_velocity: None,
+            angular_velocity: Some(w),
+        };
+        let b = body(rb(boxcars::Vector3f {
+            x: 123.456,
+            y: -0.4,
+            z: 550.0,
+        }))
+        .unwrap();
+        assert_eq!(b.angular_velocity, Some([1.23, 0.0, 5.5]));
+        // Unrecognised scale (beyond physical cap) is unavailable, not stored.
+        let b = body(rb(boxcars::Vector3f {
+            x: 5000.0,
+            y: 0.0,
+            z: 0.0,
+        }))
+        .unwrap();
+        assert_eq!(b.angular_velocity, None);
+        let b = body(rb(boxcars::Vector3f {
+            x: f32::NAN,
+            y: 0.0,
+            z: 0.0,
+        }))
+        .unwrap();
+        assert_eq!(b.angular_velocity, None);
+    }
+}
+
+#[cfg(test)]
+mod review_characterization {
+ use super::*;
+ use subtr_actor::*;
+ #[allow(unused_variables)]
+ struct FakeView { ids:Vec<PlayerId>, hit:bool, boost:f32, ball_y:f32 }
+ fn rb(pos:[f32;3],v:f32)->boxcars::RigidBody { boxcars::RigidBody { sleeping:false,location:boxcars::Vector3f{x:pos[0],y:pos[1],z:pos[2]}, rotation:boxcars::Quaternion{x:0.,y:0.,z:0.,w:1.}, linear_velocity:Some(boxcars::Vector3f{x:v,y:0.,z:0.}), angular_velocity:None } }
+ #[allow(unused_variables)]
+ impl ProcessorView for FakeView { fn get_replay_meta(&self) -> SubtrActorResult<ReplayMeta> { unimplemented!() }
+fn player_count(&self) -> usize { self.ids.len() }
+fn iter_player_ids_in_order(&self) -> Box<dyn Iterator<Item = &PlayerId> + '_> { Box::new(self.ids.iter()) }
+fn current_in_game_team_player_counts(&self) -> [usize; 2] { [self.ids.len(),0] }
+fn get_seconds_remaining(&self) -> SubtrActorResult<i32> { Ok(300) }
+fn get_replicated_state_name(&self) -> SubtrActorResult<i32> { Ok(54) }
+fn get_replicated_game_state_time_remaining(&self) -> SubtrActorResult<i32> { Ok(0) }
+fn get_ball_has_been_hit(&self) -> SubtrActorResult<bool> { Ok(self.hit) }
+fn get_ignore_ball_syncing(&self) -> SubtrActorResult<bool> { Ok(false) }
+fn get_team_scores(&self) -> SubtrActorResult<(i32, i32)> { Ok((0,0)) }
+fn get_ball_hit_team_num(&self) -> SubtrActorResult<u8> { unimplemented!() }
+fn get_scored_on_team_num(&self) -> SubtrActorResult<u8> { unimplemented!() }
+fn get_normalized_ball_rigid_body(&self) -> SubtrActorResult<boxcars::RigidBody> { Ok(rb([0.,self.ball_y,93.],0.)) }
+fn get_velocity_applied_ball_rigid_body(
+        &self,
+        target_time: f32,
+    ) -> SubtrActorResult<boxcars::RigidBody> { unimplemented!() }
+fn get_interpolated_ball_rigid_body(
+        &self,
+        target_time: f32,
+        close_enough_to_frame_time: f32,
+    ) -> SubtrActorResult<boxcars::RigidBody> { unimplemented!() }
+fn get_normalized_player_rigid_body(
+        &self,
+        player_id: &PlayerId,
+    ) -> SubtrActorResult<boxcars::RigidBody> { Ok(rb([0.,-1000.,17.],2250.)) }
+fn get_velocity_applied_player_rigid_body(
+        &self,
+        player_id: &PlayerId,
+        target_time: f32,
+    ) -> SubtrActorResult<boxcars::RigidBody> { unimplemented!() }
+fn get_interpolated_player_rigid_body(
+        &self,
+        player_id: &PlayerId,
+        target_time: f32,
+        close_enough_to_frame_time: f32,
+    ) -> SubtrActorResult<boxcars::RigidBody> { unimplemented!() }
+fn get_player_name(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+fn get_player_car_hitbox(&self, player_id: &PlayerId) -> CarHitbox { unimplemented!() }
+fn get_player_team_key(&self, player_id: &PlayerId) -> SubtrActorResult<String> { unimplemented!() }
+fn get_player_is_team_0(&self, player_id: &PlayerId) -> SubtrActorResult<bool> { Ok(true) }
+fn get_player_id_from_car_id(&self, actor_id: &boxcars::ActorId) -> SubtrActorResult<PlayerId> { unimplemented!() }
+fn get_player_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { Ok(self.boost*2.55) }
+fn get_player_last_boost_level(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+fn get_player_boost_percentage(&self, player_id: &PlayerId) -> SubtrActorResult<f32> { unimplemented!() }
+fn get_boost_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(1) }
+fn get_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+fn get_double_jump_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+fn get_dodge_active(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(0) }
+fn get_powerslide_active(&self, player_id: &PlayerId) -> SubtrActorResult<bool> { Ok(false) }
+fn get_throttle(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(255) }
+fn get_steer(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { Ok(128) }
+fn get_dodge_impulse(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+fn get_dodge_torque(&self, player_id: &PlayerId) -> SubtrActorResult<(f32, f32, f32)> { unimplemented!() }
+fn get_camera_pitch(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+fn get_camera_yaw(&self, player_id: &PlayerId) -> SubtrActorResult<u8> { unimplemented!() }
+fn get_player_match_assists(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+fn get_player_match_goals(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+fn get_player_match_saves(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+fn get_player_match_score(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+fn get_player_match_shots(&self, player_id: &PlayerId) -> SubtrActorResult<i32> { unimplemented!() }
+fn get_active_demos(&self) -> SubtrActorResult<Vec<DemolishAttribute>> { unimplemented!() }
+fn demolishes(&self) -> &[DemolishInfo] { unimplemented!() }
+fn boost_pad_events(&self) -> &[BoostPadEvent] { unimplemented!() }
+fn touch_events(&self) -> &[TouchEvent] { unimplemented!() }
+fn dodge_refreshed_events(&self) -> &[DodgeRefreshedEvent] { unimplemented!() }
+fn dodge_refreshed_counter_available(&self) -> bool { unimplemented!() }
+fn player_camera_events(&self) -> &[(PlayerId, PlayerCameraStateChange)] { unimplemented!() }
+fn player_stat_events(&self) -> &[PlayerStatEvent] { unimplemented!() }
+fn goal_events(&self) -> &[GoalEvent] { unimplemented!() }
+fn current_frame_boost_pad_events(&self) -> &[BoostPadEvent] { &[] }
+fn current_frame_touch_events(&self) -> &[TouchEvent] { unimplemented!() }
+fn current_frame_dodge_refreshed_events(&self) -> &[DodgeRefreshedEvent] { unimplemented!() }
+fn current_frame_player_stat_events(&self) -> &[PlayerStatEvent] { &[] }
+fn current_frame_goal_events(&self) -> &[GoalEvent] { &[] } }
+ fn frame(c:&mut EvidenceCollector,p:&FakeView,t:f32) { let f:boxcars::Frame=serde_json::from_value(serde_json::json!({"time":t,"delta":0.1,"new_actors":[],"deleted_actors":[],"updated_actors":[]})).unwrap(); c.process_frame(p,&f,0,t).unwrap(); }
+ fn analysis(c:&EvidenceCollector)->ReplayAnalysis { let ps=serde_json::json!([{"id":"steam:1","name":"Tester","team":0,"platform":"Steam","is_bot":false}]);serde_json::from_value(serde_json::json!({
+  "summary":{"id":"m","file_hash":"h","file_name":"m.replay","replay_name":"Synthetic","played_at":null,"mode":"1v1","duration_seconds":20.,"blue_score":1,"orange_score":0,"players":ps,"status":"ready","error":null,"source_path":"","match_type":null,"playlist_id":1,"recorder_name":null,"recorder_player_id":null,"content_hash":"h","map_name":null},
+  "players":ps,"frames":c.frames,"metrics":c.metrics("steam:1"),"events":c.events,"coverage":{"metadata":true,"positions":true,"boost":true,"goals":true,"touches":false,"decoded_frames":200,"render_frames":c.frames.len(),"live_play_seconds":c.live_seconds,"notes":[]}
+ })).unwrap() }
+ #[test] fn review_validate_duplicate_events_fails_but_control_is_valid() {
+  for (boost,valid) in [(0.,false),(33.,true)] {
+   let mut c=EvidenceCollector::new("m");let p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost,ball_y:0.};
+   for i in 0..=60 {frame(&mut c,&p,i as f32/10.); }c.finish_replay(&p).unwrap();
+   let outcome=validate_analysis(&analysis(&c));assert_eq!(outcome.is_ok(),valid,"boost={boost}, {outcome:?}");
+   eprintln!("validation low boost {boost}: {outcome:?}");
+  }
+ }
+ #[test] fn review_validator_accepts_corrupt_sufficient_statistics_and_coverage() {
+  let mut c=EvidenceCollector::new("m");let p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost:33.,ball_y:0.};frame(&mut c,&p,0.);frame(&mut c,&p,0.1);
+  let mut a=analysis(&c);assert!(validate_analysis(&a).is_ok());
+  a.metrics[1].numerator=Some(f64::INFINITY);a.metrics[1].denominator=Some(-1.);a.coverage.live_play_seconds=f64::NAN;
+  assert!(validate_analysis(&a).is_ok(),"characterization: invalid weighting and coverage accepted");
+ }
+ #[test] fn review_validator_accepts_negative_counts_and_wrong_shot_team() {
+  let mut c=EvidenceCollector::new("m");let p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost:33.,ball_y:0.};frame(&mut c,&p,0.);frame(&mut c,&p,0.1);
+  let mut a=analysis(&c);a.summary.blue_score=Some(-100);a.metrics[1].value=Some(-100.);
+  a.shots.push(StatSample{time:0.1,frame:usize::MAX,kind:"shot".into(),player_id:"steam:1".into(),team:1,player_position:None,shot:None});
+  assert!(validate_analysis(&a).is_ok(),"characterization: impossible scores/boost and inconsistent shot team/frame accepted");
+ }
+ #[test] fn review_low_and_supersonic_boost_generate_duplicate_event_ids() {
+  let mut c=EvidenceCollector::new("m");let mut p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost:0.,ball_y:0.};
+  for i in 0..=60 { frame(&mut c,&p,i as f32/10.); }
+  p.boost=100.;frame(&mut c,&p,6.1);c.finish_replay(&p).unwrap();
+  let mut ids=std::collections::HashSet::new();let duplicate=c.events.iter().any(|e|!ids.insert(&e.id));
+  assert!(duplicate,"characterization: overlapping low boost and boosting at speed share ID");
+  eprintln!("overlapping boost events: {:?}",c.events.iter().map(|e|(&e.id,&e.title,e.time,e.end_time)).collect::<Vec<_>>());
+ }
+ #[test] fn review_kickoff_time_not_in_active_play() {
+  let mut c=EvidenceCollector::new("m");let mut p=FakeView{ids:vec![RemoteId::Steam(1)],hit:false,boost:33.,ball_y:0.};
+  for i in 0..=20 { frame(&mut c,&p,i as f32/10.); }
+  assert_eq!(c.live_seconds,0.);assert_eq!(c.acc["steam:1"].seconds,0.);
+  p.hit=true;frame(&mut c,&p,2.1);frame(&mut c,&p,2.2);
+  assert!((c.live_seconds-0.1).abs()<1e-5);
+ }
+ #[test] fn review_absent_player_extends_observed_low_boost_event() {
+  let mut c=EvidenceCollector::new("m");let mut p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost:0.,ball_y:0.};
+  for i in 0..=60 { frame(&mut c,&p,i as f32/10.); }
+  p.ids.clear();for i in 61..=120 { frame(&mut c,&p,i as f32/10.); }
+  p.ids.push(RemoteId::Steam(1));frame(&mut c,&p,12.1);
+  let low=c.events.iter().find(|e|e.title=="Extended low-boost window").unwrap();
+  assert!(low.end_time>=12.,"characterization: low-boost event continues through six seconds with no car observations");
+  assert!((c.acc["steam:1"].seconds-6.).abs()<1e-4);
+  eprintln!("low-boost event {}..{}; actual observed seconds {}",low.time,low.end_time,c.acc["steam:1"].seconds);
+ }
+ #[test] fn review_gap_is_excluded_without_quality_accounting() {
+  let mut c=EvidenceCollector::new("m");let p=FakeView{ids:vec![RemoteId::Steam(1)],hit:true,boost:33.,ball_y:0.};
+  frame(&mut c,&p,0.);frame(&mut c,&p,0.1);frame(&mut c,&p,0.5);frame(&mut c,&p,0.6);
+  assert!((c.live_seconds-0.2).abs()<1e-5);
+  assert!(c.frames.iter().any(|f|f.time==0.5 && f.discontinuity));
+ }
+ #[test] fn review_exposure_event_spans_dropped_timing_gap() {
+  let mut c=EvidenceCollector::new("m");let p=FakeView{ids:vec![RemoteId::Steam(1),RemoteId::Steam(2)],hit:true,boost:33.,ball_y:-2000.};
+  for i in 0..=12 {frame(&mut c,&p,i as f32/10.); }frame(&mut c,&p,5.);
+  let e=c.events.iter().find(|e|e.category=="rotation").unwrap();
+  assert_eq!(e.end_time,5.);assert!((c.live_seconds-1.2).abs()<1e-4);
+  eprintln!("exposure event {}..{} includes dropped gap 1.2..5.0; observed live seconds {}",e.time,e.end_time,c.live_seconds);
+ }
+ #[test] fn review_partial_velocity_overstates_metric_sample_count() {
+  let mut c=EvidenceCollector::new("m");let mut a=Accumulator::default();a.samples=100;a.seconds=10.;a.observe_resources(0.1,Some(0.),Some(2250.),Some(true));c.acc.insert("p".into(),a);
+  let ms=c.metrics("p");let speed=ms.iter().find(|m|m.key=="avg_speed").unwrap();
+  assert_eq!(speed.sample_count,100);assert_eq!(speed.denominator,Some(0.1));
+ }
+}

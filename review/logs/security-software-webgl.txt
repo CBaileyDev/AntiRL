@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:33336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests\frontend-security.spec.ts:3:1 › provider consent, cloud preview, external links, import failures, identity and viewer cameras (11.2s)
+
+  1 passed (12.0s)
